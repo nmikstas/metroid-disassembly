@@ -2,49 +2,48 @@
 
 ;-------------------------------------------[ Defines ]----------------------------------------------
 
-.alias CodePtr          $0C ;Points to address to jump to when choosing
-;      CodePtr+1        $0D ;a routine from a list of routine addresses.
+.alias GenPtr00         $00     ;General use pointer.
+.alias GenPtr00LB       $00     ;General use pointer, lower byte.
+.alias GenPtr00UB       $01     ;General use pointer, upper byte.
 
-;The bits of the change and status addresses represent the following joypad buttons:
-;bit 7=A, bit 6=B, bit 5=SELECT, bit 4=START, bit 3=Up, bit 2=Down, bit 1=Left, bit 0=Right.
+.alias CodePtr          $0C     ;Pointer to an indirect function call.
+.alias CodePtrUB        $0C     ;Pointer to an indirect function call, lower byte.
+.alias CodePtrLB        $0D     ;Pointer to an indirect function call, upper byte.
 
-.alias Joy1Change           $12 ;These addresses store any button changes
-.alias Joy2Change       $13 ;that happened since last frame(pads 1 and 2).
-.alias Joy1Status           $14 ;These two addresses store all buttons
-.alias Joy2Status       $15 ;currently being pressed on the two controllers.
-.alias Joy1Retrig           $16 ;These two addresses store any buttons that need
-.alias Joy2Retrig       $17 ;to retrigger after being held down by player.
-.alias RetrigDelay1         $18 ;These two addresses are counters that control
-.alias RetrigDelay2     $19 ;The retriggering of held down buttons.
-
-.alias NMIStatus        $1A ;0=NMI in progress. anything else, NMI not in progress.
-.alias PPUDataPending       $1B ;1=not PPU data pending, 1=data pending.
-.alias PalDataPending       $1C ;Pending palette data. Palette # = PalDataPending - 1.
-.alias GameMode         $1D     ;0 = Game is playing, 1 = At title/password screen
-.alias MainRoutine      $1E ;5 = Game paused, 3 = Game engine running
-.alias TitleRoutine     $1F ;Stores title routine number currently running.
-.alias NextRoutine      $20 ;Stores next routine to jump to after WaitTimer expires.
-.alias CurrentBank      $23 ;0 thru 7. current memory page in lower memory block.
-.alias SwitchPending        $24 ;Switch memory page. Page # = SwitchPending - 1.
-.alias MMCReg0Cntrl     $25 ;Stores bits to be loaded into MMC1 Register 0.
-.alias SwitchUpperBits      $28 ;Used to store bits 3 and 4 for MMC1 register 3.  Bits
-                    ;3 and 4 should always be 0 under normal conditions.
-
-.alias TimerDelay       $29 ;Count down from 9 to 0. Decremented every frame.
-.alias Timer1           $2A ;Decremented every frame after set.
-.alias Timer2           $2B ;Decremented every frame after set.
-.alias Timer3           $2C ;Decremented every 10 frames after set.
-
+.alias Joy1Change       $12     ;Button changes since last frame, pad 1.
+.alias Joy2Change       $13     ;Button changes since last frame, pad 2.
+.alias Joy1Status       $14     ;Buttons currently being pressed, pad 1.
+.alias Joy2Status       $15     ;Buttons currently being pressed, pad 2.
+.alias Joy1Retrig       $16     ;Buttons that need to retrigger, pad 1.
+.alias Joy2Retrig       $17     ;Buttons that need to retrigger, pad 2.
+.alias RetrigDelay1     $18     ;Counter that control retriggering, pad 1.
+.alias RetrigDelay2     $19     ;Counter that control retriggering, pad 2.
+.alias NMIStatus        $1A     ;0=NMI in progress. anything else, NMI not in progress.
+.alias PPUDataPending   $1B     ;1=No PPU data pending, 1=data pending.
+.alias PalDataPending   $1C     ;Pending palette data. Palette #=PalDataPending-1.
+.alias GameMode         $1D     ;0=Game is playing, 1=At title/password screen
+.alias MainRoutine      $1E     ;5=Game paused, 3=Game engine running
+.alias TitleRoutine     $1F     ;Stores title routine number currently running.
+.alias NextRoutine      $20     ;Stores next routine to jump to after WaitTimer expires.
+.alias CurrentBank      $23     ;0 thru 7. current memory page in lower memory block.
+.alias SwitchPending    $24     ;Switch memory page. Page #=SwitchPending-1.
+.alias MMCReg0Cntrl     $25     ;Stores bits to be loaded into MMC1 Register 0.
+.alias SwitchUprBits    $28     ;Used to store bits 3 and 4 for MMC1 register 3.  Bits
+                                ;3 and 4 should always be 0 under normal conditions.
+.alias TimerDelay       $29     ;Count down from 9 to 0. Decremented every frame.
+.alias Timer1           $2A     ;Decremented every frame after set.
+.alias Timer2           $2B     ;Decremented every frame after set.
+.alias Timer3           $2C     ;Decremented every 10 frames after set.
 .alias FrameCount       $2D     ;Increments every frame(overflows every 256 frames).
+.alias RandomNumber1    $2E     ;Random numbers used     
+.alias RandomNumber2    $2F     ;throughout the game.
+.alias SpareMem30       $30     ;Written to, but never accessed.
+.alias GamePaused       $31     ;#$00=Game running, #$01=Game paused.
 
-.alias RandomNumber1        $2E ;Random numbers used     
-.alias RandomNumber2        $2F ;throughout the game.
+.alias RoomPtr          $33     ;Room pointer.
+.alias RoomPtrLB        $33     ;Room pointer, lower byte.
+.alias RoomPtrUB        $34     ;Room pointer, upper byte.
 
-.alias SpareMem30       $30 ;Written to, but never accessed.
-.alias GamePaused       $31 ;#$00=Game running, #$01=Game paused.
-
-.alias RoomPtr          $33 ;Low byte of room pointer address.
-;      RoomPtr+1        $34 ;High byte of room pointer address.
 
 .alias StructPtr        $35 ;Low bute of structure pointer address.
 ;      StructPtr+1      $36 ;High byte of structure pointer address.
@@ -203,11 +202,11 @@
                     ;The crosshair sprites double their speed.
 .alias Second4Delay     $BD ;This address holds a 32 frame delay.  When the delay is
                     ;up, the second set of crosshair sprites start their movement.
-.alias SecondCrosshairSprites   $BF ;#$01=Second crosshair sprites active in intro.
+.alias ScndCrshrSprts   $BF ;#$01=Second crosshair sprites active in intro.
 
 .alias FlashScreen      $C0 ;#$01=Flash screen during crosshairs routine.
 .alias PalDataIndex     $C1
-.alias ScreenFlashPalIndex  $C2 ;Index to palette data to flash screen during intro.
+.alias ScrnFlashPalInd  $C2 ;Index to palette data to flash screen during intro.
 .alias IntroStarOffset      $C3 ;Contains offset into IntroStarPntr table for twinkle effect.
 .alias FadeDataIndex        $C4 ;Index to palette data to fade items in and out during intro.
 
@@ -248,11 +247,11 @@
 .alias EndTimerLo       $010A   ;Lower byte of end game escape timer.
 .alias EndTimerHi       $010B   ;Upper byte of end game escape timer.
 
-.alias MissileToggle        $010E   ;0=fire bullets, 1=fire missiles.
+.alias MissileToggle    $010E   ;0=fire bullets, 1=fire missiles.
 
 ;-----------------------------------------[ Sprite RAM ]---------------------------------------------
 
-.alias Sprite00RAM          $0200   ;$0200 thru $02FF
+.alias Sprite00RAM      $0200   ;
 .alias Sprite01RAM      $0204   ;
 .alias Sprite02RAM      $0208   ;
 .alias Sprite03RAM      $020C   ;
@@ -268,7 +267,7 @@
 .alias Sprite0DRAM      $0234   ;
 .alias Sprite0ERAM      $0238   ;
 .alias Sprite0FRAM      $023C   ;
-.alias Sprite10RAM          $0240   ;
+.alias Sprite10RAM      $0240   ;
 .alias Sprite11RAM      $0244   ;
 .alias Sprite12RAM      $0248   ;
 .alias Sprite13RAM      $024C   ;
@@ -284,7 +283,7 @@
 .alias Sprite1DRAM      $0274   ;
 .alias Sprite1ERAM      $0278   ;
 .alias Sprite1FRAM      $027C   ;
-.alias Sprite20RAM          $0280   ;
+.alias Sprite20RAM      $0280   ;
 .alias Sprite21RAM      $0284   ;
 .alias Sprite22RAM      $0288   ;
 .alias Sprite23RAM      $028C   ;
@@ -300,7 +299,7 @@
 .alias Sprite2DRAM      $02B4   ;
 .alias Sprite2ERAM      $02B8   ;
 .alias Sprite2FRAM      $02BC   ;
-.alias Sprite30RAM          $02C0   ;
+.alias Sprite30RAM      $02C0   ;
 .alias Sprite31RAM      $02C4   ;
 .alias Sprite32RAM      $02C8   ;
 .alias Sprite33RAM      $02CC   ;
@@ -517,30 +516,28 @@
 .alias NoiseSFXFlag     $0680   ;Initialization flags for noise SFX
 .alias SQ1SFXFlag       $0681   ;Initialization flags for SQ1 SFX
 .alias SQ2SFXFlag       $0682   ;Initialization flags for SQ2 SFX(never used)
-.alias TriangleSFXFlag      $0683   ;Initialization flags for triangle SFX
+.alias TriangleSFXFlag  $0683   ;Initialization flags for triangle SFX
 .alias MultiSFXFlag     $0684   ;Initialization Flags for SFX and some music
 
-.alias MusicInitFlag        $0685   ;Music init flags
+.alias MusicInitFlag    $0685   ;Music init flags
 
 .alias NoiseContSFX     $0688   ;Continuation flags for noise SFX
 .alias SQ1ContSFX       $0689   ;Continuation flags for SQ1 SFX
 .alias SQ2ContSFX       $068A   ;Continuation flags for SQ2 SFX (never used)
-.alias TriangleContSFX      $068B   ;Continuation flags for Triangle SFX
+.alias TriangleContSFX  $068B   ;Continuation flags for Triangle SFX
 .alias MultiContSFX     $068C   ;Continuation flags for Multi SFX
 
 .alias CurrentMusic     $068D   ;Stores the flag of the current music being played 
 
-;----------------------------------------------------------------------------------------------------
-
 .alias PowerUpType      $0748   ;Holds the byte describing what power-up is on name table.
-.alias PowerUpYCoord        $0749   ;Y coordinate of the power-up.
-.alias PowerUpXCoord        $074A   ;X coordiante of the power-up
-.alias PowerUpNameTable     $074B   ;#$00 if on name table 0, #$01 if on name table 3.
-.alias PowerUpAnimIndex     $074F   ;Entry into FramePtrTable for item animation.
+.alias PowerUpYCoord    $0749   ;Y coordinate of the power-up.
+.alias PowerUpXCoord    $074A   ;X coordiante of the power-up
+.alias PowerUpNameTable $074B   ;#$00 if on name table 0, #$01 if on name table 3.
+.alias PowerUpAnimIndex $074F   ;Entry into FramePtrTable for item animation.
 
 .alias PowerUpBType     $0750   ;Holds the description byte of a second power-up(if any).
-.alias PowerUpBYCoord       $0751   ;Y coordinate of second power-up.
-.alias PowerUpBXCoord       $0752   ;X coordiante of second power-up.
+.alias PowerUpBYCoord   $0751   ;Y coordinate of second power-up.
+.alias PowerUpBXCoord   $0752   ;X coordiante of second power-up.
 .alias PowerUpBNameTable    $0753   ;#$00 if on name table 0, #$01 if on name table 3.
 .alias PowerUpBAnimIndex    $0757   ;Entry into FramePtrTable for item animation.
 
@@ -587,10 +584,10 @@
 .alias SQ2Cntrl2        $4006   ;
 .alias SQ2Cntrl3        $4007   ;
 
-.alias TriangleCntrl0       $4008   ;
-.alias TriangleCntrl1       $4009   ;Triangle hardware control registers.
-.alias TriangleCntrl2       $400A   ;
-.alias TriangleCntrl3       $400B   ;
+.alias TriangleCntrl0   $4008   ;
+.alias TriangleCntrl1   $4009   ;Triangle hardware control registers.
+.alias TriangleCntrl2   $400A   ;
+.alias TriangleCntrl3   $400B   ;
 
 .alias NoiseCntrl0      $400C   ;
 .alias NoiseCntrl1      $400D   ;Noise hardware control registers.
@@ -603,9 +600,9 @@
 .alias DMCCntrl3        $4013   ;
 
 .alias SPRDMAReg        $4014   ;Sprite RAM DMA register.
-.alias APUCommonCntrl0      $4015   ;APU common control 1 register.
-.alias CPUJoyPad1           $4016   ;Joypad1 register.
-.alias APUCommonCntrl1      $4017   ;Joypad2/APU common control 2 register.
+.alias APUCommonCntrl0  $4015   ;APU common control 1 register.
+.alias CPUJoyPad1       $4016   ;Joypad1 register.
+.alias APUCommonCntrl1  $4017   ;Joypad2/APU common control 2 register.
 
 ;----------------------------------------------------------------------------------------------------
 
@@ -614,18 +611,18 @@
 
 .alias EndingType       $6872   ;1=worst ending, 5=best ending
 
-.alias SamusDataIndex       $6875   ;Index for Samus saved game stats(not used). #$00, #$10, #$20.
+.alias SamusDataIndex   $6875   ;Index for Samus saved game stats(not used). #$00, #$10, #$20.
 
 .alias SamusStat00      $6876   ;Unused memory address for storing Samus info.
 .alias TankCount        $6877   ;Number of energy tanks.
 .alias SamusGear        $6878   ;Stores power-up items Samus has.
 .alias MissileCount     $6879   ;Stores current number of missiles.
 .alias MaxMissiles      $687A   ;Maximum amount of missiles Samus can carry
-.alias KraidStatueStatus    $687B   ;bit 0 set, the statues blink, 
-.alias RidleyStatueStatus   $687C   ;bit 7 set, statues are up.
-.alias SamusAge         $687D   ;Low byte of Samus' age.
-;      SamusAge+1       $687E   ;Mid byte of Samus' age.
-;      SamusAge+2       $687F   ;High byte of Samus' age.
+.alias KraidStatueStat  $687B   ;bit 0 set, the statues blink, 
+.alias RidlyStatueStat  $687C   ;bit 7 set, statues are up.
+.alias SamusAgeLo       $687D   ;Low byte of Samus' age.
+.alias SamusAgeMid      $687E   ;Mid byte of Samus' age.
+.alias SamusAgeHi       $687F   ;High byte of Samus' age.
 .alias SamusStat01      $6880   ;Unused memory address for storing Samus info.
 .alias SamusStat02      $6881   ;SamusStat02 and 03 keep track of how many times Samus has
 .alias SamusStat03      $6882   ;died, but this info is never accessed anywhere in the game.
@@ -649,50 +646,50 @@
 
 .alias KraidRidleyPresent   $6987   ;#$01=Kraid/Ridley present, #$00=Kraid/Ridley not present.
 
-.alias PasswordByte00       $6988   ;Stores status of items 0 thru 7.
-.alias PasswordByte01       $6989   ;Stores status of items 8 thru 15.
-.alias PasswordByte02       $698A   ;Stores status of items 16 thru 23.
-.alias PasswordByte03       $698B   ;Stores status of items 24 thru 31.
-.alias PasswordByte04       $698C   ;Stores status of items 32 thru 39.
-.alias PasswordByte05       $698D   ;Stores status of items 40 thru 47.
-.alias PasswordByte06       $698E   ;Stores status of items 48 thru 55.
-.alias PasswordByte07       $698F   ;Stores status of items 56 thru 58(bits 0 thru 2).
-.alias PasswordByte08       $6990   ;start location(bits 0 thru 5), Samus suit status (bit 7).
-.alias PasswordByte09       $6991   ;Stores SamusGear.
-.alias PasswordByte0A       $6992   ;Stores MissileCount.
-.alias PasswordByte0B       $6993   ;Stores SamusAge.
-.alias PasswordByte0C       $6994   ;Stores SamusAge+1.
-.alias PasswordByte0D       $6995   ;Stores SamusAge+2.
-.alias PasswordByte0E       $6996   ;Stores no data.
-.alias PasswordByte0F       $6997   ;Stores Statue statuses(bits 4 thu 7).
-.alias PasswordByte10       $6998   ;Stores value RandomNumber1.
-.alias PasswordByte11       $6999   ;Stores sum of $6988 thru $6998(Checksum).
+.alias PasswordByte00   $6988   ;Stores status of items 0 thru 7.
+.alias PasswordByte01   $6989   ;Stores status of items 8 thru 15.
+.alias PasswordByte02   $698A   ;Stores status of items 16 thru 23.
+.alias PasswordByte03   $698B   ;Stores status of items 24 thru 31.
+.alias PasswordByte04   $698C   ;Stores status of items 32 thru 39.
+.alias PasswordByte05   $698D   ;Stores status of items 40 thru 47.
+.alias PasswordByte06   $698E   ;Stores status of items 48 thru 55.
+.alias PasswordByte07   $698F   ;Stores status of items 56 thru 58(bits 0 thru 2).
+.alias PasswordByte08   $6990   ;start location(bits 0 thru 5), Samus suit status (bit 7).
+.alias PasswordByte09   $6991   ;Stores SamusGear.
+.alias PasswordByte0A   $6992   ;Stores MissileCount.
+.alias PasswordByte0B   $6993   ;Stores SamusAgeLo.
+.alias PasswordByte0C   $6994   ;Stores SamusAgeMid.
+.alias PasswordByte0D   $6995   ;Stores SamusAgeHi.
+.alias PasswordByte0E   $6996   ;Stores no data.
+.alias PasswordByte0F   $6997   ;Stores Statue statuses(bits 4 thu 7).
+.alias PasswordByte10   $6998   ;Stores value RandomNumber1.
+.alias PasswordByte11   $6999   ;Stores sum of $6988 thru $6998(Checksum).
 
 ;Upper two bits of PasswordChar bytes will always be 00.
-.alias PasswordChar00       $699A   ;
-.alias PasswordChar01       $699B   ;
-.alias PasswordChar02       $699C   ;
-.alias PasswordChar03       $699D   ;
-.alias PasswordChar04       $699E   ;
-.alias PasswordChar05       $699F   ;
-.alias PasswordChar06       $69A0   ;
-.alias PasswordChar07       $69A1   ;
-.alias PasswordChar08       $69A2   ;
-.alias PasswordChar09       $69A3   ;
-.alias PasswordChar0A       $69A4   ;These 18 memory addresses store the 18 characters
-.alias PasswordChar0B       $69A5   ;of the password to be displayed on the screen.
-.alias PasswordChar0C       $69A6   ;
-.alias PasswordChar0D       $69A7   ;
-.alias PasswordChar0E       $69A8   ;
-.alias PasswordChar0F       $69A9   ;
-.alias PasswordChar10       $69AA   ;
-.alias PasswordChar11       $69AB   ;
-.alias PasswordChar12       $69AC   ;
-.alias PasswordChar13       $69AD   ;
-.alias PasswordChar14       $69AE   ;
-.alias PasswordChar15       $69AF   ;
-.alias PasswordChar16       $69B0   ;
-.alias PasswordChar17       $69B1   ;
+.alias PasswordChar00   $699A   ;
+.alias PasswordChar01   $699B   ;
+.alias PasswordChar02   $699C   ;
+.alias PasswordChar03   $699D   ;
+.alias PasswordChar04   $699E   ;
+.alias PasswordChar05   $699F   ;
+.alias PasswordChar06   $69A0   ;
+.alias PasswordChar07   $69A1   ;
+.alias PasswordChar08   $69A2   ;
+.alias PasswordChar09   $69A3   ;
+.alias PasswordChar0A   $69A4   ;These 18 memory addresses store the 18 characters
+.alias PasswordChar0B   $69A5   ;of the password to be displayed on the screen.
+.alias PasswordChar0C   $69A6   ;
+.alias PasswordChar0D   $69A7   ;
+.alias PasswordChar0E   $69A8   ;
+.alias PasswordChar0F   $69A9   ;
+.alias PasswordChar10   $69AA   ;
+.alias PasswordChar11   $69AB   ;
+.alias PasswordChar12   $69AC   ;
+.alias PasswordChar13   $69AD   ;
+.alias PasswordChar14   $69AE   ;
+.alias PasswordChar15   $69AF   ;
+.alias PasswordChar16   $69B0   ;
+.alias PasswordChar17   $69B1   ;
 
 .alias NARPASSWORD      $69B2   ;0 = invinsible Samus not active, 1 = invinsible Samus active.
 .alias JustInBailey     $69B3   ;0 = Samus has suit, 1 = Samus is without suit.
@@ -774,8 +771,8 @@
 .alias IntroSpr0YChange     $6EA7   ;Intro sprite y total movement distance.
 .alias IntroSpr0ChngCntr    $6EA8   ;decrements each frame from #$20. At 0, change sparkle sprite.
 .alias IntroSpr0ByteType    $6EA9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8
-                    ;bits for x coord change. if #$00, next data byte contains
-                    ;4 bits for x coord change and 4 bits for y coord change.
+                                ;bits for x coord change. if #$00, next data byte contains
+                                ;4 bits for x coord change and 4 bits for y coord change.
 .alias IntroSpr0Complete    $6EAA   ;#$01=sprite has completed its task, #$00 if not complete.
 .alias IntroSpr0SpareB      $6EAB   ;Not used.
 .alias IntroSpr0XRun        $6EAC   ;x displacement of sprite movement(run).
@@ -796,8 +793,8 @@
 .alias IntroSpr1YChange     $6EB7   ;Intro sprite y total movement distance.
 .alias IntroSpr1ChngCntr    $6EB8   ;decrements each frame from #$20. At 0, change sparkle sprite.
 .alias IntroSpr1ByteType    $6EB9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8
-                    ;bits for x coord change. if #$00, next data byte contains
-                    ;4 bits for x coord change and 4 bits for y coord change.
+                                    ;bits for x coord change. if #$00, next data byte contains
+                                    ;4 bits for x coord change and 4 bits for y coord change.
 .alias IntroSpr1Complete    $6EBA   ;#$01=sprite has completed its task, #$00 if not complete.
 .alias IntroSpr1SpareB      $6EBB   ;Not used.
 .alias IntroSpr1XRun        $6EBC   ;x displacement of sprite movement(run).
@@ -928,8 +925,6 @@
 
 ;--------------------------------------------[Constants]---------------------------------------------
 
-.alias modeTitle        1
-
 ;Bitmask defs used for SamusGear.
 .alias gr_BOMBS         %00000001
 .alias gr_HIGHJUMP      %00000010
@@ -981,14 +976,17 @@
 .alias an_MissileExplode    $91
 
 ;Weapon action handlers.
-.alias wa_RegularBeam       1
+.alias wa_RegularBeam   1
 .alias wa_WaveBeam      2
 .alias wa_IceBeam       3
-.alias wa_BulletExplode     4
+.alias wa_BulletExplode 4
 .alias wa_LayBomb       8
 .alias wa_BombCount     9
-.alias wa_BombExplode       10
+.alias wa_BombExplode   10
 .alias wa_Missile       11
+
+.alias SUIT_ON          $00     ;Samus suit on.
+.alias SUIT_OFF         $01     ;Samus suit off.
 
 .alias D_PAD            $0F     ;All bits for D-pad input.
 .alias BTN_RIGHT        $01     ;Controller D-pad right.
