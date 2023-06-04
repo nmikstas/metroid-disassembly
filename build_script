@@ -1,0 +1,116 @@
+#!/bin/bash
+
+red=`tput setaf 1`
+green=`tput setaf 2`
+yellow=`tput setaf 3`
+blue=`tput setaf 4`
+magenta=`tput setaf 5`
+cyan=`tput setaf 6`
+reset=`tput sgr0`
+
+printf "\n${magenta}Deleting previous build files...${reset}\n"
+rm -rf Output_Files
+mkdir ./Output_Files
+
+printf "\n${magenta}Assembling individual PRG banks...${reset}\n\n"
+cd Source_Files
+
+../Ophis/ophis Bank00.asm ../Output_Files/Bank00.bin
+../Ophis/ophis Bank01.asm ../Output_Files/Bank01.bin
+../Ophis/ophis Bank02.asm ../Output_Files/Bank02.bin
+../Ophis/ophis Bank03.asm ../Output_Files/Bank03.bin
+../Ophis/ophis Bank04.asm ../Output_Files/Bank04.bin
+../Ophis/ophis Bank05.asm ../Output_Files/Bank05.bin
+../Ophis/ophis Bank06.asm ../Output_Files/Bank06.bin
+../Ophis/ophis Bank07.asm ../Output_Files/Bank07.bin
+cd ..
+
+printf -- "\n"
+
+printf -- "${yellow}--------------------PRG Bank 00--------------------${reset}\n"
+out00=($(md5sum Output_Files/Bank00.bin))
+org00="8890cbea191c4218a754aa926ca61c9a"
+printf "Assembled md5sum = $out00\n"
+printf "Original  md5sum = $org00\n"
+if [ "$out00" = "$org00" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 01--------------------${reset}\n"
+out01=($(md5sum Output_Files/Bank01.bin))
+org01="0e534164de09df47e581d1dd4696fe86"
+printf "Assembled md5sum = $out01\n"
+printf "Original  md5sum = $org01\n"
+if [ "$out01" = "$org01" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 02--------------------${reset}\n"
+out02=($(md5sum Output_Files/Bank02.bin))
+org02="ce30a993e1216fd29da52aac82c68598"
+printf "Assembled md5sum = $out02\n"
+printf "Original  md5sum = $org02\n"
+if [ "$out02" = "$org02" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 03--------------------${reset}\n"
+out03=($(md5sum Output_Files/Bank03.bin))
+org03="a83ab1d4872deafdff1bcae9bf00489c"
+printf "Assembled md5sum = $out03\n"
+printf "Original  md5sum = $org03\n"
+if [ "$out03" = "$org03" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 04--------------------${reset}\n"
+out04=($(md5sum Output_Files/Bank04.bin))
+org04="57be3a38f1b44e3d08ba7fdf9f010cc9"
+printf "Assembled md5sum = $out04\n"
+printf "Original  md5sum = $org04\n"
+if [ "$out04" = "$org04" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 05--------------------${reset}\n"
+out05=($(md5sum Output_Files/Bank05.bin))
+org05="a4618c072420a556bff9bf10c70ae4bc"
+printf "Assembled md5sum = $out05\n"
+printf "Original  md5sum = $org05\n"
+if [ "$out05" = "$org05" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 06--------------------${reset}\n"
+out06=($(md5sum Output_Files/Bank06.bin))
+org06="0d2cf0c230597db1ec74916def25db92"
+printf "Assembled md5sum = $out06\n"
+printf "Original  md5sum = $org06\n"
+if [ "$out06" = "$org06" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
+
+printf -- "${yellow}--------------------PRG Bank 07--------------------${reset}\n"
+out07=($(md5sum Output_Files/Bank07.bin))
+org07="cf6b80dbc866de61844171c927a0f05a"
+printf "Assembled md5sum = $out07\n"
+printf "Original  md5sum = $org07\n"
+if [ "$out07" = "$org07" ]; then
+    printf "${green}Pass${reset}\n\n"
+else
+    printf "${red}Fail${reset}\n\n"
+fi
