@@ -7,8 +7,8 @@
 
 ;Forward declarations.
 
-.alias startup          $C01A
-.alias NMI              $C0D9
+.alias startup                  $C01A
+.alias NMI                      $C0D9
 
 ;----------------------------------------------------------------------------------------------------
 

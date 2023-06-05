@@ -6,17 +6,17 @@
 
 ;--------------------------------------[ Forward declarations ]--------------------------------------
 
-.alias startup          $C01A
-.alias NMI          $C0D9
-.alias ChooseRoutine        $C27C
-.alias Adiv32           $C2BE
-.alias Amul16           $C2C5
-.alias TwosCompliment       $C3D4
-.alias Base10Subtract       $C3FB
-.alias SubtractHealth       $CE92
-.alias SetProjectileAnim    $D2FA
-.alias UpdateEnemyAnim      $E094
-.alias VerticalRoomCentered $E21B
+.alias startup                  $C01A
+.alias NMI                      $C0D9
+.alias ChooseRoutine            $C27C
+.alias Adiv32                   $C2BE
+.alias Amul16                   $C2C5
+.alias TwosCompliment           $C3D4
+.alias Base10Subtract           $C3FB
+.alias SubtractHealth           $CE92
+.alias SetProjectileAnim        $D2FA
+.alias UpdateEnemyAnim          $E094
+.alias VerticalRoomCentered     $E21B
 
 ;-----------------------------------------[ Start of code ]------------------------------------------
 

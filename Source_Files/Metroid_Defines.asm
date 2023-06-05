@@ -765,9 +765,9 @@
 .alias IntroSpr0XCoord      $6EA3   ;Loaded into byte 3 of sprite RAM(X position).
 .alias IntroSpr0Index       $6EA4   ;Index to next sparkle sprite data byte.
 .alias IntroSpr0NextCntr    $6EA5   ;Decrements each frame. When 0, load new sparkle sprite data.
-.alias SparkleSpr0YChange   $6EA6   ;Sparkle sprite y coordinate change.
+.alias SprklSpr0YChange     $6EA6   ;Sparkle sprite y coordinate change.
 .alias IntroSpr0XChange     $6EA6   ;Intro sprite x total movement distance.
-.alias SparkleSpr0XChange   $6EA7   ;Sparkle sprite x coordinate change.
+.alias SprklSpr0XChange     $6EA7   ;Sparkle sprite x coordinate change.
 .alias IntroSpr0YChange     $6EA7   ;Intro sprite y total movement distance.
 .alias IntroSpr0ChngCntr    $6EA8   ;decrements each frame from #$20. At 0, change sparkle sprite.
 .alias IntroSpr0ByteType    $6EA9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8

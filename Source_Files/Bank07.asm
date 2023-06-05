@@ -6,23 +6,22 @@
 
 ;-------------------------------------[ Forward declarations ]--------------------------------------
 
-.alias  ObjectAnimIndexTbl   $8572
-.alias  FramePtrTable    $860B
-.alias  PlacePtrTable    $86DF
-.alias  StarPalSwitch    $8AC7
-.alias  SamusEnterDoor   $8B13
-.alias  AreaPointers     $9598
-.alias  AreaRoutine      $95C3
-.alias  EnemyHitPointTbl     $962B
-.alias  EnemyInitDelayTbl $96BB
-.alias  DecSpriteYCoord  $988A
-.alias  NMIScreenWrite   $9A07
-.alias  EndGamePalWrite  $9F54
-.alias  SpecItmsTable    $9598
-.alias  CopyMap          $A93E
-.alias  SoundEngine      $B3B4
-
-.alias  GFXMetroidTitle $8BE0
+.alias  ObjectAnimIndexTbl      $8572
+.alias  FramePtrTable           $860B
+.alias  PlacePtrTable           $86DF
+.alias  StarPalSwitch           $8AC7
+.alias  SamusEnterDoor          $8B13
+.alias  AreaPointers            $9598
+.alias  AreaRoutine             $95C3
+.alias  EnemyHitPointTbl        $962B
+.alias  EnemyInitDelayTbl       $96BB
+.alias  DecSpriteYCoord         $988A
+.alias  NMIScreenWrite          $9A07
+.alias  EndGamePalWrite         $9F54
+.alias  SpecItmsTable           $9598
+.alias  CopyMap                 $A93E
+.alias  SoundEngine             $B3B4
+.alias  GFXMetroidTitle         $8BE0
 
 ;----------------------------------------[ Start of code ]------------------------------------------
 
@@ -986,27 +985,27 @@ LC4F8:  sta SwitchUprBits     ;Store any new bits set in 3 or 4(there should be 
 
 MMCWriteReg3:
 LC4FA:  sta MMC1Reg3            ;Write bit 0 of ROM bank #.
-LC4FD:  lsr             ;
+LC4FD:  lsr                     ;
 LC4FE:  sta MMC1Reg3            ;Write bit 1 of ROM bank #.
-LC501:  lsr             ;
+LC501:  lsr                     ;
 LC502:  sta MMC1Reg3            ;Write bit 2 of ROM bank #.
-LC505:  lsr             ;
+LC505:  lsr                     ;
 LC506:  sta MMC1Reg3            ;Write bit 3 of ROM bank #.
-LC509:  lsr             ;
+LC509:  lsr                     ;
 LC50A:  sta MMC1Reg3            ;Write bit 4 of ROM bank #.
-LC50D:  lda $00             ;Restore A with current bank number before exiting.
-LC50F:* rts             ;
+LC50D:  lda $00                 ;Restore A with current bank number before exiting.
+LC50F:* rts                     ;
 
 ;Calls the proper routine according to the bank number in A.
 
 GoBankInit:
-LC510:  asl             ;*2 For proper table offset below.
-LC511:  tay             ;
+LC510:  asl                     ;*2 For proper table offset below.
+LC511:  tay                     ;
 LC512:  lda BankInitTable,y     ;
-LC515:  sta $0A             ;Load appropriate subroutine address into $0A and $0B.
-LC517:  lda BankInitTable+1,y       ;
-LC51A:  sta $0B             ;
-LC51C:  jmp ($000A)         ;Jump to appropriate initialization routine.
+LC515:  sta $0A                 ;Load appropriate subroutine address into $0A and $0B.
+LC517:  lda BankInitTable+1,y   ;
+LC51A:  sta $0B                 ;
+LC51C:  jmp ($000A)             ;Jump to appropriate initialization routine.
 
 BankInitTable:
 LC51F:  .word InitBank0         ;($C531)Initialize bank 0.
