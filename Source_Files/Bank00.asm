@@ -138,7 +138,7 @@ L8086:  sty SpareMemCB          ;Not used.
 L8088:  sty SpareMemC9          ;
 
 L808A:  lda #$02                ;
-L808C:  sta IntroMusicRestart   ;Title rountines cycle twice before restart of music.
+L808C:  sta IntroMusRstrt       ;Title rountines cycle twice before restart of music.
 
 L808E:  sty SpareMemB7          ;Not used.
 L8090:  sty SpareMemB8          ;
@@ -266,8 +266,8 @@ L814C:  RTS                     ;
 METROIDSparkle:
 L814D:  LDA Timer3              ;Wait until 3 seconds have passed since
 L814F:  BNE ++                  ;last routine before continuing.
-L8151:  LDA IntroSpr0Complete   ;Check if sparkle sprites are done moving.
-L8154:  AND IntroSpr1Complete   ;
+L8151:  LDA IntroSpr0Comp       ;Check if sparkle sprites are done moving.
+L8154:  AND IntroSpr1Comp       ;
 L8157:  CMP #$01                ;Is sparkle routine finished? If so,
 L8159:  BNE +                   ;go to next title routine, else continue
 L815B:  INC TitleRoutine        ;with sparkle routine.
@@ -298,10 +298,10 @@ L8184:  BEQ +                   ;If not, branch.
 L8186:  JSR FlashIntroScreen    ;($8AA7)Flash screen white.
 L8189:* LDA Timer3              ;Wait 80 frames from last routine
 L818B:  BNE ++++                ;before running this one.
-L818D:  LDA IntroSpr0Complete   ;
-L8190:  AND IntroSpr1Complete   ;Check if first 4 sprites have completed
-L8193:  AND IntroSpr2Complete   ;their movements.  If not, branch.
-L8196:  AND IntroSpr3Complete   ;
+L818D:  LDA IntroSpr0Comp       ;
+L8190:  AND IntroSpr1Comp       ;Check if first 4 sprites have completed
+L8193:  AND IntroSpr2Comp       ;their movements.  If not, branch.
+L8196:  AND IntroSpr3Comp       ;
 L8199:  BEQ ++                  ;
 L819B:  LDA #$01                ;Prepare to flash screen and draw cross.
 L819D:  CMP ScndCrshrSprts      ;Branch if second crosshair sprites are already 
@@ -311,10 +311,10 @@ L81A3:  STA DrawCross           ;Draw cross animation on screen.
 L81A5:  STA FlashScreen         ;Flash screen white.
 L81A7:  LDA #$00                ;
 L81A9:  STA CrossDataIndex      ;Reset index to cross sprite data.
-L81AB:* AND IntroSpr4Complete   ;
-L81AE:  AND IntroSpr5Complete   ;Check if second 4 sprites have completed 
-L81AF:  AND IntroSpr6Complete   ;their movements.  If not, branch.
-L81B4:  AND IntroSpr7Complete   ;
+L81AB:* AND IntroSpr4Comp       ;
+L81AE:  AND IntroSpr5Comp       ;Check if second 4 sprites have completed 
+L81AF:  AND IntroSpr6Comp       ;their movements.  If not, branch.
+L81B4:  AND IntroSpr7Comp       ;
 L81B7:  BEQ +                   ;
 L81B9:  LDA #$01                ;Prepare to flash screen and draw cross.
 L81BB:  STA DrawCross           ;Draw cross animation on screen.
@@ -408,20 +408,14 @@ L8285:  LDA #$10                ;
 L8287:  STA Timer3              ;Set Timer3 for a delay of 160 frames(2.6 seconds).
 L8289:  RTS                     ;
 
-UnusedIntroRoutine3:
-L828A:  LDA Timer3              ;
-L828C:  BNE +                   ;
-L828E:  LDA SpareMemB7          ;
-L8290:  BNE +                   ;
-L8292:  LDA SpareMemB8          ;
-L8294:  AND #$0F                ;Unused intro routine.
-L8296:  BNE +                   ;
-L8298:  LDA #$01                ;
-L829A:  STA SpareMemD2          ;
-L829C:  LDA #$10                ;
-L829E:  STA Timer3              ;
-L82A0:  INC TitleRoutine        ;
-L82A2:* RTS                     ;
+;----------------------------------------------------------------------------------------------------
+
+;Unused intro routines. Perhaps from the FDS version of the game.
+
+L828A:  .byte $A5, $2C, $D0, $14, $A5, $B7, $D0, $10, $A5, $B8, $29, $0F, $D0, $0A, $A9, $01
+L829A:  .byte $85, $D2, $A9, $10, $85, $2C, $E6, $1F, $60
+
+;----------------------------------------------------------------------------------------------------
 
 PrepIntroRestart:
 L82A3:  LDA Timer3              ;Check if delay timer has expired.  If not, branch
@@ -454,15 +448,15 @@ L82D5:  INY                     ;Y=2.
 L82D6:  STY SpareMemCC          ;Not accessed by game.
 L82D8:  STY SpareMemCF          ;Not accessed by game.
 L82DA:  STY TitleRoutine        ;Next routine sets up METROID fade in delay.
-L82DC:  LDA IntroMusicRestart   ;Check to see if intro music needs to be restarted.
+L82DC:  LDA IntroMusRstrt       ;Check to see if intro music needs to be restarted.
 L82DE:  BNE ++                  ;Branch if not.
 L82E0:  LDA #$10                ;
 L82E2:  STA MultiSFXFlag        ;Restart intro music.
 L82E5:  LDA #$02                ;Set restart of intro music after another two cycles
-L82E7:  STA IntroMusicRestart   ;of the title routines.
+L82E7:  STA IntroMusRstrt       ;of the title routines.
 L82E9:* RTS                     ;
  
-L82EA:* DEC IntroMusicRestart   ;One title routine cycle complete. Decrement intro
+L82EA:* DEC IntroMusRstrt       ;One title routine cycle complete. Decrement intro
 L82EC:  RTS                     ;music restart counter.
 
 TitleScreenOff:
@@ -473,10 +467,12 @@ L82F2:  RTS                     ;This routine should not be reached.
 TitleRoutineRtn:
 L82F3:  RTS                     ;Last title routine function. Should not be reached.
 
+;----------------------------------------------------------------------------------------------------
+
 ;The following data fills name table 0 with the intro screen background graphics.
 
 ;Information to be stored in attribute table 0.
-L82F4:  .byte $23, $C0, $20 ;PPU address and string length.
+L82F4:  .byte $23, $C0, $20     ;PPU address and string length.
 L82F7:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
 L8307:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
@@ -485,76 +481,76 @@ L831A:  .byte $FF, $FF, $BF, $AF, $FF, $FF, $FF, $FF, $00, $00, $00, $00, $00, $
 L832A:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 ;Writes row $22E0 (24th row from top).
-L833A:  .byte $22, $E0, $20 ;PPU address and string length.
+L833A:  .byte $22, $E0, $20     ;PPU address and string length.
 L833D:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 L834D:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 
 ;Writes row $2300 (25th row from top).
-L835D:  .byte $23, $00, $20 ;PPU address and string length.
+L835D:  .byte $23, $00, $20     ;PPU address and string length.
 L8360:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 L8370:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 
 ;Writes row $2320 (26th row from top).
-L8380:  .byte $23, $20, $20 ;PPU address and string length.
+L8380:  .byte $23, $20, $20     ;PPU address and string length.
 L8383:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 L8393:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 
 ;Writes row $2340 (27th row from top).
-L83A3:  .byte $23, $40, $20 ;PPU address and string length.
+L83A3:  .byte $23, $40, $20     ;PPU address and string length.
 L83A6:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 L83B6:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 
 ;Writes row $2360 (28th row from top).
-L83C6:  .byte $23, $60, $20 ;PPU address and string length.
+L83C6:  .byte $23, $60, $20     ;PPU address and string length.
 L83C9:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 L83D9:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 
 ;Writes row $2380 (29th row from top).
-L83E9:  .byte $23, $80, $20 ;PPU address and string length.
+L83E9:  .byte $23, $80, $20     ;PPU address and string length.
 L83EC:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 L83FC:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 
 ;Writes row $23A0 (Bottom row).
-L840C:  .byte $23, $A0, $20 ;PPU address and string length.
+L840C:  .byte $23, $A0, $20     ;PPU address and string length.
 L840F:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 L841F:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 
 ;Writes some blank spaces in row $20A0 (6th row from top).
-L842F:  .byte $20, $A8, $4F ;PPU address and string length.
-L8432:  .byte $FF           ;Repeat bit set. Repeat 16 blank tiles.
+L842F:  .byte $20, $A8, $4F     ;PPU address and string length.
+L8432:  .byte $FF               ;Repeat bit set. Repeat 16 blank tiles.
 
 ;Writes METROID graphics in row $2100 (9th row from top).
-L8433:  .byte $21, $03, $1C ;PPU address and string length.
+L8433:  .byte $21, $03, $1C     ;PPU address and string length.
 L8436:  .byte $40, $5D, $56, $5D, $43, $40, $5D, $43, $40, $5D, $5D, $43, $40, $5D, $5D, $63
 L8446:  .byte $62, $5D, $5D, $63, $40, $43, $40, $5D, $5D, $63, $1D, $16
 
 ;Writes METROID graphics in row $2120 (10th row from top).
-L8452:  .byte $21, $23, $1A ;PPU address and string length.
+L8452:  .byte $21, $23, $1A     ;PPU address and string length.
 L8455:  .byte $44, $50, $50, $50, $47, $44, $57, $58, $74, $75, $76, $77, $44, $57, $69, $47
 L8465:  .byte $44, $57, $69, $47, $44, $47, $44, $68, $69, $47
 
 ;Writes METROID graphics in row $2140 (11th row from top).
-L846F:  .byte $21, $43, $1A ;PPU address and string length.
+L846F:  .byte $21, $43, $1A     ;PPU address and string length.
 L8472:  .byte $44, $41, $7E, $49, $47, $44, $59, $5A, $78, $79, $7A, $7B, $44, $59, $6D, $70
 L8482:  .byte $44, $73, $72, $47, $44, $47, $44, $73, $72, $47
 
 ;Writes METROID graphics in row $2160 (12th row from top).
-L848C:  .byte $21, $63, $1A ;PPU address and string length.
+L848C:  .byte $21, $63, $1A     ;PPU address and string length.
 L848F:  .byte $44, $42, $7F, $4A, $47, $44, $5B, $5C, $FF, $44, $47, $FF, $44, $5B, $6F, $71
 L849F:  .byte $44, $45, $46, $47, $44, $47, $44, $45, $46, $47
 
 ;Writes METROID graphics in row $2180 (13th row from top).
-L84A9:  .byte $21, $83, $1A ;PPU address and string length.
+L84A9:  .byte $21, $83, $1A     ;PPU address and string length.
 L84AC:  .byte $44, $47, $FF, $44, $47, $44, $5F, $60, $FF, $44, $47, $FF, $44, $7D, $7C, $47
 L84BC:  .byte $44, $6A, $6B, $47, $44, $47, $44, $6A, $6B, $47
 
 ;Writes METROID graphics in row $21A0 (14th row from top).
-L84C6:  .byte $21, $A3, $1A ;PPU address and string length.
+L84C6:  .byte $21, $A3, $1A     ;PPU address and string length.
 L84C9:  .byte $4C, $4F, $FF, $4C, $4F, $4C, $5E, $4F, $FF, $4C, $4F, $FF, $4C, $4D, $4E, $4F
 L84D9:  .byte $66, $5E, $5E, $64, $4C, $4F, $4C, $5E, $5E, $64
 
 ;Writes METROID graphics in row $21C0 (15th row from top).
-L84E3:  .byte $21, $C3, $1A ;PPU address and string length.
+L84E3:  .byte $21, $C3, $1A     ;PPU address and string length.
 L84E6:  .byte $51, $52, $FF, $51, $52, $51, $61, $52, $FF, $51, $52, $FF, $51, $53, $54, $52
 L84F6:  .byte $67, $61, $61, $65, $51, $52, $51, $61, $61, $65
 
@@ -566,7 +562,7 @@ L8503:  .byte $FF, $19, $1E, $1C, $11, $FF, $1C, $1D, $0A, $1B, $1D, $FF, $0B, $
 L8513:  .byte $18, $17, $FF, $FF, $FF
 
 ;Writes C 1986 NINTENDO in row $2260 (20th row from top).
-L8518:  .byte $22, $69, $12 ;PPU address and string length.
+L8518:  .byte $22, $69, $12     ;PPU address and string length.
 ;              C    _    1    9    8    6    _    N    I    N    T    E    N    D    O    _
 L851B:  .byte $8F, $FF, $01, $09, $08, $06, $FF, $17, $12, $17, $1D, $0E, $17, $0D, $18, $FF
 ;              _    _
@@ -575,92 +571,92 @@ L852B:  .byte $FF, $FF
 ;The following data fills name table 1 with the intro screen background graphics.
 
 ;Information to be stored in attribute table 1.
-L852D:  .byte $27, $C0, $20 ;PPU address and string length.
+L852D:  .byte $27, $C0, $20     ;PPU address and string length.
 L8530:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 L8540:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 ;Writes row $27E0 (24th row from top).
-L8550:  .byte $27, $E0, $20 ;PPU address and string length.
+L8550:  .byte $27, $E0, $20     ;PPU address and string length.
 L8553:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $00, $00, $00, $00, $00, $00, $00, $00
 L8563:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 ;Writes row $26E0 (24th row from top).
-L8573:  .byte $26, $E0, $20 ;PPU address and string length.
+L8573:  .byte $26, $E0, $20     ;PPU address and string length.
 L8576:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 L8586:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 
 ;Writes row $2700 (25th row from top).
-L8595:  .byte $27, $00, $20 ;PPU address and string length.
+L8595:  .byte $27, $00, $20     ;PPU address and string length.
 L8599:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 L85A9:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 
 ;Writes row $2720 (26th row from top).
-L85B9:  .byte $27, $20, $20 ;PPU address and string length.
+L85B9:  .byte $27, $20, $20     ;PPU address and string length.
 L85BC:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 L85CC:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 
 ;Writes row $2740 (27th row from top).
-L85DC:  .byte $27, $40, $20 ;PPU address and string length.
+L85DC:  .byte $27, $40, $20     ;PPU address and string length.
 L85DF:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 L85EF:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 
 ;Writes row $2760 (28th row from top).
-L85FF:  .byte $27, $60, $20 ;PPU address and string length.
+L85FF:  .byte $27, $60, $20     ;PPU address and string length.
 L8602:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 L8612:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 
 ;Writes row $2780 (29th row from top).
-L8622:  .byte $27, $80, $20 ;PPU address and string length.
+L8622:  .byte $27, $80, $20     ;PPU address and string length.
 L8625:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 L8635:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 
 ;Writes row $27A0 (bottom row).
-L8645:  .byte $27, $A0, $20 ;PPU address and string length.
+L8645:  .byte $27, $A0, $20     ;PPU address and string length.
 L8648:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 L8658:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 
 ;Writes row $2480 (5th row from top).
-L8668:  .byte $24, $88, $0F ;PPU address and string length.
+L8668:  .byte $24, $88, $0F     ;PPU address and string length.
 ;              E    M    E    R    G    E    N    C    Y    _    O    R    D    E    R
 L866B:  .byte $0E, $16, $0E, $1B, $10, $0E, $17, $0C, $22, $FF, $18, $1B, $0D, $0E, $1B
 
 ;Writes row $2500 (9th row from top).
-L867A:  .byte $25, $04, $1C ;PPU address and string length.
+L867A:  .byte $25, $04, $1C     ;PPU address and string length.
 ;              D    E    F    E    A    T    _    T    H    E    _    M    E    T    R    0
 L867D:  .byte $0D, $0E, $0F, $0E, $0A, $1D, $FF, $1D, $11, $0E, $FF, $16, $0E, $1D, $1B, $18
 ;              I    D    _    O    F    _    _    _    _    _    _    _
 L868D:  .byte $12, $0D, $FF, $18, $0F, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 ;Writes row $2540 (11th row from top).
-L8699:  .byte $25, $44, $1A ;PPU address and string length.
+L8699:  .byte $25, $44, $1A     ;PPU address and string length.
 ;              T    H    E    _    P    L    A    N    E    T    _    Z    E    B    E    T
 L869C:  .byte $1D, $11, $0E, $FF, $19, $15, $0A, $17, $0E, $1D, $FF, $23, $0E, $0B, $0E, $1D
 ;              H    _    A    N    D    _    _    _    _    _
 L86AC:  .byte $11, $FF, $0A, $17, $0D, $FF, $FF, $FF, $FF, $FF
 
 ;Writes row $2580 (13th row from top).
-L86B6:  .byte $25, $84, $1A ;PPU address and string length.
+L86B6:  .byte $25, $84, $1A     ;PPU address and string length.
 ;              D    E    S    T    R    O    Y    _    T    H    E    _    M    O    T    H
 L86B9:  .byte $0D, $0E, $1C, $1D, $1B, $18, $22, $FF, $1D, $11, $0E, $FF, $16, $18, $1D, $11
 ;              E    R    _    B    R    A    I    N    _    _
 L86C9:  .byte $0E, $1B, $FF, $0B, $1B, $0A, $12, $17, $FF, $FF
 
 ;Writes row $25C0 (15th row from top).
-L86D3:  .byte $25, $C4, $1A ;PPU address and string length.
+L86D3:  .byte $25, $C4, $1A     ;PPU address and string length.
 ;              T    H    E    _    M    E    C    H    A    N    I    C    A    L    _    L
 L86D6:  .byte $1D, $11, $0E, $FF, $16, $0E, $0C, $11, $0A, $17, $12, $0C, $0A, $15, $FF, $15
 ;              I    F    E    _    V    E    I    N    _    _
 L86E9:  .byte $12, $0F, $0E, $FF, $1F, $0E, $12, $17, $FF, $FF
 
 ;Writes row $2620 (18th row from top).
-L86F0:  .byte $26, $27, $15 ;PPU address and string length.
+L86F0:  .byte $26, $27, $15     ;PPU address and string length.
 ;              G    A    L    A    X    Y    _    F    E    D    E    R    A    L    _    P
 L86F3:  .byte $10, $0A, $15, $0A, $21, $22, $FF, $0F, $0E, $0D, $0E, $1B, $0A, $15, $FF, $19
 ;              O    L    I    C    E
 L8703:  .byte $18, $15, $12, $0C, $0E
 
 ;Writes row $2660 (20th row from top).
-L8708:  .byte $26, $69, $12 ;PPU address and string length.
+L8708:  .byte $26, $69, $12     ;PPU address and string length.
 ;              _    _    _    _    _    _    _    _    _    _    _    _    _    _    M    5
 L870B:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $16, $05
 ;              1    0
@@ -716,6 +712,8 @@ L87C3:  RTS                     ;#$00, #$00, #$00, #$20, #$00, #$00, initial.
 InitSprklDatTbl:
 L87C4:  .byte $3C, $C6, $01, $18, $00, $00, $00, $00, $20, $00, $00
 
+;----------------------------------------------------------------------------------------------------
+
 UpdtSparkleSprts:
 L87CF:  LDX #$00                ;
 L87D1:  JSR DoOneSparkleUpdate  ;($87D6)Performs calculations on top sparkle sprite.
@@ -725,12 +723,12 @@ DoOneSparkleUpdate:
 L87D6:  JSR SparkleUpdate       ;($87D9)Update sparkle sprite data.
 
 SparkleUpdate:
-L87D9:  LDA IntroSpr0NextCntr,X ;If $6EA5 has not reached #$00, skip next routine.
+L87D9:  LDA IntroSpr0NxtCntr,X  ;If $6EA5 has not reached #$00, skip next routine.
 L87DC:  BNE +                   ;
 L87DE:  JSR DoSprkleprteCoord   ;($881A)Update sparkle sprite screen position.
-L87E1:* LDA IntroSpr0Complete,X ;
+L87E1:* LDA IntroSpr0Comp,X     ;
 L87E4:  BNE ++                  ;If sprite is already done, skip routine.
-L87E6:  DEC IntroSpr0NextCntr,X ;
+L87E6:  DEC IntroSpr0NxtCntr,X  ;
 
 L87E9:  LDA SprklSpr0YChange,X  ;
 L87EC:  CLC                     ;
@@ -742,13 +740,13 @@ L87F6:  CLC                     ;
 L87F7:  ADC IntroSpr0XCoord,X   ;Updates sparkle sprite X coord.
 L87FA:  STA IntroSpr0XCoord,X   ;
 
-L87FD:  DEC IntroSpr0ChngCntr,X ;Decrement IntroSpr0ChngCntr. If 0, time to change
+L87FD:  DEC IntroSpr0ChngCnt,X  ;Decrement IntroSpr0ChngCnt. If 0, time to change
 L8800:  BNE +                   ;sprite graphic.
 L8802:  LDA IntroSpr0PattTbl,X  ;
-L8805:  EOR #$03                ;If IntroSpr0ChngCntr=$00, the sparkle sprite graphic is
+L8805:  EOR #$03                ;If IntroSpr0ChngCnt=$00, the sparkle sprite graphic is
 L8807:  STA IntroSpr0PattTbl,X  ;changed back and forth between pattern table
-L880A:  LDA #$20                ;graphic $C6 and $C7.  IntroSpr0ChngCntr is reset to #$20.
-L880C:  STA IntroSpr0ChngCntr,X ;
+L880A:  LDA #$20                ;graphic $C6 and $C7.  IntroSpr0ChngCnt is reset to #$20.
+L880C:  STA IntroSpr0ChngCnt,X  ;
 L880F:  ASL                     ;
 L8810:  EOR IntroSpr0Cntrl,X    ;Flips pattern at $C5 in pattern table 
 L8813:  STA IntroSpr0Cntrl,X    ;horizontally when displayed.
@@ -767,14 +765,14 @@ L8829:  LDY IntroSpr0Index,X    ;Loads index for finding sparkle data (x=$00 or 
 L882C:  LDA ($00),Y             ;
 L882E:  BPL +                   ;If data byte MSB is set, set $6EA9 to #$01 and move to
 L8830:  LDA #$01                ;next index for sparkle sprite data.
-L8832:  STA IntroSpr0ByteType,X ;
+L8832:  STA IntroSpr0ByteTyp,X  ;
 L8835:* BNE +                   ;
 L8837:  LDA #$01                ;If value is equal to zero, sparkle sprite
-L8839:  STA IntroSpr0Complete,X ;processing is complete.
-L883C:* STA IntroSpr0NextCntr,X ;
+L8839:  STA IntroSpr0Comp,X     ;processing is complete.
+L883C:* STA IntroSpr0NxtCntr,X  ;
 L883F:  INY                     ;
 L8840:  LDA ($00),y             ;Get x/y position byte.
-L8842:  DEC IntroSpr0ByteType,X ;If MSB of second byte is set, branch.
+L8842:  DEC IntroSpr0ByteTyp,X  ;If MSB of second byte is set, branch.
 L8845:  BMI +                   ;
 L8847:  LDA #$00                ;This code is run when the MSB of the first byte
 L8849:  STA SprklSpr0YChange,X  ;is set.  This allows the sprite to change X coord
@@ -783,7 +781,7 @@ L884E:  BMI ++                  ;
 L8850:* PHA                     ;Store value twice so X and Y
 L8851:  PHA                     ;coordinates can be extracted.
 L8852:  LDA #$00                ;
-L8854:  STA IntroSpr0ByteType,X ;Set IntroSpr0ByteType to #$00 after processing.
+L8854:  STA IntroSpr0ByteTyp,X  ;Set IntroSpr0ByteTyp to #$00 after processing.
 L8857:  PLA                     ;
 L8858:  JSR Adiv16              ;($C2BF)Move upper 4 bits to lower 4 bits.
 L885B:  JSR NibbleSubtract      ;($8871)Check if nibble to be converted to twos compliment.
@@ -807,13 +805,13 @@ WriteIntroSprite:
 L887B:  LDA IntroSpr0YCoord,X   ;
 L887E:  SEC                     ;Subtract #$01 from first byte to get proper y coordinate.
 L887F:  SBC #$01                ;
-L8881:  STA Sprite04RAM,X       ;
+L8881:  STA SpriteRAM+$10,X     ;
 L8884:  LDA IntroSpr0PattTbl,X  ;
-L8887:  STA Sprite04RAM+1,X     ;Load the four bytes for the
+L8887:  STA SpriteRAM+$11,X     ;Load the four bytes for the
 L888A:  LDA IntroSpr0Cntrl,X    ;intro sprites into sprite RAM.
-L888D:  STA Sprite04RAM+2,X     ;
+L888D:  STA SpriteRAM+$12,X     ;
 L8890:  LDA IntroSpr0XCoord,X   ;
-L8893:  STA Sprite04RAM+3,X     ;
+L8893:  STA SpriteRAM+$13,X     ;
 L8896:  RTS                     ;
  
 LoadInitSprtDat:
@@ -836,7 +834,9 @@ L88B5:  LDA #$16                ;
 L88B7:  STA IntroSpr6YRise      ;Change sprite 6 and 7 y displacement. The combination
 L88BA:  STA IntroSpr7YRise      ;of these two changes the slope of the sprite movement.
 L88BD:  RTS                     ;
- 
+
+;----------------------------------------------------------------------------------------------------
+
 ;The following tables are loaded into RAM as initial sprite control values for the crosshair sprites.
 
 Sprt0and4InitTbl:
@@ -911,6 +911,8 @@ L88FB:  .byte $1A               ;y displacement of sprite movement(rise).
 L88FC:  .byte $80               ;Change sprite x coord in negative direction.
 L88FD:  .byte $80               ;Change sprite y coord in negative direction.
 
+;----------------------------------------------------------------------------------------------------
+
 DrwCrshrsSprts:
 L88FE:  LDA First4SlowCntr      ;
 L8900:  BEQ +                   ;Has First4SlowCntr already hit 0? If so, branch.
@@ -953,12 +955,12 @@ L895E:  JSR DoSpriteMovement    ;($8963)Move sprite 6.
 L8961:  LDX #$70                ;($8963)Move sprite 7.
 
 DoSpriteMovement:
-L8963:* LDA IntroSpr0Complete,X ;If the current sprite has finished
+L8963:* LDA IntroSpr0Comp,X     ;If the current sprite has finished
 L8966:  BNE ++                  ;its movements, exit this routine.
 L8968:  JSR UpdateSpriteCoords  ;($981E)Calculate new sprite position.
 L896B:  BCS +                   ;If sprite not at final position, branch to move next frame.
 L896D:  LDA #$01                ;Sprite movement complete.
-L896F:  STA IntroSpr0Complete,X ;
+L896F:  STA IntroSpr0Comp,X     ;
 L8972:* JMP WriteIntroSprite    ;($887B)Write sprite data to sprite RAM.
 L8975:* RTS                     ;
 
@@ -971,34 +973,38 @@ L897E:  BCC +                   ;to draw cross sprites.
 L8980:  BNE ++++                ;If beyond last index, branch to exit.
 L8982:  LDA #$00                ;
 L8984:  STA DrawCross           ;If at last index, clear indicaor to draw cross sprites.
-L8986:* LDA CrossSpriteIndexTbl,Y   ;
-L8989:  STA $00             ;
-L898B:  LDY #$00            ;Reset index into CrossSpriteDataTbl
+L8986:* LDA CrsSprtIndexTbl,Y   ;
+L8989:  STA $00                 ;
+L898B:  LDY #$00                ;Reset index into CrsSprtDataTbl
 
-L898D:* LDX CrossSpriteDataTbl,Y    ;Get offet into sprite RAM to load sprite.
-L8990:  INY             ;
-L8991:* LDA CrossSpriteDataTbl,Y    ;Get sprite data byte.
-L8994:  STA Sprite00RAM,X       ;Store byte in sprite RAM.
-L8997:  INX             ;Move to next sprite RAM address.
-L8998:  INY             ;Move to next data byte in table.
-L8999:  TXA             ;
-L899A:  AND #$03            ;Is new sprite position reached?
-L899C:  BNE -               ;if not, branch to load next sprite data byte.
-L899E:  CPY $00             ;Has all the sprites been loaded for cross graphic?
-L89A0:  BNE --              ;If not, branch to load next set of sprite data.
+L898D:* LDX CrsSprtDataTbl,Y    ;Get offet into sprite RAM to load sprite.
+L8990:  INY                     ;
+L8991:* LDA CrsSprtDataTbl,Y    ;Get sprite data byte.
+L8994:  STA SpriteRAM,X         ;Store byte in sprite RAM.
+L8997:  INX                     ;Move to next sprite RAM address.
+L8998:  INY                     ;Move to next data byte in table.
+L8999:  TXA                     ;
+L899A:  AND #$03                ;Is new sprite position reached?
+L899C:  BNE -                   ;if not, branch to load next sprite data byte.
+L899E:  CPY $00                 ;Has all the sprites been loaded for cross graphic?
+L89A0:  BNE --                  ;If not, branch to load next set of sprite data.
 
 L89A2:  LDA FrameCount          ;
-L89A4:  LSR             ;Increment index into CrossSpriteIndexTbl every
-L89A5:  BCC +               ;other frame.  This updates the cross sprites
+L89A4:  LSR                     ;Increment index into CrsSprtIndexTbl every
+L89A5:  BCC +                   ;other frame.  This updates the cross sprites
 L89A7:  INC CrossDataIndex      ;every two frames.
-L89A9:* RTS             ;
+L89A9:* RTS                     ;
 
-;The following table tells the routine above how many data bytes to load from CrossSpriteDataTbl.
+;----------------------------------------------------------------------------------------------------
+
+;The following table tells the routine above how many data bytes to load from CrsSprtDataTbl.
 ;The more data that is loaded, the bigger the cross that is drawn on the screen.  The table below
 ;starts the cross out small, it then grows bigger and gets small again.
 
-CrossSpriteIndexTbl:
+CrsSprtIndexTbl:
 L89AA: .byte $05, $19, $41, $19, $05 
+
+;----------------------------------------------------------------------------------------------------
 
 ;The following table is used to find the data for the sparkle routine in the table below:
 
@@ -1101,47 +1107,63 @@ L8A45:  .byte $FF, $ED          ;MSB of first byte set. move sprite x pos -19 pi
 L8A47:  .byte $16, $09
 L8A49:  .byte $00, $00
 
+;----------------------------------------------------------------------------------------------------
+
 ;The following table is used by the DrawCrossSprites routine to draw the sprites on the screen that
 ;make up the cross that appears during the Crosshairs routine.  The single byte is the index into
 ;the sprite RAM where the sprite data is to be written.  The 4 bytes that follow it are the actual
 ;sprite data bytes.
 
-CrossSpriteDataTbl:
-L8A4B:  .byte $10           ;Load following sprite data into Sprite04RAM.
-L8A4C:  .byte $5A, $C0, $00, $79    ;Sprite data.
-L8A50:  .byte $14           ;Load following sprite data into Sprite05RAM.
-L8A51:  .byte $52, $C8, $00, $79    ;Sprite data.
-L8A55:  .byte $18           ;Load following sprite data into Sprite06RAM.
-L8A56:  .byte $5A, $C2, $40, $71    ;Sprite data.
-L8A5A:  .byte $1C           ;Load following sprite data into Sprite07RAM.
-L8A5B:  .byte $5A, $C2, $00, $81    ;Sprite data.
-L8A5F:  .byte $20           ;Load following sprite data into Sprite08RAM.
-L8A60:  .byte $62, $C8, $80, $79    ;Sprite data.
-L8A64:  .byte $14           ;Load following sprite data into Sprite05RAM.
-L8A65:  .byte $52, $C9, $00, $79    ;Sprite data.
-L8A69:  .byte $18           ;Load following sprite data into Sprite06RAM.
-L8A6A:  .byte $5A, $C1, $00, $71    ;Sprite data.
-L8A6E:  .byte $1C           ;Load following sprite data into Sprite07RAM.
-L8A6F:  .byte $5A, $C1, $00, $81    ;Sprite data.
-L8A73:  .byte $20           ;Load following sprite data into Sprite08RAM.
-L8A74:  .byte $62, $C9, $00, $79    ;Sprite data.
-L8A78:  .byte $24           ;Load following sprite data into Sprite09RAM.
-L8A79:  .byte $4A, $C8, $00, $79    ;Sprite data.
-L8A7D:  .byte $28           ;Load following sprite data into Sprite0ARAM.
-L8A7E:  .byte $5A, $C2, $40, $69    ;Sprite data.
-L8A82:  .byte $2C           ;Load following sprite data into Sprite0BRAM.
-L8A83:  .byte $5A, $C2, $00, $89    ;Sprite data.
-L8A87:  .byte $30           ;Load following sprite data into Sprite0CRAM.
-L8A88:  .byte $6A, $C8, $80, $79    ;Sprite data.
+CrsSprtDataTbl:
+L8A4B:  .byte $10 ;Sprite04RAM.
+L8A4C:  .byte $5A, $C0, $00, $79
+
+L8A50:  .byte $14 ;Sprite05RAM.
+L8A51:  .byte $52, $C8, $00, $79
+
+L8A55:  .byte $18 ;Sprite06RAM.
+L8A56:  .byte $5A, $C2, $40, $71
+
+L8A5A:  .byte $1C ;Sprite07RAM.
+L8A5B:  .byte $5A, $C2, $00, $81
+
+L8A5F:  .byte $20 ;Sprite08RAM.
+L8A60:  .byte $62, $C8, $80, $79
+
+L8A64:  .byte $14 ;Sprite05RAM.
+L8A65:  .byte $52, $C9, $00, $79
+
+L8A69:  .byte $18 ;Sprite06RAM.
+L8A6A:  .byte $5A, $C1, $00, $71
+
+L8A6E:  .byte $1C ;Sprite07RAM.
+L8A6F:  .byte $5A, $C1, $00, $81
+
+L8A73:  .byte $20 ;Sprite08RAM.
+L8A74:  .byte $62, $C9, $00, $79
+
+L8A78:  .byte $24 ;Sprite09RAM.
+L8A79:  .byte $4A, $C8, $00, $79
+
+L8A7D:  .byte $28 ;Sprite0ARAM.
+L8A7E:  .byte $5A, $C2, $40, $69
+
+L8A82:  .byte $2C ;Sprite0BRAM.
+L8A83:  .byte $5A, $C2, $00, $89
+
+L8A87:  .byte $30 ;Sprite0CRAM.
+L8A88:  .byte $6A, $C8, $80, $79
+
+;----------------------------------------------------------------------------------------------------
 
 LoadPalData:
 L8A8C:  lDY PalDataIndex        ;
 L8A8E:  LDA PalSelectTbl,Y      ;Chooses which set of palette data
-L8A91:  CMP #$FF            ;to load from the table below.
-L8A93:  BEQ +               ;
+L8A91:  CMP #$FF                ;to load from the table below.
+L8A93:  BEQ +                   ;
 L8A95:  STA PalDataPending      ;Prepare to write palette data.
 L8A97:  INC PalDataIndex        ;
-L8A99:* RTS                 ;
+L8A99:* RTS                     ;
 
 ;The table below is used by above routine to pick the proper palette.
 
@@ -1175,33 +1197,33 @@ L8ABD:  .byte $11, $01, $11, $01, $11, $11, $01, $11, $01, $FF
 
 StarPalSwitch:
 L8AC7:  LDA FrameCount          ;
-L8AC9:  AND #$0F            ;Change star palette every 16th frame.
-L8ACB:  BNE +               ;
+L8AC9:  AND #$0F                ;Change star palette every 16th frame.
+L8ACB:  BNE +                   ;
 L8ACD:  LDA PPUStrIndex         ;
-L8AD0:  BEQ ++              ;Is any other PPU data waiting? If so, exit.
-L8AD2:* RTS             ;
+L8AD0:  BEQ ++                  ;Is any other PPU data waiting? If so, exit.
+L8AD2:* RTS                     ;
 
-L8AD3:* LDA #$19            ;
-L8AD5:  STA $00             ;Prepare to write to the sprite palette
-L8AD7:  LDA #$3F            ;starting at address $3F19.
-L8AD9:  STA $01             ;
+L8AD3:* LDA #$19                ;
+L8AD5:  STA $00                 ;Prepare to write to the sprite palette
+L8AD7:  LDA #$3F                ;starting at address $3F19.
+L8AD9:  STA $01                 ;
 L8ADB:  LDA IntroStarOffset     ;Use only first 3 bits of byte since the pointer
-L8ADD:  AND #$07            ;table only has 8 entries.
-L8ADF:  ASL             ;*2 to find entry in IntroStarPntr table.
-L8AE0:  TAY             ; 
+L8ADD:  AND #$07                ;table only has 8 entries.
+L8ADF:  ASL                     ;*2 to find entry in IntroStarPntr table.
+L8AE0:  TAY                     ; 
 L8AE1:  LDA IntroStarPntr,Y     ;Stores starting address of palette data to write
-L8AE4:  STA $02             ;into $02 and $03 from IntroStarPntr table.
-L8AE6:  LDA IntroStarPntr+1,Y       ;
-L8AE9:  STA $03             ;
+L8AE4:  STA $02                 ;into $02 and $03 from IntroStarPntr table.
+L8AE6:  LDA IntroStarPntr+1,Y   ;
+L8AE9:  STA $03                 ;
 L8AEB:  INC IntroStarOffset     ;Increment index for next palette change.
-L8AED:  JSR PrepPPUPalStr    ;($C37E)Prepare and write new palette data.
-L8AF0:  LDA #$1D            ;
-L8AF2:  STA $00             ;
-L8AF4:  LDA #$3F            ;Prepare another write to the sprite palette.
-L8AF6:  STA $01             ;This tie starting at address $3F1D.
-L8AF8:  INY                 ;
+L8AED:  JSR PrepPPUPalStr       ;($C37E)Prepare and write new palette data.
+L8AF0:  LDA #$1D                ;
+L8AF2:  STA $00                 ;
+L8AF4:  LDA #$3F                ;Prepare another write to the sprite palette.
+L8AF6:  STA $01                 ;This tie starting at address $3F1D.
+L8AF8:  INY                     ;
 L8AF9:  JSR AddYToPtr02         ;($C2B3)Find new data base of palette data.
-L8AFC:  JMP PrepPPUPalStr    ;($C37E)Prepare and write new palette data.
+L8AFC:  JMP PrepPPUPalStr       ;($C37E)Prepare and write new palette data.
 
 ;The following table is a list of pointers into the table below. It contains
 ;the palette data for the twinkling stars in the intro scene.  The palette data
@@ -1228,12 +1250,12 @@ L8B55:  .byte $03, $0F, $12, $14, $00, $03, $10, $24, $0F, $00
 
 DoFadeOut:
 L8B5F:  LDY FadeDataIndex       ;Load palette data from table below.
-L8B61:  LDA FadeOutPalData,Y        ;
-L8B64:  CMP #$FF            ;If palette data = #$FF, exit.
-L8B66:  BEQ +               ;
+L8B61:  LDA FadeOutPalData,Y    ;
+L8B64:  CMP #$FF                ;If palette data = #$FF, exit.
+L8B66:  BEQ +                   ;
 L8B68:  STA PalDataPending      ;Store new palette data.
 L8B6A:  INC FadeDataIndex       ;
-L8B6C:* RTS             ;
+L8B6C:* RTS                     ;
 
 FadeOutPalData:
 L8B6D:  .byte $0D, $0E, $0F, $10, $01, $FF
@@ -1244,149 +1266,149 @@ L8B73:  .Byte $01, $10, $0F, $0E, $0D, $FF
 ;----------------------------------------[ Password routines ]---------------------------------------
 
 ProcessUniqueItems:
-L8B79:  LDA NumberOfUniqueItems     ;
-L8B7C:  STA $03             ;Store NumberOfUniqueItems at $03.
-L8B7E:  LDY #$00            ;
-L8B80:  STY $04             ;Set $04 to #$00.
-L8B82:* LDY $04             ;Use $04 at index into unique itme list.            
-L8B84:  INY             ;
-L8B85:  LDA UniqueItemHistory-1,Y   ;
-L8B88:  STA $00             ;Load the two bytes representing the aquired
-L8B8A:  INY                 ;Unique item and store them in $00 and $01.
-L8B8B:  LDA UniqueItemHistory-1,Y   ;
-L8B8E:  STA $01             ;
-L8B90:  STY $04             ;Increment $04 by two (load unique item complete).
-L8B92:  JSR UniqueItemSearch        ;($8B9C)Find unique item.
-L8B95:  LDY $04             ;
-L8B97:  CPY $03             ;If all unique items processed, return, else
-L8B99:  BCC -               ;branch to process next unique item.
-L8B9B:  RTS             ;
+L8B79:  LDA NumUniqueItems      ;
+L8B7C:  STA $03                 ;Store NumUniqueItems at $03.
+L8B7E:  LDY #$00                ;
+L8B80:  STY $04                 ;Set $04 to #$00.
+L8B82:* LDY $04                 ;Use $04 at index into unique itme list.            
+L8B84:  INY                     ;
+L8B85:  LDA UnqItmHist-1,Y      ;
+L8B88:  STA $00                 ;Load the two bytes representing the aquired
+L8B8A:  INY                     ;Unique item and store them in $00 and $01.
+L8B8B:  LDA UnqItmHist-1,Y      ;
+L8B8E:  STA $01                 ;
+L8B90:  STY $04                 ;Increment $04 by two (load unique item complete).
+L8B92:  JSR UniqueItemSearch    ;($8B9C)Find unique item.
+L8B95:  LDY $04                 ;
+L8B97:  CPY $03                 ;If all unique items processed, return, else
+L8B99:  BCC -                   ;branch to process next unique item.
+L8B9B:  RTS                     ;
 
 UniqueItemSearch:
-L8B9C:  LDX #$00            ;
-L8B9E:* TXA             ;Transfer X to A(Item number).
-L8B9F:  ASL             ;Multiply by 2.
-L8BA0:  TAY             ;Store multiplied value in y.
+L8B9C:  LDX #$00                ;
+L8B9E:* TXA                     ;Transfer X to A(Item number).
+L8B9F:  ASL                     ;Multiply by 2.
+L8BA0:  TAY                     ;Store multiplied value in y.
 L8BA1:  LDA ItemData,Y          ;Load unique item reference starting at $9029(2 bytes).
-L8BA4:  CMP $00             ;
-L8BA6:  BNE +               ;
+L8BA4:  CMP $00                 ;
+L8BA6:  BNE +                   ;
 L8BA8:  LDA ItemData+1,Y        ;Get next byte of unique item.
-L8BAB:  CMP $01             ;
-L8BAD:  BEQ ++              ;If unique item found, branch to UniqueItemFound.
-L8BAF:* INX             ;
-L8BB0:  CPX #$3C            ;If the unque item is a Zeebetite, return
-L8BB2:  BCC --              ;else branch to find next unique item.
-L8BB4:  RTS             ;
+L8BAB:  CMP $01                 ;
+L8BAD:  BEQ ++                  ;If unique item found, branch to UniqueItemFound.
+L8BAF:* INX                     ;
+L8BB0:  CPX #$3C                ;If the unque item is a Zeebetite, return
+L8BB2:  BCC --                  ;else branch to find next unique item.
+L8BB4:  RTS                     ;
 
 ;The following routine sets the item bits for aquired items in addresses $6988 thru $698E.
 ;Items 1 thru 7 masked in $6988, 8 thru 15 in $6989, etc.
 
 UniqueItemFound:
-L8BB5:* TXA             ;
-L8BB6:  JSR Adiv8           ;($C2C0)Divide by 8.
-L8BB9:  STA $05             ;Shifts 5 MSBs to LSBs of item # and saves results in $05.
-L8BBB:  JSR Amul8           ;($C2C6)Multiply by 8.
-L8BBE:  STA $02             ;Restores 5 MSBs of item # and drops 3 LSBs; saves in $02.
-L8BC0:  TXA             ;
-L8BC1:  SEC             ;
-L8BC2:  SBC $02             ;
-L8BC4:  STA $06             ;Remove 5 MSBs and stores 3 LSBs in $06.
-L8BC6:  LDX $05             ;
-L8BC8:  LDA PasswordByte00,X        ;
-L8BCB:  LDY $06             ;
-L8BCD:  ORA PasswordBitmaskTbl,Y    ;
-L8BD0:  STA PasswordByte00,X        ;Masks each unique item in the proper item address
-L8BD3:  RTS             ;(addresses $6988 thru $698E).
+L8BB5:* TXA                     ;
+L8BB6:  JSR Adiv8               ;($C2C0)Divide by 8.
+L8BB9:  STA $05                 ;Shifts 5 MSBs to LSBs of item # and saves results in $05.
+L8BBB:  JSR Amul8               ;($C2C6)Multiply by 8.
+L8BBE:  STA $02                 ;Restores 5 MSBs of item # and drops 3 LSBs; saves in $02.
+L8BC0:  TXA                     ;
+L8BC1:  SEC                     ;
+L8BC2:  SBC $02                 ;
+L8BC4:  STA $06                 ;Remove 5 MSBs and stores 3 LSBs in $06.
+L8BC6:  LDX $05                 ;
+L8BC8:  LDA PasswordByte00,X    ;
+L8BCB:  LDY $06                 ;
+L8BCD:  ORA PswrdBitmaskTbl,Y   ;
+L8BD0:  STA PasswordByte00,X    ;Masks each unique item in the proper item address
+L8BD3:  RTS                     ;(addresses $6988 thru $698E).
  
 LoadUniqueItems:
-L8BD4:  LDA #$00            ;
-L8BD6:  STA NumberOfUniqueItems     ;
-L8BD9:  STA $05             ;$05 offset of password byte currently processing(0 thru 7).
-L8BDB:  STA $06             ;$06 bit of password byte currently processing(0 thru 7).
-L8BDD:  LDA #$3B            ;
-L8BDF:  STA $07             ;Maximum number of unique items(59 or #$3B).
-L8BE1:  LDY $05             ;
-L8BE3:  LDA PasswordByte00,Y        ;
-L8BE6:  STA $08             ;$08 stores contents of password byte currently processing.
-L8BE8:  LDX #$00            ;
-L8BEA:  STX $09             ;Stores number of unique items processed(#$0 thru #$3B).
-L8BEC:  LDX $06             ;
-L8BEE:  BEQ ++              ;If start of new byte, branch.
+L8BD4:  LDA #$00                ;
+L8BD6:  STA NumUniqueItems      ;
+L8BD9:  STA $05                 ;$05 offset of password byte currently processing(0 thru 7).
+L8BDB:  STA $06                 ;$06 bit of password byte currently processing(0 thru 7).
+L8BDD:  LDA #$3B                ;
+L8BDF:  STA $07                 ;Maximum number of unique items(59 or #$3B).
+L8BE1:  LDY $05                 ;
+L8BE3:  LDA PasswordByte00,Y    ;
+L8BE6:  STA $08                 ;$08 stores contents of password byte currently processing.
+L8BE8:  LDX #$00                ;
+L8BEA:  STX $09                 ;Stores number of unique items processed(#$0 thru #$3B).
+L8BEC:  LDX $06                 ;
+L8BEE:  BEQ ++                  ;If start of new byte, branch.
 
-L8BF0:  LDX #$01            ;
-L8BF2:  STX $02             ;
-L8BF4:  CLC                 ;
-L8BF5:* ROR                 ;
-L8BF6:  STA $08             ;This code does not appear to ever be executed.
-L8BF8:  LDX $02             ;
-L8BFA:  CPX $06             ;
-L8BFC:  BEQ +               ;
-L8BFE:  INC $02             ;
-L8C00:  JMP -               ;
+L8BF0:  LDX #$01                ;
+L8BF2:  STX $02                 ;
+L8BF4:  CLC                     ;
+L8BF5:* ROR                     ;
+L8BF6:  STA $08                 ;This code does not appear to ever be executed.
+L8BF8:  LDX $02                 ;
+L8BFA:  CPX $06                 ;
+L8BFC:  BEQ +                   ;
+L8BFE:  INC $02                 ;
+L8C00:  JMP -                   ;
 
 ProcessNextItem:
-L8C03:  LDY $05             ;Locates next password byte to process
-L8C05:  LDA PasswordByte00,Y        ;and loads it into $08.
-L8C08:  STA $08             ;
+L8C03:  LDY $05                 ;Locates next password byte to process
+L8C05:  LDA PasswordByte00,Y    ;and loads it into $08.
+L8C08:  STA $08                 ;
 
-ProcessNewItemByte:
-L8C0A:* LDA $08             ;
-L8C0C:  ROR             ;Rotates next bit to be processed to the carry flag.
-L8C0D:  STA $08             ;
-L8C0F:  BCC +               ;
+PrcsNewItemByte:
+L8C0A:* LDA $08                 ;
+L8C0C:  ROR                     ;Rotates next bit to be processed to the carry flag.
+L8C0D:  STA $08                 ;
+L8C0F:  BCC +                   ;
 L8C11:  JSR SamusHasItem        ;($8C39)Store item in unique item history.
-L8C14:* LDY $06             ;If last bit of item byte has been 
-L8C16:  CPY #$07            ;checked, move to next byte.
-L8C18:  BCS +               ;
-L8C1A:  INC $06             ;
-L8C1C:  INC $09             ;
-L8C1E:  LDX $09             ;If all 59 unique items have been 
-L8C20:  CPX $07             ;searched through, exit.
-L8C22:  BCS ++              ;
-L8C24:  JMP ProcessNewItemByte      ;($8C0A)Repeat routine for next item byte.
-L8C27:* LDY #$00            ;
-L8C29:  STY $06             ;
-L8C2B:  INC $05             ;
-L8C2D:  INC $09             ;
-L8C2F:  LDX $09             ;If all 59 unique items have been 
-L8C31:  CPX $07             ;searched through, exit.
-L8C33:  BCS +               ;
+L8C14:* LDY $06                 ;If last bit of item byte has been 
+L8C16:  CPY #$07                ;checked, move to next byte.
+L8C18:  BCS +                   ;
+L8C1A:  INC $06                 ;
+L8C1C:  INC $09                 ;
+L8C1E:  LDX $09                 ;If all 59 unique items have been 
+L8C20:  CPX $07                 ;searched through, exit.
+L8C22:  BCS ++                  ;
+L8C24:  JMP PrcsNewItemByte     ;($8C0A)Repeat routine for next item byte.
+L8C27:* LDY #$00                ;
+L8C29:  STY $06                 ;
+L8C2B:  INC $05                 ;
+L8C2D:  INC $09                 ;
+L8C2F:  LDX $09                 ;If all 59 unique items have been 
+L8C31:  CPX $07                 ;searched through, exit.
+L8C33:  BCS +                   ;
 L8C35:  JMP ProcessNextItem     ;($8C03)Process next item.
-L8C38:* RTS             ;
+L8C38:* RTS                     ;
  
 SamusHasItem:
-L8C39:  LDA $05             ;$05 becomes the upper part of the item offset
-L8C3B:  JSR Amul8           ;while $06 becomes the lower part of the item offset.
-L8C3E:  CLC             ;
-L8C3F:  ADC $06             ;
-L8C41:  ASL             ;* 2. Each item is two bytes in length.
-L8C42:  TAY             ;
+L8C39:  LDA $05                 ;$05 becomes the upper part of the item offset
+L8C3B:  JSR Amul8               ;while $06 becomes the lower part of the item offset.
+L8C3E:  CLC                     ;
+L8C3F:  ADC $06                 ;
+L8C41:  ASL                     ;* 2. Each item is two bytes in length.
+L8C42:  TAY                     ;
 L8C43:  LDA ItemData+1,Y        ;
-L8C46:  STA $01             ;$00 and $01 store the two bytes of 
+L8C46:  STA $01                 ;$00 and $01 store the two bytes of 
 L8C48:  LDA ItemData,Y          ;the unique item to process.
-L8C4B:  STA $00             ;
-L8C4D:  LDY NumberOfUniqueItems     ;
-L8C50:  STA UniqueItemHistory,Y     ;Store the two bytes of the unique item
-L8C53:  LDA $01             ;in RAM in the unique item history.
-L8C55:  INY             ; 
-L8C56:  STA UniqueItemHistory,Y     ;
-L8C59:  INY             ;
-L8C5A:  STY NumberOfUniqueItems     ;Keeps a running total of unique items.
-L8C5D:  RTS             ;
+L8C4B:  STA $00                 ;
+L8C4D:  LDY NumUniqueItems      ;
+L8C50:  STA UnqItmHist,Y        ;Store the two bytes of the unique item
+L8C53:  LDA $01                 ;in RAM in the unique item history.
+L8C55:  INY                     ; 
+L8C56:  STA UnqItmHist,Y        ;
+L8C59:  INY                     ;
+L8C5A:  STY NumUniqueItems      ;Keeps a running total of unique items.
+L8C5D:  RTS                     ;
 
 CheckPassword:
-L8C5E:  JSR ConsolidatePassword     ;($8F60)Convert password characters to password bytes.
-L8C61:  JSR ValidatePassword        ;($8DDE)Verify password is correct.
-L8C64:  BCS +               ;Branch if incorrect password.
+L8C5E:  JSR ConsolidatePassword ;($8F60)Convert password characters to password bytes.
+L8C61:  JSR ValidatePassword    ;($8DDE)Verify password is correct.
+L8C64:  BCS +                   ;Branch if incorrect password.
 L8C66:  JMP InitializeGame      ;($92D4)Preliminary housekeeping before game starts.
 L8C69:* LDA MultiSFXFlag        ;
-L8C6C:  ORA #$01            ;Set IncorrectPassword SFX flag.
+L8C6C:  ORA #$01                ;Set IncorrectPassword SFX flag.
 L8C6E:  STA MultiSFXFlag        ;
-L8C71:  LDA #$0C            ;
-L8C73:  STA Timer3          ;Set Timer3 time for 120 frames (2 seconds).
-L8C75:  LDA #$18            ;
+L8C71:  LDA #$0C                ;
+L8C73:  STA Timer3              ;Set Timer3 time for 120 frames (2 seconds).
+L8C75:  LDA #$18                ;
 L8C77:  STA TitleRoutine        ;Run EnterPassword routine.
-L8C79:  RTS             ;
+L8C79:  RTS                     ;
 
 CalculatePassword:
 L8C7A:  LDA #$00                ;
@@ -1452,31 +1474,31 @@ L8D03:  LDA RandomNumber1       ;
 L8D05:  AND #$0F                ;Store the value of $2E at $6998
 L8D07:  BEQ -                   ;When any of the 4 LSB are set. (Does not
 L8D09:  STA PasswordByte10      ;allow RandomNumber1 to be a multiple of 16).
-L8D0C:  JSR PasswordChecksumAndScramble ;($8E17)Calculate checksum and scramble password.
-L8D0F:  JMP LoadPasswordChar        ;($8E6C)Calculate password characters.
+L8D0C:  JSR PswrdChksmNScrmbl   ;($8E17)Calculate checksum and scramble password.
+L8D0F:  JMP LoadPasswordChar    ;($8E6C)Calculate password characters.
 
 LoadPasswordData:
 L8D12:  LDA NARPASSWORD         ;If invincible Samus active, skip
-L8D15:  BNE +++             ;further password processing.
+L8D15:  BNE +++                 ;further password processing.
 L8D17:  JSR LoadUniqueItems     ;($8BD4)Load unique items from password.
-L8D1A:  JSR LoadTanksAndMissiles    ;($8D3D)Calculate number of missiles from password.
-L8D1D:  LDY #$00            ;
+L8D1A:  JSR LdTanksAndMissiles  ;($8D3D)Calculate number of missiles from password.
+L8D1D:  LDY #$00                ;
 L8D1F:  LDA PasswordByte08      ;If MSB in PasswordByte08 is set,
-L8D22:  AND #$80            ;Samus is not wearing her suit.
-L8D24:  BEQ +               ;           
-L8D26:  INY                 ;
+L8D22:  AND #$80                ;Samus is not wearing her suit.
+L8D24:  BEQ +                   ;           
+L8D26:  INY                     ;
 L8D27:* STY JustInBailey        ;
 L8D2A:  LDA PasswordByte08      ;Extract first 5 bits from PasswordByte08
-L8D2D:  AND #$3F            ;and use it to determine starting area.
-L8D2F:  STA InArea          ;
-L8D31:  LDY #$03            ;
-L8D33:* LDA PasswordByte0B,Y        ;Load Samus' age.
-L8D36:  STA SamusAgeLo,Y          ;
-L8D39:  DEY             ;
-L8D3A:  BPL -               ;Loop to load all 3 age bytes.
-L8D3C:* RTS             ;
+L8D2D:  AND #$3F                ;and use it to determine starting area.
+L8D2F:  STA InArea              ;
+L8D31:  LDY #$03                ;
+L8D33:* LDA PasswordByte0B,Y    ;Load Samus' age.
+L8D36:  STA SamusAgeLo,Y        ;
+L8D39:  DEY                     ;
+L8D3A:  BPL -                   ;Loop to load all 3 age bytes.
+L8D3C:* RTS                     ;
  
-LoadTanksAndMissiles:
+LdTanksAndMissiles:
 L8D3D:  LDA PasswordByte09      ;Loads Samus gear.
 L8D40:  STA SamusGear           ;Save Samus gear.
 L8D43:  LDA PasswordByte0A      ;Loads current number of missiles.
@@ -1501,80 +1523,80 @@ L8D6B:  STA KraidStatueStat     ;Store Kraid status.
 L8D6E:  LDA PasswordByte0F      ;
 L8D71:  AND #$20                ;If bit 5 is set, Ridley statue is up.
 L8D73:  BEQ +                   ;
-L8D75:  LDA $02             ;
-L8D77:  ORA #$80            ;If Ridley statue is up, set MSB in $02.
-L8D79:  STA $02             ;
+L8D75:  LDA $02                 ;
+L8D77:  ORA #$80                ;If Ridley statue is up, set MSB in $02.
+L8D79:  STA $02                 ;
 L8D7B:* LDA PasswordByte0F      ;
-L8D7E:  AND #$10            ;If bit 4 is set, Ridley is defeated.
-L8D80:  BEQ +               ;
-L8D82:  LDA $02             ;
-L8D84:  ORA #$02            ;If Ridley is defeated, set bit 1 of $02.
-L8D86:  STA $02             ;
-L8D88:* LDA $02             ;
-L8D8A:  STA RidlyStatueStat      ;Store Ridley status.
-L8D8D:  LDA #$00            ;
-L8D8F:  STA $00             ;
-L8D91:  STA $02             ;
-L8D93:  LDY #$00            ;
-L8D95:* LDA UniqueItemHistory+1,Y   ;Load second byte of item and compare
-L8D98:  AND #$FC            ;the 6 MSBs to #$20. If it matches,  
-L8D9A:  CMP #$20            ;an energy tank has been found.
-L8D9C:  BNE +               ;
-L8D9E:  INC $00             ;Increment number of energy tanks found.
-L8DA0:  JMP IncrementToNextItem     ;
-L8DA3:* CMP #$24            ;Load second byte of item and compare the 6 MSBs to
-L8DA5:  BNE +               ;#$24. If it matches, missiles have been found.
-L8DA7:  INC $02             ;Increment number of missiles found.
+L8D7E:  AND #$10                ;If bit 4 is set, Ridley is defeated.
+L8D80:  BEQ +                   ;
+L8D82:  LDA $02                 ;
+L8D84:  ORA #$02                ;If Ridley is defeated, set bit 1 of $02.
+L8D86:  STA $02                 ;
+L8D88:* LDA $02                 ;
+L8D8A:  STA RidlyStatueStat     ;Store Ridley status.
+L8D8D:  LDA #$00                ;
+L8D8F:  STA $00                 ;
+L8D91:  STA $02                 ;
+L8D93:  LDY #$00                ;
+L8D95:* LDA UnqItmHist+1,Y      ;Load second byte of item and compare
+L8D98:  AND #$FC                ;the 6 MSBs to #$20. If it matches,  
+L8D9A:  CMP #$20                ;an energy tank has been found.
+L8D9C:  BNE +                   ;
+L8D9E:  INC $00                 ;Increment number of energy tanks found.
+L8DA0:  JMP IncrementToNextItem ;
+L8DA3:* CMP #$24                ;Load second byte of item and compare the 6 MSBs to
+L8DA5:  BNE +                   ;#$24. If it matches, missiles have been found.
+L8DA7:  INC $02                 ;Increment number of missiles found.
 
 IncrementToNextItem:
-L8DA9:* INY             ;
-L8DAA:  INY             ;Increment twice. Each item is 2 bytes.
-L8DAB:  CPY #$84            ;7 extra item slots in unique item history.
-L8DAD:  BCC ---             ;Loop until all unique item history checked.
-L8DAF:  LDA $00             ;
-L8DB1:  CMP #$06            ;Ensure the Tank Count does not exceed 6
-L8DB3:  BCC +               ;tanks. Then stores the number of
-L8DB5:  LDA #$06            ;energy tanks found in TankCount.
+L8DA9:* INY                     ;
+L8DAA:  INY                     ;Increment twice. Each item is 2 bytes.
+L8DAB:  CPY #$84                ;7 extra item slots in unique item history.
+L8DAD:  BCC ---                 ;Loop until all unique item history checked.
+L8DAF:  LDA $00                 ;
+L8DB1:  CMP #$06                ;Ensure the Tank Count does not exceed 6
+L8DB3:  BCC +                   ;tanks. Then stores the number of
+L8DB5:  LDA #$06                ;energy tanks found in TankCount.
 L8DB7:* STA TankCount           ;
-L8DBA:  LDA #$00            ;
-L8DBC:  LDY $02             ;
-L8DBE:  BEQ ++              ;Branch if no missiles found.
-L8DC0:  CLC             ;
-L8DC1:* ADC #$05            ;
-L8DC3:  DEY                 ;For every missile item found, this
-L8DC4:  BNE -               ;loop adds 5 missiles to MaxMissiles.
-L8DC6:* LDY KraidStatueStat       ;
-L8DC9:  BEQ +               ;
-L8DCB:  ADC #$4B            ;75 missiles are added to MaxMissiles
-L8DCD:  BCS ++              ;if Kraid has been defeated and another
-L8DCF:* LDY RidlyStatueStat      ;75 missiles are added if the ridley 
-L8DD2:  BEQ ++              ;has been defeated.
-L8DD4:  ADC #$4B            ;
-L8DD6:  BCC ++              ;
-L8DD8:* LDA #$FF            ;If number of missiles exceeds 255, it stays at 255.
+L8DBA:  LDA #$00                ;
+L8DBC:  LDY $02                 ;
+L8DBE:  BEQ ++                  ;Branch if no missiles found.
+L8DC0:  CLC                     ;
+L8DC1:* ADC #$05                ;
+L8DC3:  DEY                     ;For every missile item found, this
+L8DC4:  BNE -                   ;loop adds 5 missiles to MaxMissiles.
+L8DC6:* LDY KraidStatueStat     ;
+L8DC9:  BEQ +                   ;
+L8DCB:  ADC #$4B                ;75 missiles are added to MaxMissiles
+L8DCD:  BCS ++                  ;if Kraid has been defeated and another
+L8DCF:* LDY RidlyStatueStat     ;75 missiles are added if the ridley 
+L8DD2:  BEQ ++                  ;has been defeated.
+L8DD4:  ADC #$4B                ;
+L8DD6:  BCC ++                  ;
+L8DD8:* LDA #$FF                ;If number of missiles exceeds 255, it stays at 255.
 L8DDA:* STA MaxMissiles         ;
-L8DDD:  RTS             ;
+L8DDD:  RTS                     ;
 
 ValidatePassword:
 L8DDE:  LDA NARPASSWORD         ;
-L8DE1:  BNE ++              ;If invincible Samus already active, branch.
-L8DE3:  LDY #$0F            ;
-L8DE5:* LDA PasswordChar00,Y        ;
-L8DE8:  CMP NARPASSWORDTbl,Y        ;If NARPASSWORD was entered at the
-L8DEB:  BNE +               ;password screen, activate invincible
-L8DED:  DEY                 ;Samus, else continue to process password.
-L8DEE:  BPL -               ;
-L8DF0:  LDA #$01            ;
+L8DE1:  BNE ++                  ;If invincible Samus already active, branch.
+L8DE3:  LDY #$0F                ;
+L8DE5:* LDA PasswordChar00,Y    ;
+L8DE8:  CMP NARPASSWORDTbl,Y    ;If NARPASSWORD was entered at the
+L8DEB:  BNE +                   ;password screen, activate invincible
+L8DED:  DEY                     ;Samus, else continue to process password.
+L8DEE:  BPL -                   ;
+L8DF0:  LDA #$01                ;
 L8DF2:  STA NARPASSWORD         ;
-L8DF5:  BNE ++              ;
-L8DF7:* JSR UnscramblePassword      ;($8E4E)Unscramble password.
-L8DFA:  JSR PasswordChecksum        ;($8E21)Calculate password checksum.
+L8DF5:  BNE ++                  ;
+L8DF7:* JSR UnscramblePassword  ;($8E4E)Unscramble password.
+L8DFA:  JSR PasswordChecksum    ;($8E21)Calculate password checksum.
 L8DFD:  CMP PasswordByte11      ;Verify proper checksum.
-L8E00:  BEQ +               ;
-L8E02:  SEC             ;If password is invalid, sets carry flag.
-L8E03:  BCS ++              ;
-L8E05:* CLC             ;If password is valid, clears carry flag.
-L8E06:* RTS             ;
+L8E00:  BEQ +                   ;
+L8E02:  SEC                     ;If password is invalid, sets carry flag.
+L8E03:  BCS ++                  ;
+L8E05:* CLC                     ;If password is valid, clears carry flag.
+L8E06:* RTS                     ;
 
 ;The table below is used by the code above. It checks to see if NARPASSWORD has been entered.
 ;NOTE: any characters after the 16th character will be ignored if the first 16 characters
@@ -1584,7 +1606,7 @@ NARPASSWORDTbl:
 ;              N    A    R    P    A    S    S    W    O    R    D    0    0    0    0    0
 L8E07:  .byte $17, $0A, $1B, $19, $0A, $1C, $1C, $20, $18, $1B, $0D, $00, $00, $00, $00, $00
 
-PasswordChecksumAndScramble:
+PswrdChksmNScrmbl:
 L8E17:  JSR PasswordChecksum    ;($8E21)Store the combined added value of
 L8E1A:  STA PasswordByte11      ;addresses $6988 thu $6998 in $6999.
 L8E1D:  JSR PasswordScramble    ;($8E2D)Scramble password.
@@ -1641,204 +1663,206 @@ L8E6C:  LDY #$00                ;Password byte #$00.
 L8E6E:  JSR SixUpperBits        ;($8F2D)
 L8E71:  STA PasswordChar00      ;Store results.
 L8E74:  LDY #$00                ;Password bytes #$00 and #$01.
-L8E76:  JSR TwoLowerAndFourUpper    ;($8F33)
+L8E76:  JSR TwoLoAndFourUp      ;($8F33)
 L8E79:  STA PasswordChar01      ;Store results.
-L8E7C:  LDY #$01            ;Password bytes #$01 and #$02.
-L8E7E:  JSR FourLowerAndTwoUpper    ;($8F46)
+L8E7C:  LDY #$01                ;Password bytes #$01 and #$02.
+L8E7E:  JSR FourLoAndTwoUp      ;($8F46)
 L8E81:  STA PasswordChar02      ;Store results.
-L8E84:  LDY #$02            ;Password byte #$02.
+L8E84:  LDY #$02                ;Password byte #$02.
 L8E86:  JSR SixLowerBits        ;($8F5A)
 L8E89:  STA PasswordChar03      ;Store results.
-L8E8C:  LDY #$03            ;Password byte #$03.
+L8E8C:  LDY #$03                ;Password byte #$03.
 L8E8E:  JSR SixUpperBits        ;($8F2D)
 L8E91:  STA PasswordChar04      ;Store results.
-L8E94:  LDY #$03            ;Password bytes #$03 and #$04.
-L8E96:  JSR TwoLowerAndFourUpper    ;($8F33)
+L8E94:  LDY #$03                ;Password bytes #$03 and #$04.
+L8E96:  JSR TwoLoAndFourUp      ;($8F33)
 L8E99:  STA PasswordChar05      ;Store results.
-L8E9C:  LDY #$04            ;Password bytes #$04 and #$05.
-L8E9E:  JSR FourLowerAndTwoUpper    ;($8F46)
+L8E9C:  LDY #$04                ;Password bytes #$04 and #$05.
+L8E9E:  JSR FourLoAndTwoUp      ;($8F46)
 L8EA1:  STA PasswordChar06      ;Store results.
-L8EA4:  LDY #$05            ;Password byte #$05.
+L8EA4:  LDY #$05                ;Password byte #$05.
 L8EA6:  JSR SixLowerBits        ;($8F5A)
 L8EA9:  STA PasswordChar07      ;Store results.
-L8EAC:  LDY #$06            ;Password byte #$06.
+L8EAC:  LDY #$06                ;Password byte #$06.
 L8EAE:  JSR SixUpperBits        ;($8F2D)
 L8EB1:  STA PasswordChar08      ;Store results.
-L8EB4:  LDY #$06            ;Password bytes #$06 and #$07.
-L8EB6:  JSR TwoLowerAndFourUpper    ;($8F33)
+L8EB4:  LDY #$06                ;Password bytes #$06 and #$07.
+L8EB6:  JSR TwoLoAndFourUp      ;($8F33)
 L8EB9:  STA PasswordChar09      ;Store results.
-L8EBC:  LDY #$07            ;Password bytes #$07 and #$08.
-L8EBE:  JSR FourLowerAndTwoUpper    ;($8F46)
+L8EBC:  LDY #$07                ;Password bytes #$07 and #$08.
+L8EBE:  JSR FourLoAndTwoUp      ;($8F46)
 L8EC1:  STA PasswordChar0A      ;Store results.
-L8EC4:  LDY #$08            ;Password byte #$08.
+L8EC4:  LDY #$08                ;Password byte #$08.
 L8EC6:  JSR SixLowerBits        ;($8F5A)
 L8EC9:  STA PasswordChar0B      ;Store results.
-L8ECC:  LDY #$09            ;Password byte #$09.
+L8ECC:  LDY #$09                ;Password byte #$09.
 L8ECE:  JSR SixUpperBits        ;($8F2D)
 L8ED1:  STA PasswordChar0C      ;Store results.
-L8ED4:  LDY #$09            ;Password bytes #$09 and #$0A.
-L8ED6:  JSR TwoLowerAndFourUpper    ;($8F33)
+L8ED4:  LDY #$09                ;Password bytes #$09 and #$0A.
+L8ED6:  JSR TwoLoAndFourUp      ;($8F33)
 L8ED9:  STA PasswordChar0D      ;Store results.
-L8EDC:  LDY #$0A            ;Password bytes #$0A and #$0B.
-L8EDE:  JSR FourLowerAndTwoUpper    ;($8F46)
+L8EDC:  LDY #$0A                ;Password bytes #$0A and #$0B.
+L8EDE:  JSR FourLoAndTwoUp      ;($8F46)
 L8EE1:  STA PasswordChar0E      ;Store results.
-L8EE4:  LDY #$0B            ;Password byte #$0B.
+L8EE4:  LDY #$0B                ;Password byte #$0B.
 L8EE6:  JSR SixLowerBits        ;($8F5A)
 L8EE9:  STA PasswordChar0F      ;Store results.
-L8EEC:  LDY #$0C            ;Password byte #$0C.
+L8EEC:  LDY #$0C                ;Password byte #$0C.
 L8EEE:  JSR SixUpperBits        ;($8F2D)
 L8EF1:  STA PasswordChar10      ;Store results.
-L8EF4:  LDY #$0C            ;Password bytes #$0C and #$0D.
-L8EF6:  JSR TwoLowerAndFourUpper    ;($8F33)
+L8EF4:  LDY #$0C                ;Password bytes #$0C and #$0D.
+L8EF6:  JSR TwoLoAndFourUp      ;($8F33)
 L8EF9:  STA PasswordChar11      ;Store results.
-L8EFC:  LDY #$0D            ;Password bytes #$0D and #$0E.
-L8EFE:  JSR FourLowerAndTwoUpper    ;($8F46)
+L8EFC:  LDY #$0D                ;Password bytes #$0D and #$0E.
+L8EFE:  JSR FourLoAndTwoUp      ;($8F46)
 L8F01:  STA PasswordChar12      ;Store results.
-L8F04:  LDY #$0E            ;Password byte #$0E.
+L8F04:  LDY #$0E                ;Password byte #$0E.
 L8F06:  JSR SixLowerBits        ;($8F5A)
 L8F09:  STA PasswordChar13      ;Store results.
-L8F0C:  LDY #$0F            ;Password byte #$0F.
+L8F0C:  LDY #$0F                ;Password byte #$0F.
 L8F0E:  JSR SixUpperBits        ;($8F2D)
 L8F11:  STA PasswordChar14      ;Store results.
-L8F14:  LDY #$0F            ;Password bytes #$0F and #$10.
-L8F16:  JSR TwoLowerAndFourUpper    ;($8F33)
+L8F14:  LDY #$0F                ;Password bytes #$0F and #$10.
+L8F16:  JSR TwoLoAndFourUp      ;($8F33)
 L8F19:  STA PasswordChar15      ;Store results.
-L8F1C:  LDY #$10            ;Password bytes #$10 and #$11.
-L8F1E:  JSR FourLowerAndTwoUpper    ;($8F46)
+L8F1C:  LDY #$10                ;Password bytes #$10 and #$11.
+L8F1E:  JSR FourLoAndTwoUp      ;($8F46)
 L8F21:  STA PasswordChar16      ;Store results.
-L8F24:  LDY #$11            ;Password byte #$11.
+L8F24:  LDY #$11                ;Password byte #$11.
 L8F26:  JSR SixLowerBits        ;($8F5A)
 L8F29:  STA PasswordChar17      ;Store results.
-L8F2C:  RTS             ;
+L8F2C:  RTS                     ;
 
 SixUpperBits:
-L8F2D:  LDA PasswordByte00,Y        ;Uses six upper bits to create a new byte.
-L8F30:  LSR             ;Bits are right shifted twice and two lower
-L8F31:  LSR             ;bits are discarded.
-L8F32:  RTS             ;
+L8F2D:  LDA PasswordByte00,Y    ;Uses six upper bits to create a new byte.
+L8F30:  LSR                     ;Bits are right shifted twice and two lower
+L8F31:  LSR                     ;bits are discarded.
+L8F32:  RTS                     ;
  
-TwoLowerAndFourUpper:
-L8F33:  LDA PasswordByte00,Y        ;
-L8F36:  AND #$03            ;Saves two lower bits and stores them
-L8F38:  JSR Amul16          ;($C2C5)in bits 4 and 5.
-L8F3B:  STA $00             ;
-L8F3D:  LDA PasswordByte01,Y        ;Saves upper 4 bits and stores them
-L8F40:  JSR Adiv16          ;($C2BF)bits 0, 1, 2 and 3.
-L8F43:  ORA $00             ;Add two sets of bits together to make a byte
-L8F45:  RTS             ;where bits 6 and 7 = 0.
+TwoLoAndFourUp:
+L8F33:  LDA PasswordByte00,Y    ;
+L8F36:  AND #$03                ;Saves two lower bits and stores them
+L8F38:  JSR Amul16              ;($C2C5)in bits 4 and 5.
+L8F3B:  STA $00                 ;
+L8F3D:  LDA PasswordByte01,Y    ;Saves upper 4 bits and stores them
+L8F40:  JSR Adiv16              ;($C2BF)bits 0, 1, 2 and 3.
+L8F43:  ORA $00                 ;Add two sets of bits together to make a byte
+L8F45:  RTS                     ;where bits 6 and 7 = 0.
  
-FourLowerAndTwoUpper:
-L8F46:  LDA PasswordByte00,Y        ;
-L8F49:  AND #$0F            ;Keep lower 4 bits.
-L8F4B:  ASL             ;Move lower 4 bits to bits 5, 4, 3 and 2.
-L8F4C:  ASL             ;
-L8F4D:  STA $00             ;
-L8F4F:  LDA PasswordByte01,Y        ;Move upper two bits
-L8F52:  ROL             ;to bits 1 and 0.
-L8F53:  ROL             ;
-L8F54:  ROL             ;
-L8F55:  AND #$03            ;Add two sets of bits together to make a byte    
-L8F57:  ORA $00             ;where bits 6 and 7 = 0.
-L8F59:  RTS             ;
+FourLoAndTwoUp:
+L8F46:  LDA PasswordByte00,Y    ;
+L8F49:  AND #$0F                ;Keep lower 4 bits.
+L8F4B:  ASL                     ;Move lower 4 bits to bits 5, 4, 3 and 2.
+L8F4C:  ASL                     ;
+L8F4D:  STA $00                 ;
+L8F4F:  LDA PasswordByte01,Y    ;Move upper two bits
+L8F52:  ROL                     ;to bits 1 and 0.
+L8F53:  ROL                     ;
+L8F54:  ROL                     ;
+L8F55:  AND #$03                ;Add two sets of bits together to make a byte    
+L8F57:  ORA $00                 ;where bits 6 and 7 = 0.
+L8F59:  RTS                     ;
 
 SixLowerBits:
-L8F5A:  LDA PasswordByte00,Y        ;Discard bits 6 and 7.
-L8F5D:  AND #$3F            ;
+L8F5A:  LDA PasswordByte00,Y    ;Discard bits 6 and 7.
+L8F5D:  AND #$3F                ;
 L8F5F:  RTS 
 
 ;The following routine converts the 24 user entered password characters into the 18 password
 ;bytes used by the program to store Samus' stats and unique item history.
 
 ConsolidatePassword:
-L8F60:  LDY #$00            ;Password characters #$00 and #$01.
-L8F62:  JSR SixLowerAndTwoUpper     ;($8FF1)
+L8F60:  LDY #$00                ;Password characters #$00 and #$01.
+L8F62:  JSR SixLowerAndTwoUpper ;($8FF1)
 L8F65:  STA PasswordByte00      ;Store results.
-L8F68:  LDY #$01            ;Password characters #$01 and #$02.
-L8F6A:  JSR FourLowerAndFiveThruTwo ;($9001)
+L8F68:  LDY #$01                ;Password characters #$01 and #$02.
+L8F6A:  JSR FourLoNFiveThruTwo  ;($9001)
 L8F6D:  STA PasswordByte01      ;Store results.
-L8F70:  LDY #$02            ;Password characters #$02 and #$03.
-L8F72:  JSR TwoLowerAndSixLower     ;($9011)
+L8F70:  LDY #$02                ;Password characters #$02 and #$03.
+L8F72:  JSR TwoLowerAndSixLower ;($9011)
 L8F75:  STA PasswordByte02      ;Store results.
-L8F78:  LDY #$04            ;Password characters #$04 and #$05.
-L8F7A:  JSR SixLowerAndTwoUpper     ;($8FF1)
+L8F78:  LDY #$04                ;Password characters #$04 and #$05.
+L8F7A:  JSR SixLowerAndTwoUpper ;($8FF1)
 L8F7D:  STA PasswordByte03      ;Store results.
-L8F80:  LDY #$05            ;Password characters #$05 and #$05.
-L8F82:  JSR FourLowerAndFiveThruTwo ;($9001)
+L8F80:  LDY #$05                ;Password characters #$05 and #$05.
+L8F82:  JSR FourLoNFiveThruTwo  ;($9001)
 L8F85:  STA PasswordByte04      ;Store results.
-L8F88:  LDY #$06            ;Password characters #$06 and #$07.
-L8F8A:  JSR TwoLowerAndSixLower     ;($9011)
+L8F88:  LDY #$06                ;Password characters #$06 and #$07.
+L8F8A:  JSR TwoLowerAndSixLower ;($9011)
 L8F8D:  STA PasswordByte05      ;Store results.
-L8F90:  LDY #$08            ;Password characters #$08 and #$09.
-L8F92:  JSR SixLowerAndTwoUpper     ;($8FF1)
+L8F90:  LDY #$08                ;Password characters #$08 and #$09.
+L8F92:  JSR SixLowerAndTwoUpper ;($8FF1)
 L8F95:  STA PasswordByte06      ;Store results.
-L8F98:  LDY #$09            ;Password characters #$09 and #$0A.
-L8F9A:  JSR FourLowerAndFiveThruTwo ;($9001)
+L8F98:  LDY #$09                ;Password characters #$09 and #$0A.
+L8F9A:  JSR FourLoNFiveThruTwo  ;($9001)
 L8F9D:  STA PasswordByte07      ;Store results.
-L8FA0:  LDY #$0A            ;Password characters #$0A and #$0B.
-L8FA2:  JSR TwoLowerAndSixLower     ;($9011)
+L8FA0:  LDY #$0A                ;Password characters #$0A and #$0B.
+L8FA2:  JSR TwoLowerAndSixLower ;($9011)
 L8FA5:  STA PasswordByte08      ;Store results.
-L8FA8:  LDY #$0C            ;Password characters #$0C and #$0D.
-L8FAA:  JSR SixLowerAndTwoUpper     ;($8FF1)
+L8FA8:  LDY #$0C                ;Password characters #$0C and #$0D.
+L8FAA:  JSR SixLowerAndTwoUpper ;($8FF1)
 L8FAD:  STA PasswordByte09      ;Store results.
-L8FB0:  LDY #$0D            ;Password characters #$0D and #$0E.
-L8FB2:  JSR FourLowerAndFiveThruTwo ;($9001)
+L8FB0:  LDY #$0D                ;Password characters #$0D and #$0E.
+L8FB2:  JSR FourLoNFiveThruTwo  ;($9001)
 L8FB5:  STA PasswordByte0A      ;Store results.
-L8FB8:  LDY #$0E            ;Password characters #$0E and #$0F.
-L8FBA:  JSR TwoLowerAndSixLower     ;($9011)
+L8FB8:  LDY #$0E                ;Password characters #$0E and #$0F.
+L8FBA:  JSR TwoLowerAndSixLower ;($9011)
 L8FBD:  STA PasswordByte0B      ;Store results.
-L8FC0:  LDY #$10            ;Password characters #$10 and #$11.
-L8FC2:  JSR SixLowerAndTwoUpper     ;($8FF1)
+L8FC0:  LDY #$10                ;Password characters #$10 and #$11.
+L8FC2:  JSR SixLowerAndTwoUpper ;($8FF1)
 L8FC5:  STA PasswordByte0C      ;Store results.
-L8FC8:  LDY #$11            ;Password characters #$11 and #$12.
-L8FCA:  JSR FourLowerAndFiveThruTwo ;($9001)
+L8FC8:  LDY #$11                ;Password characters #$11 and #$12.
+L8FCA:  JSR FourLoNFiveThruTwo  ;($9001)
 L8FCD:  STA PasswordByte0D      ;Store results.
-L8FD0:  LDY #$12            ;Password characters #$12 and #$13.
-L8FD2:  JSR TwoLowerAndSixLower     ;($9011)
+L8FD0:  LDY #$12                ;Password characters #$12 and #$13.
+L8FD2:  JSR TwoLowerAndSixLower ;($9011)
 L8FD5:  STA PasswordByte0E      ;Store results.
-L8FD8:  LDY #$14            ;Password characters #$15 and #$15.
-L8FDA:  JSR SixLowerAndTwoUpper     ;($8FF1)
+L8FD8:  LDY #$14                ;Password characters #$15 and #$15.
+L8FDA:  JSR SixLowerAndTwoUpper ;($8FF1)
 L8FDD:  STA PasswordByte0F      ;Store results.
-L8FE0:  LDY #$15            ;Password characters #$15 and #$16.
-L8FE2:  JSR FourLowerAndFiveThruTwo ;($9001)
+L8FE0:  LDY #$15                ;Password characters #$15 and #$16.
+L8FE2:  JSR FourLoNFiveThruTwo  ;($9001)
 L8FE5:  STA PasswordByte10      ;Store results.
-L8FE8:  LDY #$16            ;Password characters #$16 and #$17.
-L8FEA:  JSR TwoLowerAndSixLower     ;($9011)
+L8FE8:  LDY #$16                ;Password characters #$16 and #$17.
+L8FEA:  JSR TwoLowerAndSixLower ;($9011)
 L8FED:  STA PasswordByte11      ;Store results.
-L8FF0:  RTS             ;
+L8FF0:  RTS                     ;
 
 SixLowerAndTwoUpper:
-L8FF1:  LDA PasswordChar00,Y        ;Remove upper two bits and transfer
-L8FF4:  ASL             ;lower six bits to upper six bits.
-L8FF5:  ASL             ;
-L8FF6:  STA $00             ;
-L8FF8:  LDA PasswordChar01,Y        ;Move bits 4and 5 to lower two
-L8FFB:  JSR Adiv16          ;($C2BF)bits and discard the rest.
-L8FFE:  ORA $00             ;Combine the two bytes together.
-L9000:  RTS             ;
+L8FF1:  LDA PasswordChar00,Y    ;Remove upper two bits and transfer
+L8FF4:  ASL                     ;lower six bits to upper six bits.
+L8FF5:  ASL                     ;
+L8FF6:  STA $00                 ;
+L8FF8:  LDA PasswordChar01,Y    ;Move bits 4and 5 to lower two
+L8FFB:  JSR Adiv16              ;($C2BF)bits and discard the rest.
+L8FFE:  ORA $00                 ;Combine the two bytes together.
+L9000:  RTS                     ;
 
-FourLowerAndFiveThruTwo:
-L9001:  LDA PasswordChar00,Y        ;Take four lower bits and transfer
-L9004:  JSR Amul16          ;($C2C5)them to upper four bits. Discard the rest.
-L9007:  STA $00             ;
-L9009:  LDA PasswordChar01,Y        ;Remove two lower bits and transfer
-L900C:  LSR             ;bits 5 thru 2 to lower four bits. 
-L900D:  LSR             ;
-L900E:  ORA $00             ;Combine the two bytes together.
-L9010:  RTS             ;
+FourLoNFiveThruTwo:
+L9001:  LDA PasswordChar00,Y    ;Take four lower bits and transfer
+L9004:  JSR Amul16              ;($C2C5)them to upper four bits. Discard the rest.
+L9007:  STA $00                 ;
+L9009:  LDA PasswordChar01,Y    ;Remove two lower bits and transfer
+L900C:  LSR                     ;bits 5 thru 2 to lower four bits. 
+L900D:  LSR                     ;
+L900E:  ORA $00                 ;Combine the two bytes together.
+L9010:  RTS                     ;
  
 TwoLowerAndSixLower:
-L9011:  LDA PasswordChar00,Y        ;Shifts two lower bits to two higest bits
-L9014:  ROR                 ;and discards the rest
-L9015:  ROR                 ;
-L9016:  ROR                 ;
-L9017:  AND #$C0            ;
-L9019:  STA $00             ;
-L901B:  LDA PasswordChar01,Y        ;Add six lower bits to previous results.
-L901E:  ORA $00             ;
-L9020:  RTS             ;
+L9011:  LDA PasswordChar00,Y    ;Shifts two lower bits to two higest bits
+L9014:  ROR                     ;and discards the rest
+L9015:  ROR                     ;
+L9016:  ROR                     ;
+L9017:  AND #$C0                ;
+L9019:  STA $00                 ;
+L901B:  LDA PasswordChar01,Y    ;Add six lower bits to previous results.
+L901E:  ORA $00                 ;
+L9020:  RTS                     ;
 
-PasswordBitmaskTbl:
+PswrdBitmaskTbl:
 L9021:  .byte $01, $02, $04, $08, $10, $20, $40, $80
+
+;----------------------------------------------------------------------------------------------------
 
 ;The following table contains the unique items in the game.  The two bytes can be deciphered
 ;as follows:IIIIIIXX XXXYYYYY. I = item type, X = X coordinate on world map, Y = Y coordinate
@@ -1862,65 +1886,67 @@ L9021:  .byte $01, $02, $04, $08, $10, $20, $40, $80
 ;5th Zeebetite = 010011
 
 ItemData:
-L9029:  .word $104E         ;Maru Mari at coord 02,0E                    (Item 0)
-L902B:  .word $264B         ;Missiles at coord 12,0B                     (Item 1)
-L902D:  .word $28E5         ;Red door to long beam at coord 07,05        (Item 2)
-L902F:  .word $2882         ;Red door to Tourian elevator at coord 05,02 (Item 3)
-L9031:  .word $2327         ;Energy tank at coord 19,07                  (Item 4)
-L9033:  .word $2B25         ;Red door to bombs at coord 1A,05            (Item 5)
-L9035:  .word $0325         ;Bombs at coord 19,05                        (Item 6)
-L9037:  .word $2A69         ;Red door to ice beam at coord 13,09         (Item 7)
-L9039:  .word $2703         ;Missiles at coord 18,03                     (Item 8)
-L903B:  .word $2363         ;Energy tank at coord 1B,03                  (Item 9)
-L903D:  .word $29E2         ;Red door to varia suit at coord 0F,02       (Item 10)
-L903F:  .word $15E2         ;Varia suit at coord 0F,02                   (Item 11)
-L9041:  .word $212E         ;Energy tank at coord 09,0E                  (Item 12)
-L9043:  .word $264E         ;Missiles at coord 12,0E                     (Item 13)
-L9045:  .word $262F         ;Missiles at coord 11,0F                     (Item 14)
-L9047:  .word $2B4C         ;Red door to ice beam at coord 1B,0C         (Item 15)
-L9049:  .word $276A         ;Missiles at coord 1B,0A                     (Item 16)
-L904B:  .word $278A         ;Missiles at coord 1C,0A                     (Item 17)
-L904D:  .word $278B         ;Missiles at coord 1C,0B                     (Item 18)
-L904F:  .word $276B         ;Missiles at coord 1B,0B                     (Item 19)
-L9051:  .word $274B         ;Missiles at coord 1A,0B                     (Item 20)
-L9053:  .word $268F         ;Missiles at coord 14,0F                     (Item 21)
-L9055:  .word $266F         ;Missiles at coord 13,0F                     (Item 22)
-L9057:  .word $2B71         ;Red door to high jump at coord 1C,11        (Item 23)
-L9059:  .word $0771         ;High jump at coord 1B,11                    (Item 24)
-L905B:  .word $29F0         ;Red door to screw attack at coord 0E,10     (Item 25)
-L905D:  .word $0DF0         ;Screw attack at coord 0D,1D                 (Item 26)
-L905F:  .word $2676         ;Missiles at coord 13,16                     (Item 27)
-L9061:  .word $2696         ;Misslies at coord 14,16                     (Item 28)
-L9063:  .word $2A55         ;Red door to wave beam at coord 1C,15        (Item 29)
-L9065:  .word $2353         ;Energy tank at coord 1A,13                  (Item 30)
-L9067:  .word $2794         ;Missiles at coord 1C,14                     (Item 31)
-L9069:  .word $28F5         ;Red door at coord 07,15                     (Item 32)
-L906B:  .word $2535         ;Missiles at coord 09,15                     (Item 33)
-L906D:  .word $2495         ;Missiles at coord 04,15                     (Item 34)
-L906F:  .word $28F6         ;Red door at coord 07,16                     (Item 35)
-L9071:  .word $2156         ;Energy tank at coord 0A,16                  (Item 36)
-L9073:  .word $28F8         ;Red door at coord 07,18                     (Item 37)
-L9075:  .word $287B         ;Red door at coord 03,1B                     (Item 38)
-L9077:  .word $24BB         ;Missiles at coord 05,1B                     (Item 39)
-L9079:  .word $2559         ;Missiles at coord 0A,19                     (Item 40)
-L907B:  .word $291D         ;Red door to Kraid at coord 08,1D            (Item 41)
-L907D:  .word $211D         ;Energy tank at coord 08,1D(Kraid's room)    (Item 42)
-L907F:  .word $2658         ;Missiles at coord 12,18                     (Item 43)
-L9081:  .word $2A39         ;Red door at coord 11,19                     (Item 44)
-L9083:  .word $2239         ;Energy tank at coord 11,19                  (Item 45)
-L9085:  .word $269E         ;Missiles at coord 14,1E                     (Item 46)
-L9087:  .word $2A1D         ;purple door at coord 10,1D(Ridley's room)   (Item 47)
-L9089:  .word $21FD         ;Energy tank at coord 0F,1D                  (Item 48)
-L908B:  .word $271B         ;Missile at coord 18,1B                      (Item 49)
-L908D:  .word $2867         ;Orange door at coord 03,07                  (Item 50)
-L908F:  .word $2927         ;Red door at coord 09,07                     (Item 51)
-L9091:  .word $292B         ;Red door at coord 0A,0B                     (Item 52)
-L9093:  .word $3C00         ;1st Zeebetite in mother brain room          (Item 53)
-L9095:  .word $4000         ;2nd Zeebetite in mother brain room          (Item 54)
-L9097:  .word $4400         ;3rd Zeebetite in mother brain room          (Item 55)
-L9099:  .word $4800         ;4th Zeebetite in mother brain room          (Item 56)
-L909B:  .word $4C00         ;5th Zeebetite in mother brain room          (Item 57)
-L909D:  .word $3800         ;Mother brain                                (Item 58)
+L9029:  .word $104E             ;Maru Mari at coord 02,0E                    (Item 0)
+L902B:  .word $264B             ;Missiles at coord 12,0B                     (Item 1)
+L902D:  .word $28E5             ;Red door to long beam at coord 07,05        (Item 2)
+L902F:  .word $2882             ;Red door to Tourian elevator at coord 05,02 (Item 3)
+L9031:  .word $2327             ;Energy tank at coord 19,07                  (Item 4)
+L9033:  .word $2B25             ;Red door to bombs at coord 1A,05            (Item 5)
+L9035:  .word $0325             ;Bombs at coord 19,05                        (Item 6)
+L9037:  .word $2A69             ;Red door to ice beam at coord 13,09         (Item 7)
+L9039:  .word $2703             ;Missiles at coord 18,03                     (Item 8)
+L903B:  .word $2363             ;Energy tank at coord 1B,03                  (Item 9)
+L903D:  .word $29E2             ;Red door to varia suit at coord 0F,02       (Item 10)
+L903F:  .word $15E2             ;Varia suit at coord 0F,02                   (Item 11)
+L9041:  .word $212E             ;Energy tank at coord 09,0E                  (Item 12)
+L9043:  .word $264E             ;Missiles at coord 12,0E                     (Item 13)
+L9045:  .word $262F             ;Missiles at coord 11,0F                     (Item 14)
+L9047:  .word $2B4C             ;Red door to ice beam at coord 1B,0C         (Item 15)
+L9049:  .word $276A             ;Missiles at coord 1B,0A                     (Item 16)
+L904B:  .word $278A             ;Missiles at coord 1C,0A                     (Item 17)
+L904D:  .word $278B             ;Missiles at coord 1C,0B                     (Item 18)
+L904F:  .word $276B             ;Missiles at coord 1B,0B                     (Item 19)
+L9051:  .word $274B             ;Missiles at coord 1A,0B                     (Item 20)
+L9053:  .word $268F             ;Missiles at coord 14,0F                     (Item 21)
+L9055:  .word $266F             ;Missiles at coord 13,0F                     (Item 22)
+L9057:  .word $2B71             ;Red door to high jump at coord 1C,11        (Item 23)
+L9059:  .word $0771             ;High jump at coord 1B,11                    (Item 24)
+L905B:  .word $29F0             ;Red door to screw attack at coord 0E,10     (Item 25)
+L905D:  .word $0DF0             ;Screw attack at coord 0D,1D                 (Item 26)
+L905F:  .word $2676             ;Missiles at coord 13,16                     (Item 27)
+L9061:  .word $2696             ;Misslies at coord 14,16                     (Item 28)
+L9063:  .word $2A55             ;Red door to wave beam at coord 1C,15        (Item 29)
+L9065:  .word $2353             ;Energy tank at coord 1A,13                  (Item 30)
+L9067:  .word $2794             ;Missiles at coord 1C,14                     (Item 31)
+L9069:  .word $28F5             ;Red door at coord 07,15                     (Item 32)
+L906B:  .word $2535             ;Missiles at coord 09,15                     (Item 33)
+L906D:  .word $2495             ;Missiles at coord 04,15                     (Item 34)
+L906F:  .word $28F6             ;Red door at coord 07,16                     (Item 35)
+L9071:  .word $2156             ;Energy tank at coord 0A,16                  (Item 36)
+L9073:  .word $28F8             ;Red door at coord 07,18                     (Item 37)
+L9075:  .word $287B             ;Red door at coord 03,1B                     (Item 38)
+L9077:  .word $24BB             ;Missiles at coord 05,1B                     (Item 39)
+L9079:  .word $2559             ;Missiles at coord 0A,19                     (Item 40)
+L907B:  .word $291D             ;Red door to Kraid at coord 08,1D            (Item 41)
+L907D:  .word $211D             ;Energy tank at coord 08,1D(Kraid's room)    (Item 42)
+L907F:  .word $2658             ;Missiles at coord 12,18                     (Item 43)
+L9081:  .word $2A39             ;Red door at coord 11,19                     (Item 44)
+L9083:  .word $2239             ;Energy tank at coord 11,19                  (Item 45)
+L9085:  .word $269E             ;Missiles at coord 14,1E                     (Item 46)
+L9087:  .word $2A1D             ;purple door at coord 10,1D(Ridley's room)   (Item 47)
+L9089:  .word $21FD             ;Energy tank at coord 0F,1D                  (Item 48)
+L908B:  .word $271B             ;Missile at coord 18,1B                      (Item 49)
+L908D:  .word $2867             ;Orange door at coord 03,07                  (Item 50)
+L908F:  .word $2927             ;Red door at coord 09,07                     (Item 51)
+L9091:  .word $292B             ;Red door at coord 0A,0B                     (Item 52)
+L9093:  .word $3C00             ;1st Zeebetite in mother brain room          (Item 53)
+L9095:  .word $4000             ;2nd Zeebetite in mother brain room          (Item 54)
+L9097:  .word $4400             ;3rd Zeebetite in mother brain room          (Item 55)
+L9099:  .word $4800             ;4th Zeebetite in mother brain room          (Item 56)
+L909B:  .word $4C00             ;5th Zeebetite in mother brain room          (Item 57)
+L909D:  .word $3800             ;Mother brain                                (Item 58)
+
+;----------------------------------------------------------------------------------------------------
 
 ClearAll:
 L909F:  jsr ScreenOff           ;($C439)Turn screen off.
@@ -1971,13 +1997,13 @@ L90FA:  ORA #$08                ;Set SFX flag for select being pressed.
 L90FC:  STA TriangleSFXFlag     ;Uses triangle channel.
 L90FF:* LDY StartContinue       ;
 L9102:  LDA StartContTbl,Y      ;Get y pos of selection sprite.
-L9105:  STA Sprite00RAM         ;
+L9105:  STA SpriteRAM           ;
 L9108:  LDA #$6E                ;Load sprite info for square selection sprite.
-L910A:  STA Sprite00RAM+1       ;
+L910A:  STA SpriteRAM+1         ;
 L910D:  LDA #$03                ;
-L910F:  STA Sprite00RAM+2       ;
+L910F:  STA SpriteRAM+2         ;
 L9112:  LDA #$50                ;Set data for selection sprite.
-L9114:  STA Sprite00RAM+3       ;
+L9114:  STA SpriteRAM+3         ;
 L9117:  RTS                     ;
 
 StartContTbl:
@@ -2109,18 +2135,18 @@ L9219:  LDX PasswordCursor      ;Load A with #$3F if PasswordCursor is on
 L921C:  CPX #$0C                ;character 0 thru 11, else load it with #$4F.
 L921E:  BCC +                   ;
 L9220:  LDA #$4F                ;
-L9222:* STA Sprite01RAM         ;Set Y-coord of password cursor sprite.
+L9222:* STA SpriteRAM+4         ;Set Y-coord of password cursor sprite.
 L9225:  LDA #$6E                ;
-L9227:  STA Sprite01RAM+1       ;Set pattern for password cursor sprite.
+L9227:  STA SpriteRAM+5         ;Set pattern for password cursor sprite.
 L922A:  LDA #$20                ;
-L922C:  STA Sprite01RAM+2       ;Set attributes for password cursor sprite.
+L922C:  STA SpriteRAM+6         ;Set attributes for password cursor sprite.
 L922F:  LDA PasswordCursor      ;If the password cursor is at the 12th
 L9232:  CMP #$0C                ;character or less, branch.
 L9234:  BCC +                   ;
 L9236:  SBC #$0C                ;Calculate how many characters the password cursor
 L9238:* TAX                     ;is from the left if on the second row of password.
 L9239:  LDA CursorPosTbl,X      ;Load X position of PasswordCursor.
-L923C:  STA Sprite01RAM+3       ;
+L923C:  STA SpriteRAM+7         ;
 L923F:* LDX InputRow            ;Load X and Y with row and column
 L9242:  LDY InputColumn         ;of current character selected.
 L9245:  LDA Joy1Retrig          ;
@@ -2170,13 +2196,13 @@ L9297:* LDA FrameCount          ;
 L9299:  AND #$08                ;If FrameCount bit 3 not set, branch.
 L929B:  BEQ +                   ;
 L929D:  LDA CharSelectYTbl,X    ;Set Y-coord of character selection sprite.
-L92A0:  STA Sprite02RAM         ;
+L92A0:  STA SpriteRAM+8         ;
 L92A3:  LDA #$6E                ;Set pattern for character selection sprite.
-L92A5:  STA Sprite02RAM+1       ;
+L92A5:  STA SpriteRAM+9         ;
 L92A8:  LDA #$20                ;Set attributes for character selection sprite.
-L92AA:  STA Sprite02RAM+2       ;
+L92AA:  STA SpriteRAM+$A        ;
 L92AD:  LDA CharSelectXTbl,Y    ;Set x-Coord of character selection sprite.
-L92B0:  STA Sprite02RAM+3       ;
+L92B0:  STA SpriteRAM+$B        ;
 L92B3:* RTS                     ;
 
 ;The following data does not appear to be used in the program.
@@ -2324,9 +2350,7 @@ L93B4:  STA TitleRoutine        ;DisplayPassword.
 L93B6:  JMP ScreenOn            ;($C447)Turn screen on.
 
 ;Information below is for above routine to display "GAME OVER" on the screen.
-L93B9:  .byte $21               ;PPU address and string length.
-L93BA:  .byte $8C               ;PPU memory low byte.
-L93BB:  .byte $09               ;PPU string length.
+L93B9:  .byte $21, $8C, $09     ;PPU address and string length.
 ;             'G    A    M    E    _    O    V    E    R'
 L93BC:  .byte $10, $0A, $16, $0E, $FF, $18, $1F, $0E, $1B
 
@@ -2356,42 +2380,42 @@ L93F4:  LDY #$21                ;PPU high address byte.
 L93F6:  JMP PrepareEraseTiles   ;($9450)Erase tiles on screen.
 
 LoadPasswordTiles:
-L93F9:  LDA #$16            ;Tiles to replace are one block
+L93F9:  LDA #$16                ;Tiles to replace are one block
 L93FB:  STA TileSize            ;high and 6 blocks long.
-L93FE:  LDX #$05            ;
-L9400:* LDA PasswordChar00,Y        ;
+L93FE:  LDX #$05                ;
+L9400:* LDA PasswordChar00,Y    ;
 L9403:  STA TileInfo0,X         ;
-L9406:  DEY             ;Transfer password characters to
-L9407:  DEX             ;TileInfo addresses.
-L9408:  BPL-                ;
-L940A:  RTS             ;
+L9406:  DEY                     ;Transfer password characters to
+L9407:  DEX                     ;TileInfo addresses.
+L9408:  BPL-                    ;
+L940A:  RTS                     ;
 
 DispInpChars:
 L940B:  LDA PPUStatus           ;Clear address latches.
-L940E:  LDY #$00            ;
-L9410:  TYA                 ;Initially sets $00 an $01.
-L9411:  STA $00             ;to #$00.
-L9413:  STA $01             ;Also, initialy sets x and y to #$00.
-L9415:* ASL             ;
-L9416:  TAX             ;
-L9417:  LDA PasswordRowsTbl,X       ;
+L940E:  LDY #$00                ;
+L9410:  TYA                     ;Initially sets $00 an $01.
+L9411:  STA $00                 ;to #$00.
+L9413:  STA $01                 ;Also, initialy sets x and y to #$00.
+L9415:* ASL                     ;
+L9416:  TAX                     ;
+L9417:  LDA PasswordRowsTbl,X   ;
 L941A:  STA PPUAddress          ;
-L941D:  LDA PasswordRowsTbl+1,X     ;Displays the list of characters 
+L941D:  LDA PasswordRowsTbl+1,X ;Displays the list of characters 
 L9420:  sTA PPUAddress          ;to choose from on the password 
-L9423:  LDX #$00            ;entry screen.
+L9423:  LDX #$00                ;entry screen.
 L9425:* LDA PasswordRow0,Y      ;Base is $99A2.
 L9428:  STA PPUIOReg            ;
-L942B:  LDA #$FF            ;Blank tile.
+L942B:  LDA #$FF                ;Blank tile.
 L942D:  STA PPUIOReg            ;
-L9430:  INY             ;
-L9431:  INX             ;
-L9432:  CPX #$0D            ;13 characters in current row?
-L9434:  BNE -               ;if not, add another character.
-L9436:  INC $01             ;
-L9438:  LDA $01             ;
-L943A:  CMP #$05            ;5 rows?
-L943C:  BNE --              ;If not, go to next row.
-L943E:  RTS             ;
+L9430:  INY                     ;
+L9431:  INX                     ;
+L9432:  CPX #$0D                ;13 characters in current row?
+L9434:  BNE -                   ;if not, add another character.
+L9436:  INC $01                 ;
+L9438:  LDA $01                 ;
+L943A:  CMP #$05                ;5 rows?
+L943C:  BNE --                  ;If not, go to next row.
+L943E:  RTS                     ;
 
 ;The table below is used by the code above to determine the positions
 ;of the five character rows on the password entry screen.
@@ -2405,17 +2429,17 @@ L9447:  .byte $22, $E4          ;
 
 
 PreparePPUProcess:
-L9449:  stx $00             ;Lower byte of pointer to PPU string
-L944B:  sty $01             ;Upper byte of pointer to PPU string
-L944D:  jmp ProcessPPUStr        ;($C30C)
+L9449:  stx $00                 ;Lower byte of pointer to PPU string
+L944B:  sty $01                 ;Upper byte of pointer to PPU string
+L944D:  jmp ProcessPPUStr       ;($C30C)
 
 PrepareEraseTiles:
-L9450:  STX $00             ;PPU low address byte
-L9452:  STY $01             ;PPU high address byte
-L9454:  LDX #$80            ;
-L9456:  LDY #$07            ;
-L9458:  STX $02             ;Address of byte where tile size  
-L945A:  STY $03             ;of tile to be erased is stored.
+L9450:  STX $00                 ;PPU low address byte
+L9452:  STY $01                 ;PPU high address byte
+L9454:  LDX #$80                ;
+L9456:  LDY #$07                ;
+L9458:  STX $02                 ;Address of byte where tile size  
+L945A:  STY $03                 ;of tile to be erased is stored.
 L945C:  JMP EraseTile           ;($C328)Erase the selected tiles.
 
 ;----------------------------------------------------------------------------------------------------
@@ -2456,221 +2480,161 @@ L9578:  .word Palette0C, Palette0D, Palette0E, Palette0F
 L9580:  .word Palette10, Palette11, Palette12
 
 Palette00:
-L9586:  .byte $3F           ;PPU palette adress and data length.
-L9587:  .byte $00           ;Lower byte of PPU palette adress.
-L9588:  .byte $20           ;Palette data length.
+L9586:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9589:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F
 ;The following values are written to the sprite palette:
 L9599:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L95A9:  .byte $00           ;End Palette01 info.
+L95A9:  .byte $00               ;End Palette00 info.
 
 Palette01:
-L95AA:  .byte $3F           ;PPU palette adress and data length.
-L95AB:  .byte $00           ;Lower byte of PPU palette adress.
-L96AC:  .byte $20           ;Palette data length.
+L95AA:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L95AD:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $35, $35, $04, $0F, $35, $14, $04
 ;The following values are written to the sprite palette:
 L95BD:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L95CD:  .byte $00           ;End Palette02 info.
+L95CD:  .byte $00               ;End Palette01 info.
 
 Palette02:
-L95CE:  .byte $3F           ;PPU palette adress and data length.
-L95CF:  .byte $00           ;Lower byte of PPU palette adress.
-L95D0:  .byte $20           ;Palette data length.
+L95CE:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L95D1:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $39, $39, $09, $0F, $39, $29, $09
 ;The following values are written to the sprite palette:
 L95E1:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L95F1:  .byte $00           ;End Palette03 info.
+L95F1:  .byte $00               ;End Palette02 info.
 
 Palette03:
-L95F2:  .byte $3F           ;PPU palette adress and data length.
-L95F3:  .byte $00           ;Lower byte of PPU palette adress.
-L95F4:  .byte $20           ;Palette data length.
+L95F2:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L95F5:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $36, $36, $06, $0F, $36, $15, $06
 ;The following values are written to the sprite palette:
 L9605:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L9615:  .byte $00           ;End Palette04 info.
+L9615:  .byte $00               ;End Palette03 info.
 
 Palette04:
-L9616:  .byte $3F           ;PPU palette adress and data length.
-L9617:  .byte $00           ;Lower byte of PPU palette adress.
-L9618:  .byte $20           ;Palette data length.
+L9616:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9619:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $27, $27, $12, $0F, $27, $21, $12
 ;The following values are written to the sprite palette:
 L9629:  .byte $0F, $16, $1A, $27, $0F, $31, $20, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L9639:  .byte $00           ;End Palette05 info.
+L9639:  .byte $00               ;End Palette04 info.
 
 Palette05:
-L963A:  .byte $3F           ;PPU palette adress and data length.
-L963B:  .byte $00           ;Lower byte of PPU palette adress.
-L963C:  .byte $20           ;Palette data length.
+L963A:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L963D:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $01, $01, $0F, $0F, $01, $0F, $0F
 ;The following values are written to the sprite palette:
 L964D:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L965D:  .byte $00           ;End Palette06 info.
+L965D:  .byte $00               ;End Palette05 info.
 
 Palette06:
-L965E:  .byte $3F           ;PPU palette adress and data length.
-L965F:  .byte $00           ;Lower byte of PPU palette adress.
-L9660:  .byte $20           ;Palette data length.
+L965E:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9661:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $01, $01, $0F, $0F, $01, $01, $0F
 ;The following values are written to the sprite palette:
 L9671:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L9681:  .byte $00           ;End Palette07 info.
+L9681:  .byte $00               ;End Palette06 info.
 
 Palette07:
-L9682:  .byte $3F           ;PPU palette adress and data length.
-L9683:  .byte $00           ;Lower byte of PPU palette adress.
-L9684:  .byte $20           ;Palette data length.
+L9682:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9685:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $02, $02, $01, $0F, $02, $02, $01
 ;The following values are written to the sprite palette:
 L9695:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L96A5:  .byte $00           ;End Palette08 info.
+L96A5:  .byte $00               ;End Palette07 info.
 
 Palette08:
-L96A6:  .byte $3F           ;PPU palette adress and data length.
-L96A7:  .byte $00           ;Lower byte of PPU palette adress.
-L96A8:  .byte $20           ;Palette data length.
+L96A6:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L96A9:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $02, $02, $01, $0F, $02, $01, $01
 ;The following values are written to the sprite palette:
 L96B9:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L96C9:  .byte $00           ;End Palette09 info.
+L96C9:  .byte $00               ;End Palette08 info.
 
 Palette09:
-L96CA:  .byte $3F           ;PPU palette adress and data length.
-L96CB:  .byte $00           ;Lower byte of PPU palette adress.
-L96CC:  .byte $20           ;Palette data length.
+L96CA:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L96CD:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $12, $12, $02, $0F, $12, $12, $02
 ;The following values are written to the sprite palette:
 L96DD:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L96ED:  .byte $00           ;End Palette0A info.
+L96ED:  .byte $00               ;End Palette09 info.
 
 Palette0A:
-L96EE:  .byte $3F           ;PPU palette adress and data length.
-L96EF:  .byte $00           ;Lower byte of PPU palette adress.
-L96F0:  .byte $20           ;Palette data length.
+L96EE:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L96F1:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $11, $11, $02, $0F, $11, $02, $02
 ;The following values are written to the sprite palette:
 L9701:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L9711:  .byte $00           ;End Palette0B info.
+L9711:  .byte $00               ;End Palette0A info.
 
 Palette0B:
-L9712:  .byte $3F           ;PPU palette adress and data length.
-L9713:  .byte $00           ;Lower byte of PPU palette adress.
-L9714:  .byte $20           ;Palette data length.
+L9712:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9715:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $31, $31, $01, $0F, $31, $11, $01
 ;The following values are written to the sprite palette:
 L9716:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L9735:  .byte $00           ;End Palette0C info.
+L9735:  .byte $00               ;End Palette0B info.
 
 Palette0C:
-L9736:  .byte $3F           ;PPU palette adress and data length.
-L9737:  .byte $00           ;Lower byte of PPU palette adress.
-L9738:  .byte $20           ;Palette data length.
+L9736:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9739:  .byte $0F, $28, $18, $08, $0F, $12, $30, $21, $0F, $27, $28, $29, $0F, $31, $31, $01
 ;The following values are written to the sprite palette:
 L9749:  .byte $0F, $16, $2A, $27, $0F, $12, $30, $21, $0F, $27, $24, $2C, $0F, $15, $21, $38
-
-L9759:  .byte $00           ;End Palette0D info.
+L9759:  .byte $00               ;End Palette0C info.
 
 Palette0D:
-L975A:  .byte $3F           ;PPU palette adress and data length.
-L975B:  .byte $00           ;Lower byte of PPU palette adress.
-L975C:  .byte $20           ;Palette data length.
+L975A:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L975D:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $12, $12, $01, $0F, $12, $02, $01
 ;The following values are written to the sprite palette:
 L975E:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L977D:  .byte $00           ;End Palette0E info.
+L977D:  .byte $00               ;End Palette0D info.
 
 Palette0E:
-L977E:  .byte $3F           ;PPU palette adress and data length.
-L977F:  .byte $00           ;Lower byte of PPU palette adress.
-L9780:  .byte $20           ;Palette data length.
+L977E:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9781:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $02, $02, $0F, $0F, $02, $01, $0F
 ;The following values are written to the sprite palette:
 L9791:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L97A1:  .byte $00           ;End Palette0F info.
+L97A1:  .byte $00               ;End Palette0E info.
 
 Palette0F:
-L97A2:  .byte $3F           ;PPU palette adress and data length.
-L97A3:  .byte $00           ;Lower byte of PPU palette adress.
-L97A4:  .byte $20           ;Palette data length.
+L97A2:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L97A5:  .byte $0F, $28, $18, $08, $0F, $29, $1B, $1A, $0F, $01, $01, $0F, $0F, $01, $0F, $0F
 ;The following values are written to the sprite palette:
 L97B5:  .byte $0F, $16, $1A, $27, $0F, $37, $3A, $1B, $0F, $17, $31, $37, $0F, $32, $22, $12
-
-L97C5:  .byte $00           ;End Palette10 info.
+L97C5:  .byte $00               ;End Palette0F info.
 
 Palette10:
-L97C6:  .byte $3F           ;PPU palette adress and data length.
-L97C7:  .byte $00           ;Lower byte of PPU palette adress.
-L97C8:  .byte $20           ;Palette data length.
+L97C6:  .byte $3F, $00, $20     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L97C9:  .byte $30, $28, $18, $08, $30, $29, $1B, $1A, $30, $30, $30, $30, $30, $30, $30, $30
 ;The following values are written to the sprite palette:
 L97D9:  .byte $30, $16, $1A, $27, $30, $37, $3A, $1B, $30, $17, $31, $37, $30, $32, $22, $12
-
-L97E9:  .byte $00           ;End Palette11 info.
+L97E9:  .byte $00               ;End Palette10 info.
 
 Palette11:
-L97EA:  .byte $3F           ;PPU palette adress and data length.
-L97EB:  .byte $00           ;Lower byte of PPU palette adress.
-L97EC:  .byte $04           ;Palette data length.
+L97EA:  .byte $3F, $00, $04     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L97ED:  .byte $0F, $30, $30, $21
-
-L98F1:  .byte $00           ;End Palette12 info.
+L98F1:  .byte $00               ;End Palette11 info.
 
 Palette12:
-L97F2:  .byte $3F           ;PPU palette adress and data length.
-L97F3:  .byte $00           ;Lower byte of PPU palette adress.
-L97F4:  .byte $10           ;Palette data length.
+L97F2:  .byte $3F, $00, $10     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L97F5:  .byte $0F, $30, $30, $0F, $0F, $2A, $2A, $21, $0F, $31, $31, $0F, $0F, $2A, $2A, $21
-
-L9805:  .byte $00           ;End Palette13 data.
+L9805:  .byte $00               ;End Palette12 data.
 
 EndGamePal0B:
-L9806:  .byte $3F           ;PPU palette adress and data length.
-L9807:  .byte $00           ;Lower byte of PPU palette adress.
-L9808:  .byte $10           ;Palette data length.
+L9806:  .byte $3F, $00, $10     ;PPU palette adress and data length.
 ;The following values are written to the background palette:
 L9809:  .byte $0F, $2C, $2C, $2C, $0F, $2C, $2C, $2C, $0F, $2C, $2C, $2C, $0F, $2C, $2C, $2C
 
 EndGamePal0C:
 L9819:  .byte $3F, $10, $50     ;PPU palette adress and data length.
 L981C:  .byte $0F               ;Repeat bit set. Fill sprite palette with #$0F.
-
 L981D:  .byte $00               ;End EndGamePal0C data.
 
 UpdateSpriteCoords:
@@ -2720,6 +2684,8 @@ L986A:  LDA IntroSpr0XChange,X  ;position addresses to make sure the sprites don
 L986D:  STA IntroSpr0XCoord,X   ;overshoot their mark.
 L9870:* RTS                     ;
 
+;----------------------------------------------------------------------------------------------------
+
 CalcDisplacement:
 L9871:  STA $04                 ;
 L9873:  LDA #$08                ;Time division. The higher the number, the slower the sprite.
@@ -2735,20 +2701,22 @@ L9885:  BNE --                  ;
 L9887:  LDA $04                 ;
 L9889:  RTS                     ;Return A/time.
 
+;----------------------------------------------------------------------------------------------------
+
 ;This function decrements the y coordinate of the 40 intro star sprites.
 
 DecSpriteYCoord:
 L988A:  LDA TitleRoutine        ;
 L988C:  CMP #$1D                ;
 L988E:  BCS ++                  ;If the end game is playing, branch to exit.
-L9890:  LDA SpriteLoadPending   ;       
+L9890:  LDA SpriteLoadPend      ;       
 L9892:  BEQ ++                  ;If no sprite load is pending, branch to exit.
 L9894:  LDA FrameCount          ;
 L9896:  LSR                     ;
 L9897:  BCS ++                  ;If not on an odd numbered frame, branch to exit.
 L9899:  LDX #$9F                ;
-L989B:* DEC IntroStarSprite00,X ;Decrement y coord of the intro star sprites.
-L989E:  DEC Sprite18RAM,X       ;Decrement y coord of 40 sprites.
+L989B:* DEC IntroStrSprt00,X    ;Decrement y coord of the intro star sprites.
+L989E:  DEC SpriteRAM+$60,X     ;Decrement y coord of 40 sprites.
 L98A1:  DEX                     ;
 L98A2:  DEX                     ;
 L98A3:  DEX                     ;Move to next sprite.
@@ -2756,18 +2724,18 @@ L98A4:  DEX                     ;
 L98A5:  CPX #$FF                ;
 L98A7:  BNE -                   ;Loop 40 times.
 L98A9:  LDA #$00                ;
-L98AB:  STA SpriteLoadPending   ;Sprite RAM load complete.
+L98AB:  STA SpriteLoadPend      ;Sprite RAM load complete.
 L98AD:* RTS                     ;
 
 LoadStarSprites:
 L98AE:  LDY #$9F                ;
-L98B0:* LDA IntroStarSprite00,Y ;
-L98B3:  STA Sprite18RAM,Y       ;Store RAM contents of $6E00 thru $6E9F 
+L98B0:* LDA IntroStrSprt00,Y    ;
+L98B3:  STA SpriteRAM+$60,Y     ;Store RAM contents of $6E00 thru $6E9F 
 L98B6:  DEY                     ;in sprite RAM at locations $0260 thru $02FF. 
 L98B7:  CPY #$FF                ;
 L98B9:  BNE -                   ;
 L98BB:  LDA #$00                ;               
-L98BD:  STA SpriteLoadPending   ;Set $C8 to #$00.
+L98BD:  STA SpriteLoadPend      ;Set $C8 to #$00.
 L98BF:  RTS                     ;
 
 ;----------------------------------------------------------------------------------------------------
@@ -2797,19 +2765,15 @@ L9980:  .byte $01, $20, $21, $00
 
 ;----------------------------------------------------------------------------------------------------
 
-L9984:  .byte $21           ;PPU address and string length.
-L9985:  .byte $8C           ;PPU address low byte.
-L9986:  .byte $05           ;PPU string length.
+L9984:  .byte $21, $8C, $05     ;PPU address and string length.
 ;              S    T    A    R    T
 L9987:  .byte $1C, $1D, $0A, $1B, $1D                   
 
-L998C:  .byte $21           ;PPU address and string length.
-L998D:  .byte $EC           ;PPU address low byte.
-L998E:  .byte $08           ;PPU string length.
+L998C:  .byte $21, $EC, $08     ;PPU address and string length.
 ;              C    O    N    T    I    N    U    E
 L998F:  .byte $0C, $18, $17, $1D, $12, $17, $1E, $0E
 
-L9997:  .byte $00       ;End PPU string write 
+L9997:  .byte $00               ;End PPU string write 
 
 ;----------------------------------------------------------------------------------------------------
 
@@ -2852,30 +2816,22 @@ L99E3:  .byte $20, $88, $10 ;PPU address and string length.
 L99E6:  .byte $19, $0A, $1C, $1C, $FF, $20, $18, $1B, $0D, $FF, $19, $15, $0E, $0A, $1C, $0E
 
 ;Clears attribute table 0 starting at address $23C0.
-L99F6:  .byte $23           ;PPU address and string length.
-L99F7:  .byte $C0           ;PPU address low byte.
-L99F8:  .byte $50           ;PPU string length.
-L99F9:  .byte $00           ;Repeat bit set. Repeats entry 16 times.
+L99F6:  .byte $23, $C0, $50     ;PPU address and string length.
+L99F9:  .byte $00               ;Repeat bit set. Repeats entry 16 times.
 
 ;Writes to attribute table 0 starting at address $23D0.
-L99FA:  .byte $23           ;PPU address and string length.
-L99FB:  .byte $D0           ;PPU address low byte.
-L99FC:  .byte $48           ;PPU string length.
-L99FD:  .byte $55           ;Repeat bit set. Repeats entry 8 times.
+L99FA:  .byte $23, $D0, $48     ;PPU address and string length.
+L99FD:  .byte $55               ;Repeat bit set. Repeats entry 8 times.
 
 ;Writes to attribute table 0 starting at address $23D8.
-L99FE:  .byte $23           ;PPU address and string length.
-L99FF:  .byte $D8           ;PPU address low byte.
-L9A00:  .byte $60           ;PPU string length.
-L9A01:  .byte $FF           ;Repeat bit set. Repeats entry 32 times.
+L99FE:  .byte $23, $D8, $60     ;PPU address and string length.
+L9A01:  .byte $FF               ;Repeat bit set. Repeats entry 32 times.
 
 ;Writes to attribute table 0 starting at address $23DA.
-L9A02:  .byte $23           ;PPU address and string length.
-L9A03:  .byte $DA           ;PPU address low byte.
-L9A04:  .byte $44           ;PPU string length.
-L9A05:  .byte $F0           ;Repeat bit set. Repeats entry 4 times.
+L9A02:  .byte $23, $DA, $44     ;PPU address and string length.
+L9A05:  .byte $F0               ;Repeat bit set. Repeats entry 4 times.
 
-L9A06:  .byte $00           ;End PPU string write. 
+L9A06:  .byte $00               ;End PPU string write. 
 
 ;----------------------------------------[ Ending routines ]-----------------------------------------
 
@@ -2919,7 +2875,7 @@ L9A43:* STA PasswordByte00,Y    ;Erase PasswordByte00 thru PasswordByte11.
 L9A46:  DEY                     ;
 L9A47:  BPL -                   ;
 L9A49:  INY                     ;Y = #$00.
-L9A4A:* STA UniqueItemHistory,Y ;
+L9A4A:* STA UnqItmHist,Y        ;
 L9A4D:  INY                     ;Erase Unique item history.
 L9A4E:  BNE -                   ;
 L9A50:  LDA SamusGear           ;
@@ -2971,7 +2927,7 @@ L9AB8:  CMP #$09                ;reaches #$09.
 L9ABA:  BNE +                   ;
 L9ABC:  LDA #$01                ;
 L9ABE:  STA PalDataPending      ;
-L9AC0:* LDA RoomPtr             ;RoomPtr used in end of game to determine
+L9AC0:* LDA GenByte33           ;GenByte33 used in end of game to determine
 L9AC2:  JSR ChooseRoutine       ;($C27C)which subroutine to run below.
 
 L9AC5:  .word LoadEndGFX        ;($9AD5)Load end GFX to pattern tables.
@@ -2989,10 +2945,10 @@ L9AD8:  JSR InitEndGFX          ;($C5D0)Prepare to load end GFX.
 L9ADB:  LDA #$04                ;
 L9ADD:  LDY JustInBailey        ;Checks if game was played as suitless
 L9AE0:  BNE +                   ;Samus.  If so, branch.
-L9AE2:  LDA #$00                ;Loads SpritePointerIndex with #$00(suit on).
+L9AE2:  LDA #$00                ;Loads SpritePtrIndex with #$00(suit on).
 L9AE4:* STA EndingType          ;
-L9AE7:  ASL                     ;Loads SpritePointerIndex with #$08(suitless).
-L9AE8:  STA SpritePointerIndex  ;
+L9AE7:  ASL                     ;Loads SpritePtrIndex with #$08(suitless).
+L9AE8:  STA SpritePtrIndex      ;
 L9AEA:  LDX #$52                ;Loads the screen where Samus stands on
 L9AEC:  LDY #$A0                ;the surface of the planet in end of game.
 L9AEE:  JSR PrepPPUProcess_     ;($C20E)Prepare to write to PPU.
@@ -3002,7 +2958,7 @@ L9AF6:  STA MultiSFXFlag        ;
 L9AF9:  LDA #$60                ;Loads Timer3 with a delay of 960 frames
 L9AFB:  STA Timer3              ;(16 seconds).
 L9AFD:  LDA #$36                ;#$36/#$03 = #$12.  Number of sprites
-L9AFF:  STA SpriteByteCounter   ;used to draw end graphic of Samus.
+L9AFF:  STA SpriteByteCntr      ;used to draw end graphic of Samus.
 L9B01:  LDA #$00                ;
 L9B03:  STA SpriteAttribByte    ;
 L9B05:  STA ColorCntIndex       ;
@@ -3014,14 +2970,14 @@ L9B0F:  LDA #$01                ;
 L9B11:  STA PalDataPending      ;Change palette.
 L9B13:  LDA #$08                ;
 L9B15:  STA ClrChangeCounter    ;Initialize ClrChangeCounter with #$08.
-L9B17:  INC RoomPtr             ;
+L9B17:  INC GenByte33           ;
 L9B19:  JMP ScreenOn            ;($C447)Turn screen on.
 
 ShowEndSamus:
 L9B1C:  JSR LoadEndSamSprts     ;($9C9A)Load end image of Samus.
 L9B1F:  LDA Timer3              ;Once 960 frames (16 seconds) have expired,
 L9B21:  BNE +                   ;Move to EndSamusFlash routine.
-L9B23:  INC RoomPtr             ;
+L9B23:  INC GenByte33           ;
 L9B25:  RTS                     ;
 
 L9B26:* CMP #$50                ;After 160 frames have past
@@ -3045,9 +3001,9 @@ L9B42:  JSR ChooseEnding        ;($CAF5)Choose which Samus ending to show.
 L9B45:  JSR CalculatePassword   ;($8C7A)Calculate game password.
 L9B48:  LDA EndingType          ;
 L9B4B:  ASL                     ;When EndSamusFlash routine is half way
-L9B4C:  STA SpritePointerIndex  ;done, this code will calculate the
+L9B4C:  STA SpritePtrIndex      ;done, this code will calculate the
 L9B4E:  LDA #$36                ;password and choose the proper ending.
-L9B50:  STA SpriteByteCounter   ;
+L9B50:  STA SpriteByteCntr      ;
 L9B52:* CMP #$10                ;
 L9B54:  BNE ++                  ;Once flashing Samus is compete, set Timer3
 L9B56:  STA Timer3              ;for a 160 frame(2.6 seconds) delay.
@@ -3056,8 +3012,8 @@ L9B5A:  LDA EndingType          ;
 L9B5D:  CMP #$04                ;If one of the suitless Samus endings,
 L9B5F:  BCC +                   ;increment sprite color for proper
 L9B61:  INY                     ;color to be displayed and increment
-L9B62:* STY SpriteAttribByte    ;RoomPtr and erase the sprites.
-L9B64:  INC RoomPtr             ;
+L9B62:* STY SpriteAttribByte    ;GenByte33 and erase the sprites.
+L9B64:  INC GenByte33           ;
 L9B66:  JMP EraseAllSprites     ;($C1A3)Clear all sprites off the screen.
 L9B69:* DEC ClrChangeCounter    ;Decrement ClrChangeCounter.
 L9B6B:  BNE +                   ;
@@ -3087,7 +3043,7 @@ L9B97:  LDA #$10                ;
 L9B99:  STA Timer3              ;Load Timer3 with 160 frame delay
 L9B9B:  LDA #$08                ;(2.6 seconds).
 L9B9D:  STA PalDataPending      ;Change palette
-L9B9F:  INC RoomPtr             ;Increment RoomPtr
+L9B9F:  INC GenByte33           ;Increment GenByte33
 L9BA1:  RTS                     ;
 
 L9BA2:* LDA EndingType          ;If suitless Samus
@@ -3095,21 +3051,21 @@ L9BA5:  CMP #$04                ;ending, branch.
 L9BA7:  BCS +                   ;
 L9BA9:  JMP LoadEndSamSprts     ;($9C9A)
 L9BAC:* SBC #$04                ;If jumpsuit Samus ending,
-L9BAE:  ASL                     ;WaveSpritePointer=#$00, if bikini
-L9BAF:  ASL                     ;Samus ending, WaveSpritePointer=#$04.
-L9BB0:  STA WaveSpritePointer   ;
+L9BAE:  ASL                     ;WaveSpritePtr=#$00, if bikini
+L9BAF:  ASL                     ;Samus ending, WaveSpritePtr=#$04.
+L9BB0:  STA WaveSpritePtr       ;
 L9BB2:  LDA FrameCount          ;
 L9BB4:  AND #$08                ;Every eigth frame count, change wave sprite data.
 L9BB6:  BNE +                   ;
-L9BB8:  LDY #$10                ;Load WaveSpriteCounter with #$10(16 bytes of
-L9BBA:  STY WaveSpriteCounter   ;sprite data to be loaded).
+L9BB8:  LDY #$10                ;Load WaveSpriteCntr with #$10(16 bytes of
+L9BBA:  STY WaveSpriteCntr      ;sprite data to be loaded).
 L9BBC:  BNE ++                  ;Branch always.
-L9BBE:* INC WaveSpritePointer   ;
-L9BC0:  INC WaveSpritePointer   ;When bit 3 of FrameCount is not set,
+L9BBE:* INC WaveSpritePtr       ;
+L9BC0:  INC WaveSpritePtr       ;When bit 3 of FrameCount is not set,
 L9BC2:  LDY #$10                ;Samus' waving hand is down.
-L9BC4:  STY WaveSpriteCounter   ;
-L9BC6:* LDA #$2D                ;Load SpriteByteCounter in preparation for
-L9BC8:  STA SpriteByteCounter   ;refreshing Samus sprite bytes.
+L9BC4:  STY WaveSpriteCntr      ;
+L9BC6:* LDA #$2D                ;Load SpriteByteCntr in preparation for
+L9BC8:  STA SpriteByteCntr      ;refreshing Samus sprite bytes.
 L9BCA:  JMP LoadWaveSprites     ;($9C7F)Load sprites for waving Samus.
 
 EndFadeOut:
@@ -3130,8 +3086,8 @@ L9BE3:  LDA PalDataPending      ;This creates the fade out effect.
 L9BE5:  CMP #$0C                ;
 L9BE7:  BNE +                   ;
 L9BE9:  LDA #$10                ;After fadeout complete, load Timer3 with 160 frame
-L9BEB:  STA Timer3              ;delay(2.6 seconds) and increment RoomPtr.
-L9BED:  INC RoomPtr             ;
+L9BEB:  STA Timer3              ;delay(2.6 seconds) and increment GenByte33.
+L9BED:  INC GenByte33           ;
 L9BEF:* LDA EndingType          ;
 L9BF2:  CMP #$04                ;If suitless Samus ending, load hand wave sprites,
 L9BF4:  BCS +                   ;else just load regular Samus sprites
@@ -3158,7 +3114,7 @@ L9C1F:  BNE +                   ;
 L9C21:  LDA ScrollY             ;
 L9C23:  CMP #$88                ;If last page of credits is not finished
 L9C25:  BCC +                   ;scrolling, branch.  Else increment to next
-L9C27:  INC RoomPtr             ;routine.
+L9C27:  INC GenByte33           ;routine.
 L9C29:  RTS                     ;
 
 L9C2A:* LDA FrameCount          ;credits scroll up one position every 3 frames.
@@ -3217,97 +3173,99 @@ L9C6F:  ASL                     ;This formula is used when ScrollY = 128,
 L9C70:* ADC $01                 ;129, 130 and 131.
 L9C72:  ASL                     ;Result is index to find proper credits to load.
 L9C73:  TAY                     ;
-L9C74:  LDX CreditsPntrTbl,Y     ;Base is $A291. Lower byte of pointer to PPU string.
-L9C77:  LDA CreditsPntrTbl+1,Y   ;Upper byte of pointer to PPU string.
-L9C7A:  TAY                 ;
-L9C7B:  JMP PrepPPUProcess_      ;($C20E)Prepare to write to PPU.
-L9C7E:* RTS             ;
+L9C74:  LDX CreditsPntrTbl,Y    ;Base is $A291. Lower byte of pointer to PPU string.
+L9C77:  LDA CreditsPntrTbl+1,Y  ;Upper byte of pointer to PPU string.
+L9C7A:  TAY                     ;
+L9C7B:  JMP PrepPPUProcess_     ;($C20E)Prepare to write to PPU.
+L9C7E:* RTS                     ;
  
 LoadWaveSprites:
-L9C7F:  LDX WaveSpritePointer       ;
-L9C81:  LDA WavePointerTable,X      ;
-L9C84:  STA $00             ;Load pointer to wave sprite data
-L9C86:  LDA WavePointerTable+1,X    ;into addresses $00 and $01.
-L9C89:  STA $01             ;
-L9C8B:  LDX #$20            ;Offset for sprite RAM load.
-L9C8D:  LDY #$00            ;
-L9C8F:* LDA ($00),Y         ;
-L9C91:  STA Sprite00RAM,X       ;Load wave sprites into sprite RAM starting at
-L9C94:  INX             ;location $220 (Sprite08RAM).
-L9C95:  INY             ;
-L9C96:  CPY WaveSpriteCounter       ;Check to see if sprite RAM load complete.
-L9C98:  BNE -               ;If not, branch and load another byte.
+L9C7F:  LDX WaveSpritePtr       ;
+L9C81:  LDA WavePntrTable,X     ;
+L9C84:  STA $00                 ;Load pointer to wave sprite data
+L9C86:  LDA WavePntrTable+1,X   ;into addresses $00 and $01.
+L9C89:  STA $01                 ;
+L9C8B:  LDX #$20                ;Offset for sprite RAM load.
+L9C8D:  LDY #$00                ;
+L9C8F:* LDA ($00),Y             ;
+L9C91:  STA SpriteRAM,X         ;Load wave sprites into sprite RAM starting at
+L9C94:  INX                     ;location $220 (Sprite08RAM).
+L9C95:  INY                     ;
+L9C96:  CPY WaveSpriteCntr      ;Check to see if sprite RAM load complete.
+L9C98:  BNE -                   ;If not, branch and load another byte.
 
 LoadEndSamSprts:
-L9C9A:  LDX #$30            ;Index for loading Samus sprite data into sprite RAM.
-L9C9C:  LDY SpritePointerIndex      ;
-L9C9E:  LDA EndSamusAddrTbl,Y       ;Base is $9D5A.
-L9CA1:  STA $00             ;Load $00 and $01 with pointer to the sprite
-L9CA3:  LDA EndSamusAddrTbl+1,Y     ;data that shows Samus at the end of the game.
-L9CA6:  STA $01             ;
-L9CA8:  LDY #$00            ;
-L9CAA:* LDA ($00),Y         ;Load sprite data starting at Sprite0CRAM.
-L9CAC:  STA Sprite00RAM,X       ;Load sprite Y-coord.
-L9CAF:  INX             ;
-L9CB0:  INY             ;Increment X and Y.
-L9CB1:  LDA ($00),Y         ;
-L9CB3:  BPL +               ;If sprite pattern byte MSB cleared, branch.
-L9CB5:  AND #$7F            ;
-L9CB7:  STA Sprite00RAM,X       ;Remove MSB and write sprite pattern data
-L9CBA:  LDA SpriteAttribByte        ;to sprite RAM.
-L9CBC:  EOR #$40            ;
-L9CBE:  BNE ++              ;
-L9CC0:* STA Sprite00RAM,X       ;Writes sprite pattern byte to 
-L9CC3:  LDA SpriteAttribByte        ;sprite RAM if its MSB is not set.
-L9CC5:* INX             ;
-L9CC6:  STA Sprite00RAM,X       ;Writes sprite attribute byte to sprite RAM.
-L9CC9:  INY             ;
-L9CCA:  INX                 ;Increment X and Y.
-L9CCB:  LDA ($00),Y         ;
-L9CCD:  STA Sprite00RAM,X       ;Load sprite X-coord.
-L9CD0:  INY             ;
-L9CD1:  INX             ;Increment X and Y.
-L9CD2:  CPY SpriteByteCounter       ;
-L9CD4:  BNE ---             ;Repeat until sprite load is complete.
-L9CD6:  LDA RoomPtr         ;
-L9CD8:  CMP #$02            ;If not running the EndSamusFlash routine, branch.
-L9CDA:  BCC ++              ;
+L9C9A:  LDX #$30                ;Index for loading Samus sprite data into sprite RAM.
+L9C9C:  LDY SpritePtrIndex      ;
+L9C9E:  LDA EndSamusAddrTbl,Y   ;Base is $9D5A.
+L9CA1:  STA $00                 ;Load $00 and $01 with pointer to the sprite
+L9CA3:  LDA EndSamusAddrTbl+1,Y ;data that shows Samus at the end of the game.
+L9CA6:  STA $01                 ;
+L9CA8:  LDY #$00                ;
+L9CAA:* LDA ($00),Y             ;Load sprite data starting at Sprite0CRAM.
+L9CAC:  STA SpriteRAM,X         ;Load sprite Y-coord.
+L9CAF:  INX                     ;
+L9CB0:  INY                     ;Increment X and Y.
+L9CB1:  LDA ($00),Y             ;
+L9CB3:  BPL +                   ;If sprite pattern byte MSB cleared, branch.
+L9CB5:  AND #$7F                ;
+L9CB7:  STA SpriteRAM,X         ;Remove MSB and write sprite pattern data
+L9CBA:  LDA SpriteAttribByte    ;to sprite RAM.
+L9CBC:  EOR #$40                ;
+L9CBE:  BNE ++                  ;
+L9CC0:* STA SpriteRAM,X         ;Writes sprite pattern byte to 
+L9CC3:  LDA SpriteAttribByte    ;sprite RAM if its MSB is not set.
+L9CC5:* INX                     ;
+L9CC6:  STA SpriteRAM,X         ;Writes sprite attribute byte to sprite RAM.
+L9CC9:  INY                     ;
+L9CCA:  INX                     ;Increment X and Y.
+L9CCB:  LDA ($00),Y             ;
+L9CCD:  STA SpriteRAM,X         ;Load sprite X-coord.
+L9CD0:  INY                     ;
+L9CD1:  INX                     ;Increment X and Y.
+L9CD2:  CPY SpriteByteCntr      ;
+L9CD4:  BNE ---                 ;Repeat until sprite load is complete.
+L9CD6:  LDA GenByte33           ;
+L9CD8:  CMP #$02                ;If not running the EndSamusFlash routine, branch.
+L9CDA:  BCC ++                  ;
 L9CDC:  LDA ColorCntIndex       ;
-L9CDE:  CMP #$08            ;If EndSamusFlash routine is more than half
-L9CE0:  BCC ++              ;way done, Check ending type for the Samus helmet
+L9CDE:  CMP #$08                ;If EndSamusFlash routine is more than half
+L9CE0:  BCC ++                  ;way done, Check ending type for the Samus helmet
 L9CE2:  LDA EndingType          ;off ending.  If not helmet off ending, branch.
-L9CE5:  CMP #$03            ;
-L9CE7:  BNE ++              ;
-L9CE9:  LDY #$00            ;
-L9CEB:  LDX #$00            ;
-L9CED:* LDA SamusHeadSpriteTble,Y   ;The following code loads the sprite graphics
-L9CF0:  STA Sprite00RAM,X       ;when the helmet off ending is playing.  The
-L9CF3:  INY                 ;sprites below keep Samus head from flashing
-L9CF4:  INX                 ;while the rest of her body does.
-L9CF5:  CPY #$18            ;
-L9CF7:  BNE -               ;
-L9CF9:* RTS             ;
+L9CE5:  CMP #$03                ;
+L9CE7:  BNE ++                  ;
+L9CE9:  LDY #$00                ;
+L9CEB:  LDX #$00                ;
+L9CED:* LDA SamusHeadSprtTble,Y ;The following code loads the sprite graphics
+L9CF0:  STA SpriteRAM,X         ;when the helmet off ending is playing.  The
+L9CF3:  INY                     ;sprites below keep Samus head from flashing
+L9CF4:  INX                     ;while the rest of her body does.
+L9CF5:  CPY #$18                ;
+L9CF7:  BNE -                   ;
+L9CF9:* RTS                     ;
  
 ;The following table is used by the routine above to keep Samus'
 ;head from flashing during the helmet off ending.
 
-SamusHeadSpriteTble:
-L9CFA:  .byte $93, $36, $01, $70    ;Sprite00RAM
-L9CFE:  .byte $93, $37, $01, $78    ;Sprite01RAM
-L9D02:  .byte $93, $38, $01, $80    ;Sprite02RAM
-L9D06:  .byte $9B, $46, $01, $70    ;Sprite03RAM
-L9D0A:  .byte $9B, $47, $01, $78    ;Sprite04RAM
-L9D0E:  .byte $9B, $48, $01, $80    ;Sprite05RAM
+SamusHeadSprtTble:
+
+;Sprites 0-5.
+L9CFA:  .byte $93, $36, $01, $70
+L9CFE:  .byte $93, $37, $01, $78
+L9D02:  .byte $93, $38, $01, $80
+L9D06:  .byte $9B, $46, $01, $70
+L9D0A:  .byte $9B, $47, $01, $78
+L9D0E:  .byte $9B, $48, $01, $80
 
 ;The following table is a pointer table to the sprites that makes Samus wave in the end
 ;of the game when she is suitless.  The top two pointers are for when she is in the jumpsuit
 ;and the bottom two pointers are for when she is in the bikini.
 
-WavePointerTable:
-L9D12:  .word $9D1A         ;Jumpsuit Samus hand up.
-L9D14:  .word $9D2A         ;Jumpsuit Samus hand down.
-L9D16:  .word $9D3A         ;Bikini Samus hand up.
-L9D18:  .word $9D4A         ;Bikini Samus hand down.
+WavePntrTable:
+L9D12:  .word $9D1A             ;Jumpsuit Samus hand up.
+L9D14:  .word $9D2A             ;Jumpsuit Samus hand down.
+L9D16:  .word $9D3A             ;Bikini Samus hand up.
+L9D18:  .word $9D4A             ;Bikini Samus hand down.
 
 ;Sprite data table used when Samus is in jumpsuit and her waving hand is up.
 JsHandUpTable:
@@ -3462,7 +3420,7 @@ L9EA7:  .byte $AB, $4C, $80
 LoadEndStarSprites:
 L9EAA:  LDY #$00                ;
 L9EAC:* LDA EndStarDataTable,Y  ;
-L9EAF:  STA Sprite1CRAM,Y       ;Load the table below into sprite RAM
+L9EAF:  STA SpriteRAM+$70,Y     ;Load the table below into sprite RAM
 L9EB2:  INY                     ;starting at address $0270.
 L9EB3:  CPY #$9C                ;
 L9EB5:  BNE -                   ;
@@ -3544,15 +3502,12 @@ L9F91:  .word EndGamePal08, EndGamePal09, EndGamePal0A, EndGamePal0A
 L9F99:  .word EndGamePal0B
 
 EndGamePal00:
-L9F9B:  .byte $3F           ;PPU address and string length.
-L9F9C:  .byte $00           ;PPU address low byte.
-L9F9D:  .byte $20           ;PPU string length.
+L9F9B:  .byte $3F, $00, $20     ;PPU address and string length.
 ;The following values are written to the background palette:
 L9F9E:  .byte $0F, $21, $11, $02, $0F, $29, $1B, $1A, $0F, $27, $28, $29, $0F, $28, $18, $08
 ;The following values are written to the sprite palette:
 L9FAE:  .byte $0F, $16, $19, $27, $0F, $36, $15, $17, $0F, $12, $21, $20, $0F, $35, $12, $16 
-
-L9FBE:  .byte $00           ;End EndGamePal00 data.
+L9FBE:  .byte $00               ;End EndGamePal00 data.
 
 EndGamePal01:
 L9FBF:  .byte $3F           ;PPU address and string length.
@@ -3645,20 +3600,16 @@ LA037:  .byte $10           ;PPU string length.
 ;The following values are written to the sprite palette:
 LA038:  .byte $0F, $06, $08, $0F, $0F, $06, $08, $0F, $0F, $00, $10, $0F, $0F, $01, $0C, $0F
 
-LA048:  .byte $00           ;End EndGamePal09 data.
+LA048:  .byte $00               ;End EndGamePal09 data.
 
 EndGamePal0A:
-LA049:  .byte $3F           ;PPU address and string length.
-LA04A:  .byte $0C           ;PPU address low byte.
-LA04B:  .byte $44           ;PPU string length.
-LA04C:  .byte $0F           ;Repeat bit set. Fill background palette with #$0F
-                    ;starting at $0C.
-LA04D:  .byte $3F           ;PPU address and string length.
-LA04E:  .byte $10           ;PPU address low byte.
-LA04F:  .byte $50           ;PPU string length.
-LA050:  .byte $0F           ;Repeat bit set. Fill sprite palette with #$0F.
+LA049:  .byte $3F, $0C, $44     ;PPU address and string length.
+LA04C:  .byte $0F               ;Repeat bit set. Fill background palette with #$0F starting at $0C.
 
-LA051:  .byte $00           ;End EndGamePal0A data.
+LA04D:  .byte $3F, $10, $50     ;PPU address and string length.
+LA050:  .byte $0F               ;Repeat bit set. Fill sprite palette with #$0F.
+
+LA051:  .byte $00               ;End EndGamePal0A data.
 
 ;The following data writes the end game backgroud graphics.
 
@@ -4971,326 +4922,326 @@ LADC3:  .byte $B2               ;7/32 seconds
 LADC4:  .byte $1C               ;D3
 
 EndSQ2Data:
-LADC5:  .byte $C2           ;
-LADC6:  .byte $B4           ;7/8 seconds    +
-LADC7:  .byte $20           ;E3     |
-LADC8:  .byte $2A           ;A3     | Repeat 2 times.
-LADC9:  .byte $28           ;Ab3        |
-LADCA:  .byte $26           ;G3     +
-LADCB:  .byte $FF           ;
-LADCC:  .byte $20           ;E3
-LADCD:  .byte $20           ;E3
-LADCE:  .byte $C2           ;
-LADCF:  .byte $B0           ;1/4 seconds    +
-LADD0:  .byte $34           ;D4     |
-LADD1:  .byte $3C           ;F#4        |
-LADD2:  .byte $42           ;A4     |
-LADD3:  .byte $4C           ;D5     |
-LADD4:  .byte $B2           ;7/32 seconds   |
-LADD5:  .byte $54           ;F#5        |
-LADD6:  .byte $50           ;E5     |
-LADD7:  .byte $4C           ;D5     |
-LADD8:  .byte $B3           ;7/16 seconds   |
-LADD9:  .byte $42           ;A4     | Repeat 2 times.
-LADDA:  .byte $3C           ;F#4        |
-LADDB:  .byte $B3           ;7/16 seconds   |
-LADDC:  .byte $46           ;B4     |
-LADDD:  .byte $B2           ;7/32 seconds   |
-LADDE:  .byte $34           ;D4     |
-LADDF:  .byte $B1           ;7/64 seconds   |
-LADE0:  .byte $4C           ;D5     |
-LADE1:  .byte $B0           ;1/4 seconds    |
-LADE2:  .byte $42           ;A4     |
-LADE3:  .byte $3C           ;F#4        |
-LADE4:  .byte $B3           ;7/16 seconds   |
-LADE5:  .byte $38           ;E4     |
-LADE6:  .byte $46           ;B4     +
-LADE7:  .byte $FF           ;
-LADE8:  .byte $C2           ;
-LADE9:  .byte $B3           ;7/16 seconds   +
-LADEA:  .byte $38           ;E4     |
-LADEB:  .byte $B2           ;7/32 seconds   |
-LADEC:  .byte $3C           ;F#4        |
-LADED:  .byte $34           ;D4     |
-LADEE:  .byte $34           ;D4     |
-LADEF:  .byte $30           ;C4     |
-LADF0:  .byte $38           ;E4     |
-LADF1:  .byte $34           ;D4     |
-LADF2:  .byte $44           ;A#4        | Repeat 2 times.
-LADF3:  .byte $38           ;E4     |
-LADF4:  .byte $34           ;D4     |
-LADF5:  .byte $42           ;A4     |
-LADF6:  .byte $B1           ;7/64 seconds   |
-LADF7:  .byte $3A           ;F4     |
-LADF8:  .byte $40           ;Ab4        |
-LADF9:  .byte $B2           ;7/32 seconds   |
-LADFA:  .byte $46           ;B4     |
-LADFB:  .byte $3E           ;G4     |
-LADFC:  .byte $3E           ;G4     +
-LADFD:  .byte $FF           ;
-LADFE:  .byte $C4           ;
-LADFF:  .byte $B2           ;7/32 seconds   +
-LAE00:  .byte $3C           ;F#4        |
-LAE01:  .byte $42           ;A4     |
-LAE02:  .byte $4C           ;D5     |
-LAE03:  .byte $42           ;A4     | Repeat 4 times.
-LAE04:  .byte $3E           ;G4     |
-LAE05:  .byte $42           ;A4     |
-LAE06:  .byte $4C           ;D5     |
-LAE07:  .byte $3E           ;G4     +
-LAE08:  .byte $FF           ;
-LAE09:  .byte $C2           ;
-LAE0A:  .byte $72           ;A6     +
-LAE0B:  .byte $6E           ;G6     |
-LAE0C:  .byte $6C           ;F#6        |
-LAE0D:  .byte $68           ;E6     |
-LAE0E:  .byte $6E           ;G6     |
-LAE0F:  .byte $6C           ;F#6        |
-LAE10:  .byte $64           ;D6     |
-LAE11:  .byte $68           ;E6     +
-LAE12:  .byte $FF           ;
-LAE13:  .byte $B4           ;7/8 seconds
-LAE14:  .byte $4C           ;D5
-LAE15:  .byte $B3           ;7/16 seconds
-LAE16:  .byte $56           ;G5
-LAE17:  .byte $50           ;E5
-LAE18:  .byte $B4           ;7/8 seconds
-LAE19:  .byte $54           ;F#5
-LAE1A:  .byte $B3           ;7/16 seconds
-LAE1B:  .byte $56           ;G5
-LAE1C:  .byte $5C           ;A#5
-LAE1D:  .byte $B4           ;7/8 seconds
-LAE1E:  .byte $4C           ;D5
-LAE1F:  .byte $B3           ;7/16 seconds
-LAE20:  .byte $50           ;E5
-LAE21:  .byte $56           ;G5
-LAE22:  .byte $B4           ;7/8 seconds
-LAE23:  .byte $54           ;F#5
-LAE24:  .byte $B3           ;7/16 seconds
-LAE25:  .byte $56           ;G5
-LAE26:  .byte $5C           ;A#5
-LAE27:  .byte $C4           ;
-LAE28:  .byte $B1           ;7/64 seconds   +
-LAE29:  .byte $5A           ;A5     |
-LAE2A:  .byte $42           ;A4     |
-LAE2B:  .byte $56           ;G5     |
-LAE2C:  .byte $42           ;A4     |
-LAE2D:  .byte $54           ;F#5        |
-LAE2E:  .byte $42           ;A4     |
-LAE2F:  .byte $50           ;E5     | Repeat 4 times.
-LAE30:  .byte $42           ;A4     |
-LAE31:  .byte $56           ;G5     |
-LAE32:  .byte $3E           ;G4     |
-LAE33:  .byte $54           ;F#5        |
-LAE34:  .byte $3E           ;G4     |
-LAE35:  .byte $4C           ;D5     |
-LAE36:  .byte $3E           ;G4     |
-LAE37:  .byte $50           ;E5     |
-LAE38:  .byte $3E           ;G4     +
-LAE39:  .byte $FF           ;
-LAE3A:  .byte $C8           ;
-LAE3B:  .byte $B0           ;1/4 seconds    +
-LAE3C:  .byte $3C           ;F#4        |
-LAE3D:  .byte $3E           ;G4     |
-LAE3E:  .byte $3C           ;F#4        |
-LAE3F:  .byte $3E           ;G4     |
-LAE40:  .byte $42           ;A4     |
-LAE41:  .byte $46           ;B4     |
-LAE42:  .byte $42           ;A4     | Repeat 8 times.
-LAE43:  .byte $46           ;B4     |
-LAE44:  .byte $4C           ;D5     |
-LAE45:  .byte $50           ;E5     |
-LAE46:  .byte $4C           ;D5     |
-LAE47:  .byte $50           ;E5     |
-LAE48:  .byte $50           ;E5     |
-LAE49:  .byte $54           ;F#5        |
-LAE4A:  .byte $50           ;E5     |
-LAE4B:  .byte $54           ;F#5        +
-LAE4C:  .byte $FF           ;
-LAE4D:  .byte $C3           ;
-LAE4E:  .byte $B0           ;1/4 seconds    +
-LAE4F:  .byte $42           ;A4     |
-LAE50:  .byte $42           ;A4     |
-LAE51:  .byte $42           ;A4     |
-LAE52:  .byte $02           ;No sound   |
-LAE53:  .byte $02           ;No sound   |
-LAE54:  .byte $02           ;No sound   |
-LAE55:  .byte $42           ;A4     |
-LAE56:  .byte $42           ;A4     |
-LAE57:  .byte $42           ;A4     |
-LAE58:  .byte $02           ;No sound   |
-LAE59:  .byte $42           ;A4     |
-LAE5A:  .byte $42           ;A4     |
-LAE5B:  .byte $42           ;A4     |
-LAE5C:  .byte $42           ;A4     |
-LAE5D:  .byte $42           ;A4     | Repeat 3 times.
-LAE5E:  .byte $02           ;No sound   |
-LAE5F:  .byte $3A           ;F4     |
-LAE60:  .byte $3A           ;F4     |
-LAE61:  .byte $3A           ;F4     |
-LAE62:  .byte $02           ;No sound   |
-LAE63:  .byte $02           ;No sound   |
-LAE64:  .byte $02           ;No sound   |
-LAE65:  .byte $3A           ;F4     |
-LAE66:  .byte $3A           ;F4     |
-LAE67:  .byte $3E           ;G4     |
-LAE68:  .byte $02           ;No sound   |
-LAE69:  .byte $3E           ;G4     |
-LAE6A:  .byte $3E           ;G4     |
-LAE6B:  .byte $3E           ;G4     |
-LAE6C:  .byte $3E           ;G4     |
-LAE6D:  .byte $3E           ;G4     |
-LAE6E:  .byte $02           ;No sound   +
-LAE6F:  .byte $FF           ;
-LAE70:  .byte $C2           ;
-LAE71:  .byte $42           ;A4     +
-LAE72:  .byte $42           ;A4     |
-LAE73:  .byte $42           ;A4     |
-LAE74:  .byte $02           ;No sound   |
-LAE75:  .byte $02           ;No sound   |
-LAE76:  .byte $02           ;No sound   |
-LAE77:  .byte $42           ;A4     |
-LAE78:  .byte $42           ;A4     | Repeat 2 times.
-LAE79:  .byte $42           ;A4     |
-LAE7A:  .byte $02           ;No sound   |
-LAE7B:  .byte $42           ;A4     |
-LAE7C:  .byte $42           ;A4     |
-LAE7D:  .byte $42           ;A4     |
-LAE7E:  .byte $42           ;A4     |
-LAE7F:  .byte $42           ;A4     |
-LAE80:  .byte $02           ;No sound   +
-LAE81:  .byte $FF           ;
-LAE82:  .byte $B4           ;7/8 seconds
-LAE83:  .byte $2A           ;A3
-LAE84:  .byte $B2           ;7/32 seconds
-LAE85:  .byte $02           ;No sound
-LAE86:  .byte $B0           ;1/4 seconds
-LAE87:  .byte $2A           ;A3
-LAE88:  .byte $02           ;No sound
-LAE89:  .byte $2A           ;A3
-LAE8A:  .byte $2A           ;A3
-LAE8B:  .byte $B2           ;7/32 seconds
-LAE8C:  .byte $2A           ;A3
-LAE8D:  .byte $00           ;End of end music.
+LADC5:  .byte $C2               ;
+LADC6:  .byte $B4               ;7/8 seconds    +
+LADC7:  .byte $20               ;E3             |
+LADC8:  .byte $2A               ;A3             | Repeat 2 times.
+LADC9:  .byte $28               ;Ab3            |
+LADCA:  .byte $26               ;G3             +
+LADCB:  .byte $FF               ;
+LADCC:  .byte $20               ;E3
+LADCD:  .byte $20               ;E3
+LADCE:  .byte $C2               ;
+LADCF:  .byte $B0               ;1/4 seconds    +
+LADD0:  .byte $34               ;D4             |
+LADD1:  .byte $3C               ;F#4            |
+LADD2:  .byte $42               ;A4             |
+LADD3:  .byte $4C               ;D5             |
+LADD4:  .byte $B2               ;7/32 seconds   |
+LADD5:  .byte $54               ;F#5            |
+LADD6:  .byte $50               ;E5             |
+LADD7:  .byte $4C               ;D5             |
+LADD8:  .byte $B3               ;7/16 seconds   |
+LADD9:  .byte $42               ;A4             | Repeat 2 times.
+LADDA:  .byte $3C               ;F#4            |
+LADDB:  .byte $B3               ;7/16 seconds   |
+LADDC:  .byte $46               ;B4             |
+LADDD:  .byte $B2               ;7/32 seconds   |
+LADDE:  .byte $34               ;D4             |
+LADDF:  .byte $B1               ;7/64 seconds   |
+LADE0:  .byte $4C               ;D5             |
+LADE1:  .byte $B0               ;1/4 seconds    |
+LADE2:  .byte $42               ;A4             |
+LADE3:  .byte $3C               ;F#4            |
+LADE4:  .byte $B3               ;7/16 seconds   |
+LADE5:  .byte $38               ;E4             |
+LADE6:  .byte $46               ;B4             +
+LADE7:  .byte $FF               ;
+LADE8:  .byte $C2               ;
+LADE9:  .byte $B3               ;7/16 seconds   +
+LADEA:  .byte $38               ;E4             |
+LADEB:  .byte $B2               ;7/32 seconds   |
+LADEC:  .byte $3C               ;F#4            |
+LADED:  .byte $34               ;D4             |
+LADEE:  .byte $34               ;D4             |
+LADEF:  .byte $30               ;C4             |
+LADF0:  .byte $38               ;E4             |
+LADF1:  .byte $34               ;D4             |
+LADF2:  .byte $44               ;A#4            | Repeat 2 times.
+LADF3:  .byte $38               ;E4             |
+LADF4:  .byte $34               ;D4             |
+LADF5:  .byte $42               ;A4             |
+LADF6:  .byte $B1               ;7/64 seconds   |
+LADF7:  .byte $3A               ;F4             |
+LADF8:  .byte $40               ;Ab4            |
+LADF9:  .byte $B2               ;7/32 seconds   |
+LADFA:  .byte $46               ;B4             |
+LADFB:  .byte $3E               ;G4             |
+LADFC:  .byte $3E               ;G4             +
+LADFD:  .byte $FF               ;
+LADFE:  .byte $C4               ;
+LADFF:  .byte $B2               ;7/32 seconds   +
+LAE00:  .byte $3C               ;F#4            |
+LAE01:  .byte $42               ;A4             |
+LAE02:  .byte $4C               ;D5             |
+LAE03:  .byte $42               ;A4             | Repeat 4 times.
+LAE04:  .byte $3E               ;G4             |
+LAE05:  .byte $42               ;A4             |
+LAE06:  .byte $4C               ;D5             |
+LAE07:  .byte $3E               ;G4             +
+LAE08:  .byte $FF               ;
+LAE09:  .byte $C2               ;
+LAE0A:  .byte $72               ;A6             +
+LAE0B:  .byte $6E               ;G6             |
+LAE0C:  .byte $6C               ;F#6            |
+LAE0D:  .byte $68               ;E6             | Repeat 2 times.
+LAE0E:  .byte $6E               ;G6             |
+LAE0F:  .byte $6C               ;F#6            |
+LAE10:  .byte $64               ;D6             |
+LAE11:  .byte $68               ;E6             +
+LAE12:  .byte $FF               ;
+LAE13:  .byte $B4               ;7/8 seconds
+LAE14:  .byte $4C               ;D5
+LAE15:  .byte $B3               ;7/16 seconds
+LAE16:  .byte $56               ;G5
+LAE17:  .byte $50               ;E5
+LAE18:  .byte $B4               ;7/8 seconds
+LAE19:  .byte $54               ;F#5
+LAE1A:  .byte $B3               ;7/16 seconds
+LAE1B:  .byte $56               ;G5
+LAE1C:  .byte $5C               ;A#5
+LAE1D:  .byte $B4               ;7/8 seconds
+LAE1E:  .byte $4C               ;D5
+LAE1F:  .byte $B3               ;7/16 seconds
+LAE20:  .byte $50               ;E5
+LAE21:  .byte $56               ;G5
+LAE22:  .byte $B4               ;7/8 seconds
+LAE23:  .byte $54               ;F#5
+LAE24:  .byte $B3               ;7/16 seconds
+LAE25:  .byte $56               ;G5
+LAE26:  .byte $5C               ;A#5
+LAE27:  .byte $C4               ;
+LAE28:  .byte $B1               ;7/64 seconds   +
+LAE29:  .byte $5A               ;A5             |
+LAE2A:  .byte $42               ;A4             |
+LAE2B:  .byte $56               ;G5             |
+LAE2C:  .byte $42               ;A4             |
+LAE2D:  .byte $54               ;F#5            |
+LAE2E:  .byte $42               ;A4             |
+LAE2F:  .byte $50               ;E5             | Repeat 4 times.
+LAE30:  .byte $42               ;A4             |
+LAE31:  .byte $56               ;G5             |
+LAE32:  .byte $3E               ;G4             |
+LAE33:  .byte $54               ;F#5            |
+LAE34:  .byte $3E               ;G4             |
+LAE35:  .byte $4C               ;D5             |
+LAE36:  .byte $3E               ;G4             |
+LAE37:  .byte $50               ;E5             |
+LAE38:  .byte $3E               ;G4             +
+LAE39:  .byte $FF               ;
+LAE3A:  .byte $C8               ;
+LAE3B:  .byte $B0               ;1/4 seconds    +
+LAE3C:  .byte $3C               ;F#4            |
+LAE3D:  .byte $3E               ;G4             |
+LAE3E:  .byte $3C               ;F#4            |
+LAE3F:  .byte $3E               ;G4             |
+LAE40:  .byte $42               ;A4             |
+LAE41:  .byte $46               ;B4             |
+LAE42:  .byte $42               ;A4             | Repeat 8 times.
+LAE43:  .byte $46               ;B4             |
+LAE44:  .byte $4C               ;D5             |
+LAE45:  .byte $50               ;E5             |
+LAE46:  .byte $4C               ;D5             |
+LAE47:  .byte $50               ;E5             |
+LAE48:  .byte $50               ;E5             |
+LAE49:  .byte $54               ;F#5            |
+LAE4A:  .byte $50               ;E5             |
+LAE4B:  .byte $54               ;F#5            +
+LAE4C:  .byte $FF               ;
+LAE4D:  .byte $C3               ;
+LAE4E:  .byte $B0               ;1/4 seconds    +
+LAE4F:  .byte $42               ;A4             |
+LAE50:  .byte $42               ;A4             |
+LAE51:  .byte $42               ;A4             |
+LAE52:  .byte $02               ;No sound       |
+LAE53:  .byte $02               ;No sound       |
+LAE54:  .byte $02               ;No sound       |
+LAE55:  .byte $42               ;A4             |
+LAE56:  .byte $42               ;A4             |
+LAE57:  .byte $42               ;A4             |
+LAE58:  .byte $02               ;No sound       |
+LAE59:  .byte $42               ;A4             |
+LAE5A:  .byte $42               ;A4             |
+LAE5B:  .byte $42               ;A4             |
+LAE5C:  .byte $42               ;A4             |
+LAE5D:  .byte $42               ;A4             | Repeat 3 times.
+LAE5E:  .byte $02               ;No sound       |
+LAE5F:  .byte $3A               ;F4             |
+LAE60:  .byte $3A               ;F4             |
+LAE61:  .byte $3A               ;F4             |
+LAE62:  .byte $02               ;No sound       |
+LAE63:  .byte $02               ;No sound       |
+LAE64:  .byte $02               ;No sound       |
+LAE65:  .byte $3A               ;F4             |
+LAE66:  .byte $3A               ;F4             |
+LAE67:  .byte $3E               ;G4             |
+LAE68:  .byte $02               ;No sound       |
+LAE69:  .byte $3E               ;G4             |
+LAE6A:  .byte $3E               ;G4             |
+LAE6B:  .byte $3E               ;G4             |
+LAE6C:  .byte $3E               ;G4             |
+LAE6D:  .byte $3E               ;G4             |
+LAE6E:  .byte $02               ;No sound       +
+LAE6F:  .byte $FF               ;
+LAE70:  .byte $C2               ;
+LAE71:  .byte $42               ;A4             +
+LAE72:  .byte $42               ;A4             |
+LAE73:  .byte $42               ;A4             |
+LAE74:  .byte $02               ;No sound       |
+LAE75:  .byte $02               ;No sound       |
+LAE76:  .byte $02               ;No sound       |
+LAE77:  .byte $42               ;A4             |
+LAE78:  .byte $42               ;A4             | Repeat 2 times.
+LAE79:  .byte $42               ;A4             |
+LAE7A:  .byte $02               ;No sound       |
+LAE7B:  .byte $42               ;A4             |
+LAE7C:  .byte $42               ;A4             |
+LAE7D:  .byte $42               ;A4             |
+LAE7E:  .byte $42               ;A4             |
+LAE7F:  .byte $42               ;A4             |
+LAE80:  .byte $02               ;No sound       +
+LAE81:  .byte $FF               ;
+LAE82:  .byte $B4               ;7/8 seconds
+LAE83:  .byte $2A               ;A3
+LAE84:  .byte $B2               ;7/32 seconds
+LAE85:  .byte $02               ;No sound
+LAE86:  .byte $B0               ;1/4 seconds
+LAE87:  .byte $2A               ;A3
+LAE88:  .byte $02               ;No sound
+LAE89:  .byte $2A               ;A3
+LAE8A:  .byte $2A               ;A3
+LAE8B:  .byte $B2               ;7/32 seconds
+LAE8C:  .byte $2A               ;A3
+LAE8D:  .byte $00               ;End of end music.
 
 EndNoiseData:
-LAE8E:  .byte $CA           ;
-LAE8F:  .byte $B0           ;1/4 seconds    +
-LAE90:  .byte $04           ;Drumbeat 01    |
-LAE91:  .byte $04           ;Drumbeat 01    |
-LAE92:  .byte $04           ;Drumbeat 01    |
-LAE93:  .byte $01           ;Drumbeat 00    |
-LAE94:  .byte $01           ;Drumbeat 00    |
-LAE95:  .byte $01           ;Drumbeat 00    |
-LAE96:  .byte $04           ;Drumbeat 01    |
-LAE97:  .byte $04           ;Drumbeat 01    | Repeat 10 times.
-LAE98:  .byte $04           ;Drumbeat 01    |
-LAE99:  .byte $01           ;Drumbeat 00    |
-LAE9A:  .byte $04           ;Drumbeat 01    |
-LAE9B:  .byte $04           ;Drumbeat 01    |
-LAE9C:  .byte $04           ;Drumbeat 01    |
-LAE9D:  .byte $04           ;Drumbeat 01    |
-LAE9E:  .byte $04           ;Drumbeat 01    |
-LAE9F:  .byte $01           ;Drumbeat 00    +
-LAEA0:  .byte $FF           ;
-LAEA1:  .byte $D8           ;
-LAEA2:  .byte $B2           ;7/32 seconds   +
-LAEA3:  .byte $04           ;Drumbeat 01    | Repeat 24 times.
-LAEA4:  .byte $07           ;Drumbeat 02    +
-LAEA5:  .byte $FF           ;
-LAEA6:  .byte $C4           ;
-LAEA7:  .byte $B0           ;1/4 seconds    +
-LAEA8:  .byte $04           ;Drumbeat 01    |
-LAEA9:  .byte $04           ;Drumbeat 01    |
-LAEAA:  .byte $04           ;Drumbeat 01    |
-LAEAB:  .byte $01           ;Drumbeat 00    |
-LAEAC:  .byte $01           ;Drumbeat 00    |
-LAEAD:  .byte $01           ;Drumbeat 00    |
-LAEAE:  .byte $04           ;Drumbeat 01    | Repeat 4 times.
-LAEAF:  .byte $04           ;Drumbeat 01    |
-LAEB0:  .byte $04           ;Drumbeat 01    |
-LAEB1:  .byte $01           ;Drumbeat 00    |
-LAEB2:  .byte $04           ;Drumbeat 01    |
-LAEB3:  .byte $04           ;Drumbeat 01    |
-LAEB4:  .byte $04           ;Drumbeat 01    |
-LAEB5:  .byte $04           ;Drumbeat 01    |
-LAEB6:  .byte $04           ;Drumbeat 01    |
-LAEB7:  .byte $01           ;Drumbeat 00    +
-LAEB8:  .byte $FF           ;
-LAEB9:  .byte $C8           ;
-LAEBA:  .byte $B1           ;7/64 seconds   +
-LAEBB:  .byte $04           ;Drumbeat 01    |
-LAEBC:  .byte $B0           ;1/4 seconds    |
-LAEBD:  .byte $04           ;Drumbeat 01    |
-LAEBE:  .byte $04           ;Drumbeat 01    |
-LAEBF:  .byte $B1           ;7/64 seconds   |
-LAEC0:  .byte $04           ;Drumbeat 01    |
-LAEC1:  .byte $B0           ;1/4 seconds    |
-LAEC2:  .byte $04           ;Drumbeat 01    |
-LAEC3:  .byte $04           ;Drumbeat 01    | Repeat 8 times.
-LAEC4:  .byte $B1           ;7/64 seconds   |
-LAEC5:  .byte $04           ;Drumbeat 01    |
-LAEC6:  .byte $B0           ;1/4 seconds    |
-LAEC7:  .byte $04           ;Drumbeat 01    |
-LAEC8:  .byte $04           ;Drumbeat 01    |
-LAEC9:  .byte $B1           ;7/64 seconds   |
-LAECA:  .byte $07           ;Drumbeat 02    |
-LAECB:  .byte $B0           ;1/4 seconds    |
-LAECC:  .byte $04           ;Drumbeat 01    |
-LAECD:  .byte $04           ;Drumbeat 01    +
-LAECE:  .byte $FF           ;
-LAECF:  .byte $D0           ;
-LAED0:  .byte $B2           ;7/32 seconds   + Repeat 16 times.
-LAED1:  .byte $04           ;Drumbeat01 +
-LAED2:  .byte $FF           ;
-LAED3:  .byte $E0           ;
-LAED4:  .byte $B1           ;7/64 seconds   +
-LAED5:  .byte $04           ;Drumbeat 01    | Repeat 32 times.
-LAED6:  .byte $04           ;Drumbeat 01    +
-LAED7:  .byte $FF           ;
-LAED8:  .byte $E0           ;
-LAED9:  .byte $B0           ;1/4 seconds    +
-LAEDA:  .byte $04           ;Drumbeat 01    |
-LAEDB:  .byte $04           ;Drumbeat 01    |
-LAEDC:  .byte $B1           ;7/64 seconds   |
-LAEDD:  .byte $07           ;Drumbeat 02    | Repeat 32 times.
-LAEDE:  .byte $B0           ;1/4 seconds    |
-LAEDF:  .byte $0A           ;Drumbeat 03    |
-LAEE0:  .byte $04           ;Drumbeat 01    |
-LAEE1:  .byte $B1           ;7/64 seconds   |
-LAEE2:  .byte $07           ;Drumbeat 02    +
-LAEE3:  .byte $FF           ;
-LAEE4:  .byte $C8           ;
-LAEE5:  .byte $B0           ;1/4 seconds    +
-LAEE6:  .byte $04           ;Drumbeat 01    |
-LAEE7:  .byte $04           ;Drumbeat 01    |
-LAEE8:  .byte $04           ;Drumbeat 01    |
-LAEE9:  .byte $01           ;Drumbeat 00    |
-LAEEA:  .byte $01           ;Drumbeat 00    |
-LAEEB:  .byte $01           ;Drumbeat 00    |
-LAEEC:  .byte $04           ;Drumbeat 01    | Repeat 8 times.
-LAEED:  .byte $04           ;Drumbeat 01    |
-LAEEE:  .byte $04           ;Drumbeat 01    |
-LAEEF:  .byte $01           ;Drumbeat 00    |
-LAEF0:  .byte $04           ;Drumbeat 01    |
-LAEF1:  .byte $04           ;Drumbeat 01    |
-LAEF2:  .byte $04           ;Drumbeat 01    |
-LAEF3:  .byte $04           ;Drumbeat 01    |
-LAEF4:  .byte $04           ;Drumbeat 01    |
-LAEF5:  .byte $01           ;Drumbeat 00    +
-LAEF6:  .byte $FF           ;
-LAEF7:  .byte $B4           ;7/8 seconds
-LAEF8:  .byte $07           ;Drumbeat 02
-LAEF9:  .byte $B2           ;7/32 seconds
-LAEFA:  .byte $01           ;Drumbeat 00
-LAEFB:  .byte $B0           ;1/4 seconds
-LAEFC:  .byte $07           ;Drumbeat 02
-LAEFD:  .byte $01           ;Drumbeat 00
-LAEFE:  .byte $07           ;Drumbeat 02
-LAEFF:  .byte $07           ;Drumbeat 02
-LAF00:  .byte $B2           ;7/32 seconds
-LAF01:  .byte $07           ;Drumbeat 02
-LAF02:  .byte $00           ;End of end music.
+LAE8E:  .byte $CA               ;
+LAE8F:  .byte $B0               ;1/4 seconds    +
+LAE90:  .byte $04               ;Drumbeat 01    |
+LAE91:  .byte $04               ;Drumbeat 01    |
+LAE92:  .byte $04               ;Drumbeat 01    |
+LAE93:  .byte $01               ;Drumbeat 00    |
+LAE94:  .byte $01               ;Drumbeat 00    |
+LAE95:  .byte $01               ;Drumbeat 00    |
+LAE96:  .byte $04               ;Drumbeat 01    |
+LAE97:  .byte $04               ;Drumbeat 01    | Repeat 10 times.
+LAE98:  .byte $04               ;Drumbeat 01    |
+LAE99:  .byte $01               ;Drumbeat 00    |
+LAE9A:  .byte $04               ;Drumbeat 01    |
+LAE9B:  .byte $04               ;Drumbeat 01    |
+LAE9C:  .byte $04               ;Drumbeat 01    |
+LAE9D:  .byte $04               ;Drumbeat 01    |
+LAE9E:  .byte $04               ;Drumbeat 01    |
+LAE9F:  .byte $01               ;Drumbeat 00    +
+LAEA0:  .byte $FF               ;
+LAEA1:  .byte $D8               ;
+LAEA2:  .byte $B2               ;7/32 seconds   +
+LAEA3:  .byte $04               ;Drumbeat 01    | Repeat 24 times.
+LAEA4:  .byte $07               ;Drumbeat 02    +
+LAEA5:  .byte $FF               ;
+LAEA6:  .byte $C4               ;
+LAEA7:  .byte $B0               ;1/4 seconds    +
+LAEA8:  .byte $04               ;Drumbeat 01    |
+LAEA9:  .byte $04               ;Drumbeat 01    |
+LAEAA:  .byte $04               ;Drumbeat 01    |
+LAEAB:  .byte $01               ;Drumbeat 00    |
+LAEAC:  .byte $01               ;Drumbeat 00    |
+LAEAD:  .byte $01               ;Drumbeat 00    |
+LAEAE:  .byte $04               ;Drumbeat 01    | Repeat 4 times.
+LAEAF:  .byte $04               ;Drumbeat 01    |
+LAEB0:  .byte $04               ;Drumbeat 01    |
+LAEB1:  .byte $01               ;Drumbeat 00    |
+LAEB2:  .byte $04               ;Drumbeat 01    |
+LAEB3:  .byte $04               ;Drumbeat 01    |
+LAEB4:  .byte $04               ;Drumbeat 01    |
+LAEB5:  .byte $04               ;Drumbeat 01    |
+LAEB6:  .byte $04               ;Drumbeat 01    |
+LAEB7:  .byte $01               ;Drumbeat 00    +
+LAEB8:  .byte $FF               ;
+LAEB9:  .byte $C8               ;
+LAEBA:  .byte $B1               ;7/64 seconds   +
+LAEBB:  .byte $04               ;Drumbeat 01    |
+LAEBC:  .byte $B0               ;1/4 seconds    |
+LAEBD:  .byte $04               ;Drumbeat 01    |
+LAEBE:  .byte $04               ;Drumbeat 01    |
+LAEBF:  .byte $B1               ;7/64 seconds   |
+LAEC0:  .byte $04               ;Drumbeat 01    |
+LAEC1:  .byte $B0               ;1/4 seconds    |
+LAEC2:  .byte $04               ;Drumbeat 01    |
+LAEC3:  .byte $04               ;Drumbeat 01    | Repeat 8 times.
+LAEC4:  .byte $B1               ;7/64 seconds   |
+LAEC5:  .byte $04               ;Drumbeat 01    |
+LAEC6:  .byte $B0               ;1/4 seconds    |
+LAEC7:  .byte $04               ;Drumbeat 01    |
+LAEC8:  .byte $04               ;Drumbeat 01    |
+LAEC9:  .byte $B1               ;7/64 seconds   |
+LAECA:  .byte $07               ;Drumbeat 02    |
+LAECB:  .byte $B0               ;1/4 seconds    |
+LAECC:  .byte $04               ;Drumbeat 01    |
+LAECD:  .byte $04               ;Drumbeat 01    +
+LAECE:  .byte $FF               ;
+LAECF:  .byte $D0               ;
+LAED0:  .byte $B2               ;7/32 seconds   + Repeat 16 times.
+LAED1:  .byte $04               ;Drumbeat01 +
+LAED2:  .byte $FF               ;
+LAED3:  .byte $E0               ;
+LAED4:  .byte $B1               ;7/64 seconds   +
+LAED5:  .byte $04               ;Drumbeat 01    | Repeat 32 times.
+LAED6:  .byte $04               ;Drumbeat 01    +
+LAED7:  .byte $FF               ;
+LAED8:  .byte $E0               ;
+LAED9:  .byte $B0               ;1/4 seconds    +
+LAEDA:  .byte $04               ;Drumbeat 01    |
+LAEDB:  .byte $04               ;Drumbeat 01    |
+LAEDC:  .byte $B1               ;7/64 seconds   |
+LAEDD:  .byte $07               ;Drumbeat 02    | Repeat 32 times.
+LAEDE:  .byte $B0               ;1/4 seconds    |
+LAEDF:  .byte $0A               ;Drumbeat 03    |
+LAEE0:  .byte $04               ;Drumbeat 01    |
+LAEE1:  .byte $B1               ;7/64 seconds   |
+LAEE2:  .byte $07               ;Drumbeat 02    +
+LAEE3:  .byte $FF               ;
+LAEE4:  .byte $C8               ;
+LAEE5:  .byte $B0               ;1/4 seconds    +
+LAEE6:  .byte $04               ;Drumbeat 01    |
+LAEE7:  .byte $04               ;Drumbeat 01    |
+LAEE8:  .byte $04               ;Drumbeat 01    |
+LAEE9:  .byte $01               ;Drumbeat 00    |
+LAEEA:  .byte $01               ;Drumbeat 00    |
+LAEEB:  .byte $01               ;Drumbeat 00    |
+LAEEC:  .byte $04               ;Drumbeat 01    | Repeat 8 times.
+LAEED:  .byte $04               ;Drumbeat 01    |
+LAEEE:  .byte $04               ;Drumbeat 01    |
+LAEEF:  .byte $01               ;Drumbeat 00    |
+LAEF0:  .byte $04               ;Drumbeat 01    |
+LAEF1:  .byte $04               ;Drumbeat 01    |
+LAEF2:  .byte $04               ;Drumbeat 01    |
+LAEF3:  .byte $04               ;Drumbeat 01    |
+LAEF4:  .byte $04               ;Drumbeat 01    |
+LAEF5:  .byte $01               ;Drumbeat 00    +
+LAEF6:  .byte $FF               ;
+LAEF7:  .byte $B4               ;7/8 seconds
+LAEF8:  .byte $07               ;Drumbeat 02
+LAEF9:  .byte $B2               ;7/32 seconds
+LAEFA:  .byte $01               ;Drumbeat 00
+LAEFB:  .byte $B0               ;1/4 seconds
+LAEFC:  .byte $07               ;Drumbeat 02
+LAEFD:  .byte $01               ;Drumbeat 00
+LAEFE:  .byte $07               ;Drumbeat 02
+LAEFF:  .byte $07               ;Drumbeat 02
+LAF00:  .byte $B2               ;7/32 seconds
+LAF01:  .byte $07               ;Drumbeat 02
+LAF02:  .byte $00               ;End of end music.
 
 ;Unused tile patterns.
 LAF03:  .byte $80, $40, $20, $10, $88, $00, $00, $00, $00, $00, $00, $00, $80, $04, $00, $02
@@ -5311,321 +5262,321 @@ LAFE3:  .byte $C7, $C7, $C7, $C7, $C7, $38, $38, $38, $38, $38, $38, $38, $38, $
 LAFF3:  .byte $20, $20, $20, $20, $20, $C0, $C0, $C0, $C0, $C0, $C0, $C0, $C0 
 
 IntroSQ2Data:
-LB000:  .byte $C2           ;
-LB001:  .byte $B4           ;7/8 seconds    +
-LB002:  .byte $64           ;D6     |
-LB003:  .byte $74           ;A#6        |
-LB004:  .byte $6A           ;F6     |
-LB005:  .byte $02           ;No sound   | Repeat 2 times.
-LB006:  .byte $64           ;D6     |
-LB007:  .byte $78           ;C7     |
-LB008:  .byte $74           ;A#6        |
-LB009:  .byte $02           ;No sound   +
-LB00A:  .byte $FF           ;
-LB00B:  .byte $C2           ;
-LB00C:  .byte $B2           ;7/32 seconds   +
-LB00D:  .byte $72           ;A6     |
-LB00E:  .byte $5A           ;A5     |
-LB00F:  .byte $6E           ;G6     |
-LB010:  .byte $56           ;G5     |
-LB011:  .byte $6C           ;F#6        |
-LB012:  .byte $54           ;F#5        |
-LB013:  .byte $68           ;E6     | Repeat 2 times.
-LB014:  .byte $50           ;E5     |
-LB015:  .byte $6E           ;G6     |
-LB016:  .byte $56           ;G5     |
-LB017:  .byte $6C           ;F#6        |
-LB018:  .byte $54           ;F#5        |
-LB019:  .byte $68           ;E6     |
-LB01A:  .byte $50           ;E5     |
-LB01B:  .byte $64           ;D6     |
-LB01C:  .byte $4C           ;D5     +
-LB01D:  .byte $FF           ;
-LB01E:  .byte $C4           ;
-LB01F:  .byte $72           ;A6     +
-LB020:  .byte $5A           ;A5     |
-LB021:  .byte $6E           ;G6     |
-LB022:  .byte $5A           ;A5     |
-LB023:  .byte $6C           ;F#6        |
-LB024:  .byte $5A           ;A5     |
-LB025:  .byte $68           ;E6     |
-LB026:  .byte $5A           ;A5     | Repeat 4 times.
-LB027:  .byte $6E           ;G6     |
-LB028:  .byte $56           ;G5     |
-LB029:  .byte $6C           ;F#6        |
-LB02A:  .byte $56           ;G5     |
-LB02B:  .byte $68           ;E6     |
-LB02C:  .byte $56           ;G5     |
-LB02D:  .byte $64           ;D6     |
-LB02E:  .byte $56           ;G5     +
-LB02F:  .byte $FF           ;
-LB030:  .byte $B2           ;7/32 seconds
-LB031:  .byte $5A           ;A5
-LB032:  .byte $B1           ;7/64 seconds
-LB033:  .byte $42           ;A4
-LB034:  .byte $B2           ;7/32 seconds
-LB035:  .byte $56           ;G5
-LB036:  .byte $B1           ;7/64 seconds
-LB037:  .byte $42           ;A4
-LB038:  .byte $B2           ;7/32 seconds
-LB039:  .byte $54           ;F#5
-LB03A:  .byte $B1           ;7/64 seconds
-LB03B:  .byte $42           ;A4
-LB03C:  .byte $B2           ;7/32 seconds
-LB03D:  .byte $50           ;E5
-LB03E:  .byte $B1           ;7/64 seconds
-LB03F:  .byte $42           ;A4
-LB040:  .byte $B2           ;7/32 seconds
-LB041:  .byte $5A           ;A5
-LB042:  .byte $B1           ;7/64 seconds
-LB043:  .byte $42           ;A4
-LB044:  .byte $B2           ;7/32 seconds
-LB045:  .byte $56           ;G5
-LB046:  .byte $B1           ;7/64 seconds
-LB047:  .byte $42           ;A4
-LB048:  .byte $B2           ;7/32 seconds
-LB049:  .byte $52           ;F5
-LB04A:  .byte $B1           ;7/64 seconds
-LB04B:  .byte $42           ;A4
-LB04C:  .byte $B2           ;7/32 seconds
-LB04D:  .byte $50           ;E5
-LB04E:  .byte $B1           ;7/64 seconds
-LB04F:  .byte $42           ;A4
-LB050:  .byte $B2           ;7/32 seconds
-LB051:  .byte $5A           ;A5
-LB052:  .byte $B1           ;7/64 seconds
-LB053:  .byte $44           ;A#4
-LB054:  .byte $B2           ;7/32 seconds
-LB055:  .byte $56           ;G5
-LB056:  .byte $B1           ;7/64 seconds
-LB057:  .byte $44           ;A#4
-LB058:  .byte $B2           ;7/32 seconds
-LB059:  .byte $52           ;F5
-LB05A:  .byte $B1           ;7/64 seconds
-LB05B:  .byte $44           ;A#4
-LB05C:  .byte $B2           ;7/32 seconds
-LB05D:  .byte $56           ;G5
-LB05E:  .byte $B1           ;7/64 seconds
-LB05F:  .byte $44           ;A#4
-LB060:  .byte $C4           ;
-LB061:  .byte $5A           ;A5     +
-LB062:  .byte $50           ;E5     | Repeat 4 times.
-LB063:  .byte $46           ;B4     +
-LB064:  .byte $FF           ;
-LB065:  .byte $C3           ;
-LB066:  .byte $58           ;Ab5        +
-LB067:  .byte $50           ;E5     | Repeat 3 times.
-LB068:  .byte $46           ;B4     +
-LB069:  .byte $FF           ;
-LB06A:  .byte $58           ;Ab5
-LB06B:  .byte $50           ;E5
-LB06C:  .byte $B0           ;1/4 seconds
-LB06D:  .byte $46           ;B4
-LB06E:  .byte $02           ;No sound
-LB06F:  .byte $E0           ;
-LB070:  .byte $B6           ;21/32 seconds  +
-LB071:  .byte $1C           ;D3     | Repeat 32 times.
-LB072:  .byte $B2           ;7/32 seconds   |
-LB073:  .byte $02           ;No sound   +
-LB074:  .byte $FF           ;
-LB075:  .byte $00           ;End intro music.
+LB000:  .byte $C2               ;
+LB001:  .byte $B4               ;7/8 seconds    +
+LB002:  .byte $64               ;D6             |
+LB003:  .byte $74               ;A#6            |
+LB004:  .byte $6A               ;F6             |
+LB005:  .byte $02               ;No sound       | Repeat 2 times.
+LB006:  .byte $64               ;D6             |
+LB007:  .byte $78               ;C7             |
+LB008:  .byte $74               ;A#6            |
+LB009:  .byte $02               ;No sound       +
+LB00A:  .byte $FF               ;
+LB00B:  .byte $C2               ;
+LB00C:  .byte $B2               ;7/32 seconds   +
+LB00D:  .byte $72               ;A6             |
+LB00E:  .byte $5A               ;A5             |
+LB00F:  .byte $6E               ;G6             |
+LB010:  .byte $56               ;G5             |
+LB011:  .byte $6C               ;F#6            |
+LB012:  .byte $54               ;F#5            |
+LB013:  .byte $68               ;E6             | Repeat 2 times.
+LB014:  .byte $50               ;E5             |
+LB015:  .byte $6E               ;G6             |
+LB016:  .byte $56               ;G5             |
+LB017:  .byte $6C               ;F#6            |
+LB018:  .byte $54               ;F#5            |
+LB019:  .byte $68               ;E6             |
+LB01A:  .byte $50               ;E5             |
+LB01B:  .byte $64               ;D6             |
+LB01C:  .byte $4C               ;D5             +
+LB01D:  .byte $FF               ;
+LB01E:  .byte $C4               ;
+LB01F:  .byte $72               ;A6             +
+LB020:  .byte $5A               ;A5             |
+LB021:  .byte $6E               ;G6             |
+LB022:  .byte $5A               ;A5             |
+LB023:  .byte $6C               ;F#6            |
+LB024:  .byte $5A               ;A5             |
+LB025:  .byte $68               ;E6             |
+LB026:  .byte $5A               ;A5             | Repeat 4 times.
+LB027:  .byte $6E               ;G6             |
+LB028:  .byte $56               ;G5             |
+LB029:  .byte $6C               ;F#6            |
+LB02A:  .byte $56               ;G5             |
+LB02B:  .byte $68               ;E6             |
+LB02C:  .byte $56               ;G5             |
+LB02D:  .byte $64               ;D6             |
+LB02E:  .byte $56               ;G5             +
+LB02F:  .byte $FF               ;
+LB030:  .byte $B2               ;7/32 seconds
+LB031:  .byte $5A               ;A5
+LB032:  .byte $B1               ;7/64 seconds
+LB033:  .byte $42               ;A4
+LB034:  .byte $B2               ;7/32 seconds
+LB035:  .byte $56               ;G5
+LB036:  .byte $B1               ;7/64 seconds
+LB037:  .byte $42               ;A4
+LB038:  .byte $B2               ;7/32 seconds
+LB039:  .byte $54               ;F#5
+LB03A:  .byte $B1               ;7/64 seconds
+LB03B:  .byte $42               ;A4
+LB03C:  .byte $B2               ;7/32 seconds
+LB03D:  .byte $50               ;E5
+LB03E:  .byte $B1               ;7/64 seconds
+LB03F:  .byte $42               ;A4
+LB040:  .byte $B2               ;7/32 seconds
+LB041:  .byte $5A               ;A5
+LB042:  .byte $B1               ;7/64 seconds
+LB043:  .byte $42               ;A4
+LB044:  .byte $B2               ;7/32 seconds
+LB045:  .byte $56               ;G5
+LB046:  .byte $B1               ;7/64 seconds
+LB047:  .byte $42               ;A4
+LB048:  .byte $B2               ;7/32 seconds
+LB049:  .byte $52               ;F5
+LB04A:  .byte $B1               ;7/64 seconds
+LB04B:  .byte $42               ;A4
+LB04C:  .byte $B2               ;7/32 seconds
+LB04D:  .byte $50               ;E5
+LB04E:  .byte $B1               ;7/64 seconds
+LB04F:  .byte $42               ;A4
+LB050:  .byte $B2               ;7/32 seconds
+LB051:  .byte $5A               ;A5
+LB052:  .byte $B1               ;7/64 seconds
+LB053:  .byte $44               ;A#4
+LB054:  .byte $B2               ;7/32 seconds
+LB055:  .byte $56               ;G5
+LB056:  .byte $B1               ;7/64 seconds
+LB057:  .byte $44               ;A#4
+LB058:  .byte $B2               ;7/32 seconds
+LB059:  .byte $52               ;F5
+LB05A:  .byte $B1               ;7/64 seconds
+LB05B:  .byte $44               ;A#4
+LB05C:  .byte $B2               ;7/32 seconds
+LB05D:  .byte $56               ;G5
+LB05E:  .byte $B1               ;7/64 seconds
+LB05F:  .byte $44               ;A#4
+LB060:  .byte $C4               ;
+LB061:  .byte $5A               ;A5             +
+LB062:  .byte $50               ;E5             | Repeat 4 times.
+LB063:  .byte $46               ;B4             +
+LB064:  .byte $FF               ;
+LB065:  .byte $C3               ;
+LB066:  .byte $58               ;Ab5            +
+LB067:  .byte $50               ;E5             | Repeat 3 times.
+LB068:  .byte $46               ;B4             +
+LB069:  .byte $FF               ;
+LB06A:  .byte $58               ;Ab5
+LB06B:  .byte $50               ;E5
+LB06C:  .byte $B0               ;1/4 seconds
+LB06D:  .byte $46               ;B4
+LB06E:  .byte $02               ;No sound
+LB06F:  .byte $E0               ;
+LB070:  .byte $B6               ;21/32 seconds  +
+LB071:  .byte $1C               ;D3             | Repeat 32 times.
+LB072:  .byte $B2               ;7/32 seconds   |
+LB073:  .byte $02               ;No sound       +
+LB074:  .byte $FF               ;
+LB075:  .byte $00               ;End intro music.
 
 IntroTriangleData:
 LB076:  .byte $D0
-LB077:  .byte $B6           ;21/32 seconds  +
-LB078:  .byte $2A           ;A3     |
-LB079:  .byte $B1           ;7/64 seconds   | Repeat 16 times.
-LB07A:  .byte $2A           ;A3     |
-LB07B:  .byte $B1           ;7/64 seconds   |
-LB07C:  .byte $02           ;No sound   +
-LB07D:  .byte $FF           ;
-LB07E:  .byte $B4           ;7/8 seconds
-LB07F:  .byte $4C           ;D5
-LB080:  .byte $60           ;C6
-LB081:  .byte $5E           ;B5
-LB082:  .byte $5C           ;A#5
-LB083:  .byte $54           ;F#5
-LB084:  .byte $60           ;C6
-LB085:  .byte $5C           ;A#5
-LB086:  .byte $56           ;G5
-LB087:  .byte $C2           ;
-LB088:  .byte $34           ;D4     +
-LB089:  .byte $48           ;C5     |
-LB08A:  .byte $46           ;B4     |
-LB08B:  .byte $44           ;A#4        | Repeat 2 times.
-LB08C:  .byte $3C           ;F#4        |
-LB08D:  .byte $48           ;C5     |
-LB08E:  .byte $44           ;A#4        |
-LB08F:  .byte $3E           ;G4     +
-LB090:  .byte $FF           ;
-LB091:  .byte $C2           ;
-LB092:  .byte $B2           ;7/32 seconds   +
-LB093:  .byte $34           ;D4     |
-LB094:  .byte $B1           ;7/64 seconds   | Repeat 2 times.
-LB095:  .byte $42           ;A4     |
-LB096:  .byte $B5           ;1 13/16 seconds|
-LB097:  .byte $4C           ;D5     +
-LB098:  .byte $FF           ;
-LB099:  .byte $C2           ;
-LB09A:  .byte $B2           ;7/32 seconds   +
-LB09B:  .byte $2C           ;A#3        |
-LB09C:  .byte $B1           ;7/64 seconds   | Repeat 2 times.
-LB09D:  .byte $3A           ;F4     |
-LB09E:  .byte $B5           ;1 13/16 seconds|
-LB09F:  .byte $48           ;C5     +
-LB0A0:  .byte $FF           ;
-LB0A1:  .byte $C2           ;
-LB0A2:  .byte $B2           ;7/32 seconds   +
-LB0A3:  .byte $1E           ;D#3        |
-LB0A4:  .byte $B1           ;7/64 seconds   | Repeat 2 times.
-LB0A5:  .byte $2C           ;A#3        |
-LB0A6:  .byte $B5           ;1 13/16 seconds|
-LB0A7:  .byte $36           ;D#4        +
-LB0A8:  .byte $FF           ;
-LB0A9:  .byte $C4           ;
-LB0AA:  .byte $B2           ;7/32 seconds   +
-LB0AB:  .byte $20           ;E3     |
-LB0AC:  .byte $B1           ;7/64 seconds   | Repeat 4 times.
-LB0AD:  .byte $2E           ;B3     |
-LB0AE:  .byte $B5           ;1 13/16 seconds|
-LB0AF:  .byte $38           ;E4     +
-LB0B0:  .byte $FF           ;
-LB0B1:  .byte $E0           ;
-LB0B2:  .byte $B6           ;21/32 seconds  +
-LB0B3:  .byte $2A           ;A3     |
-LB0B4:  .byte $B1           ;7/64 seconds   | Repeat 32 times.
-LB0B5:  .byte $2A           ;A3     |
-LB0B6:  .byte $B1           ;7/64 seconds   |
-LB0B7:  .byte $02           ;No sound   +
-LB0B8:  .byte $FF           ;
+LB077:  .byte $B6               ;21/32 seconds  +
+LB078:  .byte $2A               ;A3             |
+LB079:  .byte $B1               ;7/64 seconds   | Repeat 16 times.
+LB07A:  .byte $2A               ;A3             |
+LB07B:  .byte $B1               ;7/64 seconds   |
+LB07C:  .byte $02               ;No sound       +
+LB07D:  .byte $FF               ;
+LB07E:  .byte $B4               ;7/8 seconds
+LB07F:  .byte $4C               ;D5
+LB080:  .byte $60               ;C6
+LB081:  .byte $5E               ;B5
+LB082:  .byte $5C               ;A#5
+LB083:  .byte $54               ;F#5
+LB084:  .byte $60               ;C6
+LB085:  .byte $5C               ;A#5
+LB086:  .byte $56               ;G5
+LB087:  .byte $C2               ;
+LB088:  .byte $34               ;D4             +
+LB089:  .byte $48               ;C5             |
+LB08A:  .byte $46               ;B4             |
+LB08B:  .byte $44               ;A#4            | Repeat 2 times.
+LB08C:  .byte $3C               ;F#4            |
+LB08D:  .byte $48               ;C5             |
+LB08E:  .byte $44               ;A#4            |
+LB08F:  .byte $3E               ;G4             +
+LB090:  .byte $FF               ;
+LB091:  .byte $C2               ;
+LB092:  .byte $B2               ;7/32 seconds   +
+LB093:  .byte $34               ;D4             |
+LB094:  .byte $B1               ;7/64 seconds   | Repeat 2 times.
+LB095:  .byte $42               ;A4             |
+LB096:  .byte $B5               ;1 13/16 seconds|
+LB097:  .byte $4C               ;D5             +
+LB098:  .byte $FF               ;
+LB099:  .byte $C2               ;
+LB09A:  .byte $B2               ;7/32 seconds   +
+LB09B:  .byte $2C               ;A#3            |
+LB09C:  .byte $B1               ;7/64 seconds   | Repeat 2 times.
+LB09D:  .byte $3A               ;F4             |
+LB09E:  .byte $B5               ;1 13/16 seconds|
+LB09F:  .byte $48               ;C5             +
+LB0A0:  .byte $FF               ;
+LB0A1:  .byte $C2               ;
+LB0A2:  .byte $B2               ;7/32 seconds   +
+LB0A3:  .byte $1E               ;D#3            |
+LB0A4:  .byte $B1               ;7/64 seconds   | Repeat 2 times.
+LB0A5:  .byte $2C               ;A#3            |
+LB0A6:  .byte $B5               ;1 13/16 seconds|
+LB0A7:  .byte $36               ;D#4            +
+LB0A8:  .byte $FF               ;
+LB0A9:  .byte $C4               ;
+LB0AA:  .byte $B2               ;7/32 seconds   +
+LB0AB:  .byte $20               ;E3             |
+LB0AC:  .byte $B1               ;7/64 seconds   | Repeat 4 times.
+LB0AD:  .byte $2E               ;B3             |
+LB0AE:  .byte $B5               ;1 13/16 seconds|
+LB0AF:  .byte $38               ;E4             +
+LB0B0:  .byte $FF               ;
+LB0B1:  .byte $E0               ;
+LB0B2:  .byte $B6               ;21/32 seconds  +
+LB0B3:  .byte $2A               ;A3             |
+LB0B4:  .byte $B1               ;7/64 seconds   | Repeat 32 times.
+LB0B5:  .byte $2A               ;A3             |
+LB0B6:  .byte $B1               ;7/64 seconds   |
+LB0B7:  .byte $02               ;No sound       +
+LB0B8:  .byte $FF               ;
 
 IntroSQ1Data:
-LB0B9:  .byte $D0           ;
-LB0BA:  .byte $B6           ;21/32 seconds  +
-LB0BB:  .byte $06           ;D2     | Repeat 16 times.
-LB0BC:  .byte $B2           ;7/32 seconds   |
-LB0BD:  .byte $02           ;No sound   +
-LB0BE:  .byte $FF           ;
-LB0BF:  .byte $C8           ;
-LB0C0:  .byte $B4           ;7/8 seconds    + Repeat 8 times.
-LB0C1:  .byte $02           ;No sound   +
-LB0C2:  .byte $FF           ;
-LB0C3:  .byte $B2           ;7/32 seconds
-LB0C4:  .byte $24           ;F#3
-LB0C5:  .byte $26           ;G3
-LB0C6:  .byte $2A           ;A3
-LB0C7:  .byte $2E           ;B3
-LB0C8:  .byte $34           ;D4
-LB0C9:  .byte $38           ;E4
-LB0CA:  .byte $3C           ;F#4
-LB0CB:  .byte $3E           ;G4
-LB0CC:  .byte $B6           ;21/32 seconds
-LB0CD:  .byte $42           ;A4
-LB0CE:  .byte $B1           ;7/64 seconds
-LB0CF:  .byte $3E           ;G4
-LB0D0:  .byte $3C           ;F#4
-LB0D1:  .byte $B6           ;21/32 seconds
-LB0D2:  .byte $3E           ;G4
-LB0D3:  .byte $B1           ;7/64 seconds
-LB0D4:  .byte $3C           ;F#4
-LB0D5:  .byte $38           ;E4
-LB0D6:  .byte $B6           ;21/32 seconds
-LB0D7:  .byte $34           ;D4
-LB0D8:  .byte $B2           ;7/32 seconds
-LB0D9:  .byte $42           ;A4
-LB0DA:  .byte $B4           ;7/8 seconds
-LB0DB:  .byte $4C           ;D5
-LB0DC:  .byte $B3           ;7/16 seconds
-LB0DD:  .byte $44           ;A#4
-LB0DE:  .byte $42           ;A4
-LB0DF:  .byte $3E           ;G4
-LB0E0:  .byte $3C           ;F#4
-LB0E1:  .byte $B6           ;21/32 seconds
-LB0E2:  .byte $38           ;E4
-LB0E3:  .byte $B2           ;7/32 seconds
-LB0E4:  .byte $3C           ;F#4
-LB0E5:  .byte $B6           ;21/32 seconds
-LB0E6:  .byte $42           ;A4
-LB0E7:  .byte $B2           ;7/32 seconds
-LB0E8:  .byte $4C           ;D5
-LB0E9:  .byte $B6           ;21/32 seconds
-LB0EA:  .byte $38           ;E4
-LB0EB:  .byte $B2           ;7/32 seconds
-LB0EC:  .byte $3C           ;F#4
-LB0ED:  .byte $B4           ;7/8 seconds
-LB0EE:  .byte $34           ;D4
-LB0EF:  .byte $B3           ;7/16 seconds
-LB0F0:  .byte $2A           ;A3
-LB0F1:  .byte $2E           ;B3
-LB0F2:  .byte $34           ;D4
-LB0F3:  .byte $38           ;E4
-LB0F4:  .byte $B6           ;21/32 seconds
-LB0F5:  .byte $34           ;D4
-LB0F6:  .byte $B2           ;7/32 seconds
-LB0F7:  .byte $2C           ;A#3
-LB0F8:  .byte $B4           ;7/8 seconds
-LB0F9:  .byte $26           ;G3
-LB0FA:  .byte $B5           ;1 13/16 seconds
-LB0FB:  .byte $38           ;E4
-LB0FC:  .byte $3C           ;F#4
-LB0FD:  .byte $42           ;A4
-LB0FE:  .byte $4C           ;D5
-LB0FF:  .byte $34           ;D4
-LB100:  .byte $3A           ;F4
-LB101:  .byte $48           ;C5
-LB102:  .byte $42           ;A4
-LB103:  .byte $36           ;D#4
-LB104:  .byte $3E           ;G4
-LB105:  .byte $4C           ;D5
-LB106:  .byte $44           ;A#4
-LB107:  .byte $42           ;A4
-LB108:  .byte $38           ;E4
-LB109:  .byte $2E           ;B3
-LB10A:  .byte $38           ;E4
-LB10B:  .byte $40           ;Ab4
-LB10C:  .byte $38           ;E4
-LB10D:  .byte $2E           ;B3
-LB10E:  .byte $38           ;E4
-LB10F:  .byte $E0           ;
-LB110:  .byte $B6           ;21/32 seconds  +
-LB111:  .byte $06           ;D2     | Repeat 32 times.
-LB112:  .byte $B2           ;7/32 seconds   |
-LB113:  .byte $02           ;No sound   +
-LB114:  .byte $FF           ;
+LB0B9:  .byte $D0               ;
+LB0BA:  .byte $B6               ;21/32 seconds  +
+LB0BB:  .byte $06               ;D2             | Repeat 16 times.
+LB0BC:  .byte $B2               ;7/32 seconds   |
+LB0BD:  .byte $02               ;No sound       +
+LB0BE:  .byte $FF               ;
+LB0BF:  .byte $C8               ;
+LB0C0:  .byte $B4               ;7/8 seconds    + Repeat 8 times.
+LB0C1:  .byte $02               ;No sound       +
+LB0C2:  .byte $FF               ;
+LB0C3:  .byte $B2               ;7/32 seconds
+LB0C4:  .byte $24               ;F#3
+LB0C5:  .byte $26               ;G3
+LB0C6:  .byte $2A               ;A3
+LB0C7:  .byte $2E               ;B3
+LB0C8:  .byte $34               ;D4
+LB0C9:  .byte $38               ;E4
+LB0CA:  .byte $3C               ;F#4
+LB0CB:  .byte $3E               ;G4
+LB0CC:  .byte $B6               ;21/32 seconds
+LB0CD:  .byte $42               ;A4
+LB0CE:  .byte $B1               ;7/64 seconds
+LB0CF:  .byte $3E               ;G4
+LB0D0:  .byte $3C               ;F#4
+LB0D1:  .byte $B6               ;21/32 seconds
+LB0D2:  .byte $3E               ;G4
+LB0D3:  .byte $B1               ;7/64 seconds
+LB0D4:  .byte $3C               ;F#4
+LB0D5:  .byte $38               ;E4
+LB0D6:  .byte $B6               ;21/32 seconds
+LB0D7:  .byte $34               ;D4
+LB0D8:  .byte $B2               ;7/32 seconds
+LB0D9:  .byte $42               ;A4
+LB0DA:  .byte $B4               ;7/8 seconds
+LB0DB:  .byte $4C               ;D5
+LB0DC:  .byte $B3               ;7/16 seconds
+LB0DD:  .byte $44               ;A#4
+LB0DE:  .byte $42               ;A4
+LB0DF:  .byte $3E               ;G4
+LB0E0:  .byte $3C               ;F#4
+LB0E1:  .byte $B6               ;21/32 seconds
+LB0E2:  .byte $38               ;E4
+LB0E3:  .byte $B2               ;7/32 seconds
+LB0E4:  .byte $3C               ;F#4
+LB0E5:  .byte $B6               ;21/32 seconds
+LB0E6:  .byte $42               ;A4
+LB0E7:  .byte $B2               ;7/32 seconds
+LB0E8:  .byte $4C               ;D5
+LB0E9:  .byte $B6               ;21/32 seconds
+LB0EA:  .byte $38               ;E4
+LB0EB:  .byte $B2               ;7/32 seconds
+LB0EC:  .byte $3C               ;F#4
+LB0ED:  .byte $B4               ;7/8 seconds
+LB0EE:  .byte $34               ;D4
+LB0EF:  .byte $B3               ;7/16 seconds
+LB0F0:  .byte $2A               ;A3
+LB0F1:  .byte $2E               ;B3
+LB0F2:  .byte $34               ;D4
+LB0F3:  .byte $38               ;E4
+LB0F4:  .byte $B6               ;21/32 seconds
+LB0F5:  .byte $34               ;D4
+LB0F6:  .byte $B2               ;7/32 seconds
+LB0F7:  .byte $2C               ;A#3
+LB0F8:  .byte $B4               ;7/8 seconds
+LB0F9:  .byte $26               ;G3
+LB0FA:  .byte $B5               ;1 13/16 seconds
+LB0FB:  .byte $38               ;E4
+LB0FC:  .byte $3C               ;F#4
+LB0FD:  .byte $42               ;A4
+LB0FE:  .byte $4C               ;D5
+LB0FF:  .byte $34               ;D4
+LB100:  .byte $3A               ;F4
+LB101:  .byte $48               ;C5
+LB102:  .byte $42               ;A4
+LB103:  .byte $36               ;D#4
+LB104:  .byte $3E               ;G4
+LB105:  .byte $4C               ;D5
+LB106:  .byte $44               ;A#4
+LB107:  .byte $42               ;A4
+LB108:  .byte $38               ;E4
+LB109:  .byte $2E               ;B3
+LB10A:  .byte $38               ;E4
+LB10B:  .byte $40               ;Ab4
+LB10C:  .byte $38               ;E4
+LB10D:  .byte $2E               ;B3
+LB10E:  .byte $38               ;E4
+LB10F:  .byte $E0               ;
+LB110:  .byte $B6               ;21/32 seconds  +
+LB111:  .byte $06               ;D2             | Repeat 32 times.
+LB112:  .byte $B2               ;7/32 seconds   |
+LB113:  .byte $02               ;No sound       +
+LB114:  .byte $FF               ;
 
 IntroNoiseIndexData:
-LB115:  .byte $D0           ;
-LB116:  .byte $B4           ;7/8 Seconds    + Repeat 16 times.
-LB117:  .byte $04           ;Drumbeat 01    +
-LB118:  .byte $FF           ;
-LB119:  .byte $CC           ;
-LB11A:  .byte $B2           ;7/32 Seconds   +
-LB11B:  .byte $04           ;Drumbeat 01    |
-LB11C:  .byte $04           ;Drumbeat 01    |
-LB11D:  .byte $B5           ;1 13/16 Seconds|
-LB11E:  .byte $07           ;Drumbeat 02    |
-LB11F:  .byte $B0           ;1/4 Seconds    |
-LB120:  .byte $04           ;Drumbeat 01    | Repeat 12 times.
-LB121:  .byte $04           ;Drumbeat 01    |
-LB122:  .byte $B6           ;21/32 Seconds  |
-LB123:  .byte $04           ;Drumbeat 01    |
-LB124:  .byte $B1           ;7/64 Seconds   |
-LB125:  .byte $04           ;Drumbeat 01    |
-LB126:  .byte $04           ;Drumbeat 01    +
-LB127:  .byte $FF           ;
-LB128:  .byte $CA           ;
-LB129:  .byte $B1           ;7/64 Seconds   +
-LB12A:  .byte $04           ;Drumbeat 01    |
-LB12B:  .byte $04           ;Drumbeat 01    |
-LB12C:  .byte $04           ;Drumbeat 01    | Repeat 10 times.
-LB12D:  .byte $07           ;Drumbeat 02    |
-LB12E:  .byte $04           ;Drumbeat 01    |
-LB12F:  .byte $04           ;Drumbeat 01    +
-LB130:  .byte $FF           ;
-LB131:  .byte $E0           ;
-LB132:  .byte $B4           ;7/8 Seconds    + Repeat 32 times.
-LB133:  .byte $04           ;Drumbeat 01    +
-LB134:  .byte $FF           ;
+LB115:  .byte $D0               ;
+LB116:  .byte $B4               ;7/8 Seconds    + Repeat 16 times.
+LB117:  .byte $04               ;Drumbeat 01    +
+LB118:  .byte $FF               ;
+LB119:  .byte $CC               ;
+LB11A:  .byte $B2               ;7/32 Seconds   +
+LB11B:  .byte $04               ;Drumbeat 01    |
+LB11C:  .byte $04               ;Drumbeat 01    |
+LB11D:  .byte $B5               ;1 13/16 Seconds|
+LB11E:  .byte $07               ;Drumbeat 02    |
+LB11F:  .byte $B0               ;1/4 Seconds    |
+LB120:  .byte $04               ;Drumbeat 01    | Repeat 12 times.
+LB121:  .byte $04               ;Drumbeat 01    |
+LB122:  .byte $B6               ;21/32 Seconds  |
+LB123:  .byte $04               ;Drumbeat 01    |
+LB124:  .byte $B1               ;7/64 Seconds   |
+LB125:  .byte $04               ;Drumbeat 01    |
+LB126:  .byte $04               ;Drumbeat 01    +
+LB127:  .byte $FF               ;
+LB128:  .byte $CA               ;
+LB129:  .byte $B1               ;7/64 Seconds   +
+LB12A:  .byte $04               ;Drumbeat 01    |
+LB12B:  .byte $04               ;Drumbeat 01    |
+LB12C:  .byte $04               ;Drumbeat 01    | Repeat 10 times.
+LB12D:  .byte $07               ;Drumbeat 02    |
+LB12E:  .byte $04               ;Drumbeat 01    |
+LB12F:  .byte $04               ;Drumbeat 01    +
+LB130:  .byte $FF               ;
+LB131:  .byte $E0               ;
+LB132:  .byte $B4               ;7/8 Seconds    + Repeat 32 times.
+LB133:  .byte $04               ;Drumbeat 01    +
+LB134:  .byte $FF               ;
 
 ;----------------------------------------------------------------------------------------------------
 
@@ -5873,60 +5824,60 @@ LB35F:  LDX #$AC            ;Lower address byte in ChooseNextSFXRoutineTbl.
 LB361:  JMP GotoSFXCheckFlags       ;($B337)Checks to see if SFX or music flags set.
 
 LoadSQ1Flags:
-LB364:  JSR LoadSQ1SFXInitFlags     ;($B329)Check for SQ1 init flags.
-LB367:  RTS             ;
+LB364:  JSR LoadSQ1SFXInitFlags ;($B329)Check for SQ1 init flags.
+LB367:  RTS                     ;
 
-LoadSQ1ChannelSFX:          ;Used to determine which sound registers to change
-LB368:  LDA #$00            ;($4000 - $4003) - SQ1.
-LB36A:  BEQ +               ;Branch always.
+LoadSQ1ChannelSFX:              ;Used to determine which sound registers to change
+LB368:  LDA #$00                ;($4000 - $4003) - SQ1.
+LB36A:  BEQ +                   ;Branch always.
 
 LoadTriangleChannelSFX:         ;Used to determine which sound registers to change
-LB36C:  LDA #$08            ;($4008 - $400B) - Triangle.
-LB36E:  BNE +               ;Branch always.
+LB36C:  LDA #$08                ;($4008 - $400B) - Triangle.
+LB36E:  BNE +                   ;Branch always.
 
 LoadNoiseChannelSFX:            ;Used to determine which sound registers to change
-LB370:  LDA #$0C            ;($400C - $400F) - Noise.
-LB372:  BNE +               ;Branch always.
+LB370:  LDA #$0C                ;($400C - $400F) - Noise.
+LB372:  BNE +                   ;Branch always.
 
-LoadSQ2ChannelSFX:          ;Used to determine which sound registers to change
-LB374:  LDA #$04            ;($4004 - $4007) - SQ2.
+LoadSQ2ChannelSFX:              ;Used to determine which sound registers to change
+LB374:  LDA #$04                ;($4004 - $4007) - SQ2.
 
 LoadSFXData:
-LB376:* STA $E0             ;Lower address byte of desired APU control register.
-LB378:  LDA #$40            ;
-LB37A:  STA $E1             ;Upper address byte of desired APU control register.
-LB37C:  STY $E2             ;Lower address byte of data to load into sound channel.
-LB37E:  LDA #$B2            ;
-LB380:  STA $E3             ;Upper address byte of data to load into sound channel.
-LB382:  LDY #$00            ;Starting index for loading four byte sound data.
+LB376:* STA $E0                 ;Lower address byte of desired APU control register.
+LB378:  LDA #$40                ;
+LB37A:  STA $E1                 ;Upper address byte of desired APU control register.
+LB37C:  STY $E2                 ;Lower address byte of data to load into sound channel.
+LB37E:  LDA #$B2                ;
+LB380:  STA $E3                 ;Upper address byte of data to load into sound channel.
+LB382:  LDY #$00                ;Starting index for loading four byte sound data.
 
 LoadSFXRegisters:
-LB384:* LDA ($E2),Y         ;Load A with SFX data byte.
-LB386:  STA ($E0),Y         ;Store A in SFX register.
-LB388:  INY                 ;
-LB389:  TYA                 ;The four registers associated with each sound
-LB38A:  CMP #$04            ;channel are loaded one after the other (the loop
-LB38C:  BNE -               ;repeats four times).
-LB38E:  RTS                 ;
+LB384:* LDA ($E2),Y             ;Load A with SFX data byte.
+LB386:  STA ($E0),Y             ;Store A in SFX register.
+LB388:  INY                     ;
+LB389:  TYA                     ;The four registers associated with each sound
+LB38A:  CMP #$04                ;channel are loaded one after the other (the loop
+LB38C:  BNE -                   ;repeats four times).
+LB38E:  RTS                     ;
 
 PauseSFX:
 LB38F:* INC SFXPaused           ;SFXPaused=#$01
 LB392:  JSR ClearSounds         ;($B43E)Clear sound registers of data.      
 LB395:  STA PauseSFXStatus      ;PauseSFXStatus=#$00
-LB398:  RTS             ;
+LB398:  RTS                     ;
 
 LB399:* LDA SFXPaused           ;Has SFXPaused been set? if not, branch
-LB39C:  BEQ --              ;
+LB39C:  BEQ --                  ;
 LB39E:  LDA PauseSFXStatus      ;For the first #$12 frames after the game has been
-LB3A1:  CMP #$12            ;paused, play GamePaused SFX.  If paused for #$12
-LB3A3:  BEQ ++              ;frames or more, branch to exit.
-LB3A5:  AND #$03            ;
-LB3A7:  CMP #$03            ;Every fourth frame, repeat GamePaused SFX
-LB3A9:  BNE +               ;
-LB3AB:  LDY #$0D            ;Lower address byte of GamePaused SFX data(Base=$B200)
-LB3AD:  JSR LoadSQ1ChannelSFX       ;($B368) Load GamePaused SFX data.
+LB3A1:  CMP #$12                ;paused, play GamePaused SFX.  If paused for #$12
+LB3A3:  BEQ ++                  ;frames or more, branch to exit.
+LB3A5:  AND #$03                ;
+LB3A7:  CMP #$03                ;Every fourth frame, repeat GamePaused SFX
+LB3A9:  BNE +                   ;
+LB3AB:  LDY #$0D                ;Lower address byte of GamePaused SFX data(Base=$B200)
+LB3AD:  JSR LoadSQ1ChannelSFX   ;($B368) Load GamePaused SFX data.
 LB3B0:* INC PauseSFXStatus      ;
-LB3B3:* RTS             ;
+LB3B3:* RTS                     ;
 
 ;----------------------------------[ Sound Engine Entry Point ]-----------------------------------
 ;NOTES:  
@@ -5942,15 +5893,15 @@ LB3B3:* RTS             ;
 ;SQ1=0, SQ2=1, Triangle=2, Noise=3
 
 SoundEngine: 
-LB3B4:  LDA #$C0            ;Set APU to 5 frame cycle, disable frame interrupt.
+LB3B4:  LDA #$C0                ;Set APU to 5 frame cycle, disable frame interrupt.
 LB3B6:  STA APUCommonCntrl1     ;
 LB3B9:  LDA NoiseSFXFlag        ;is bit zero is set in NoiseSFXFlag(Silence
-LB3BC:  LSR                 ;music)?  If yes, branch.
-LB3BD:  BCS ++              ;
+LB3BC:  LSR                     ;music)?  If yes, branch.
+LB3BD:  BCS ++                  ;
 LB3BF:  LDA MainRoutine         ;
-LB3C1:  CMP #$05            ;Is game paused?  If yes, branch.
-LB3C3:  BEQ ---             ;
-LB3C5:  LDA #$00            ;Clear SFXPaused when game is running.
+LB3C1:  CMP #$05                ;Is game paused?  If yes, branch.
+LB3C3:  BEQ ---                 ;
+LB3C5:  LDA #$00                ;Clear SFXPaused when game is running.
 LB3C7:  STA SFXPaused           ;
 LB3CA:  JSR LoadNoiseSFXInitFlags   ;($B31B)Check noise SFX flags.
 LB3CD:  JSR LoadMultiSFXInitFlags   ;($B34B)Check multichannel SFX flags.
@@ -5958,123 +5909,123 @@ LB3D0:  JSR LoadSTriangleSFXInitFlags   ;($B33D)Check triangle SFX flags.
 LB3D3:  JSR LoadMusicTempFlags      ;($BC36)Check music flags.
 
 ClearSFXFlags:
-LB3D6:* LDA #$00            ;
+LB3D6:* LDA #$00                ;
 LB3D8:  STA NoiseSFXFlag        ;
 LB3DB:  STA SQ1SFXFlag          ;
 LB3DE:  STA SQ2SFXFlag          ;Clear all SFX flags.
 LB3E1:  STA TriangleSFXFlag     ;
 LB3E4:  STA MultiSFXFlag        ;
 LB3E7:  STA MusicInitFlag       ;
-LB3EA:  RTS             ;
+LB3EA:  RTS                     ;
 
 LB3EB:* JSR InitializeSoundAddresses    ;($B404)Prepare to start playing music.     
-LB3EE:  BEQ --              ;Branch always.
+LB3EE:  BEQ --                  ;Branch always.
 
 CheckRepeatMusic:
 LB3F0:  LDA MusicRepeat         ;
-LB3F3:  BEQ +               ;If music is supposed to repeat, reset music,
+LB3F3:  BEQ +                   ;If music is supposed to repeat, reset music,
 LB3F5:  LDA CurrentMusic        ;flags else branch to exit.
-LB3F8:  STA CurrentMusicRepeat      ;
-LB3FB:  RTS             ;
+LB3F8:  STA CrntMusicRepeat     ;
+LB3FB:  RTS                     ;
 
 CheckMusicFlags:
 LB3FC:  LDA CurrentMusic        ;Loads A with current music flags and compares it
 LB3FF:  CMP CurrentSFXFlags     ;with current SFX flags.  If both are equal,
-LB402:  BEQ ++              ;just clear music counters, else clear everything.
+LB402:  BEQ ++                  ;just clear music counters, else clear everything.
 
 InitializeSoundAddresses:       ;
 LB404:* JSR ClearMusicAndSFXAddresses   ;($B41D)Jumps to all subroutines needed to reset
 LB407:  JSR ClearSounds         ;($B43E)all sound addresses in order to start
 LB40A:* JSR ClearSpecialAddresses   ;($B40E)playing music.
-LB40D:  RTS                 ;
+LB40D:  RTS                     ;
 
 ClearSpecialAddresses:
-LB40E:  LDA #$00            ;   
-LB410:  STA TriangleCounterCntrl    ;Clears addresses used for repeating music,
+LB40E:  LDA #$00                ;   
+LB410:  STA TriCounterCntrl     ;Clears addresses used for repeating music,
 LB413:  STA SFXPaused           ;pausing music and controlling triangle length.
-LB416:  STA CurrentMusicRepeat      ;
+LB416:  STA CrntMusicRepeat     ;
 LB419:  STA MusicRepeat         ;
-LB41C:  RTS             ;
+LB41C:  RTS                     ;
 
 ClearMusicAndSFXAddresses:      ;
-LB41D:  LDA #$00            ;
+LB41D:  LDA #$00                ;
 LB41F:  STA SQ1InUse            ;
 LB422:  STA SQ2InUse            ;
 LB425:  STA TriangleInUse       ;
-LB428:  STA WriteMultiChannelData   ;
+LB428:  STA WrtMultiChnDat      ;
 LB42B:  STA NoiseContSFX        ;Clears any SFX or music 
 LB42E:  STA SQ1ContSFX          ;currently being played.
 LB431:  STA SQ2ContSFX          ;
 LB434:  STA TriangleContSFX     ;
 LB437:  STA MultiContSFX        ;
 LB43A:  STA CurrentMusic        ;
-LB43D:  RTS                 ;
+LB43D:  RTS                     ;
 
-ClearSounds:                ;
-LB43E:  LDA #$10            ;
+ClearSounds:                    ;
+LB43E:  LDA #$10                ;
 LB440:  STA SQ1Cntrl0           ;
 LB443:  STA SQ2Cntrl0           ;
 LB446:  STA NoiseCntrl0         ;Clears all sounds that might be in
-LB449:  LDA #$00            ;The sound channel registers.
+LB449:  LDA #$00                ;The sound channel registers.
 LB44B:  STA TriangleCntrl0      ;
 LB44E:  STA DMCCntrl1           ;
-LB451:  RTS                 ;
+LB451:  RTS                     ;
 
 SelectSFXRoutine:
 LB452:  LDX ChannelType         ;
-LB455:  STA NoiseSFXLength,X        ;Stores frame length of SFX in corresponding address.
-LB458:  TXA             ;
-LB459:  BEQ ++              ;Branch if SFX uses noise channel.
-LB45B:  CMP #$01            ;
-LB45D:  BEQ +               ;Branch if SFX uses SQ1 channel.
-LB45F:  CMP #$02            ;
+LB455:  STA NoiseSFXLength,X    ;Stores frame length of SFX in corresponding address.
+LB458:  TXA                     ;
+LB459:  BEQ ++                  ;Branch if SFX uses noise channel.
+LB45B:  CMP #$01                ;
+LB45D:  BEQ +                   ;Branch if SFX uses SQ1 channel.
+LB45F:  CMP #$02                ;
 LB461:  BEQ MusicBranch00       ;Branch if SFX uses SQ2 channel.
-LB463:  CMP #$03            ;
+LB463:  CMP #$03                ;
 LB465:  BEQ MusicBranch01       ;Branch if SFX uses triangle wave.
-LB467:  RTS             ;Exit if SFX routine uses no channels.
+LB467:  RTS                     ;Exit if SFX routine uses no channels.
 
-LB468:* JSR LoadSQ1ChannelSFX       ;($B368)Prepare to load SQ1 channel with data.
-LB46B:  BEQ ++              ;Branch always.
-MusicBranch00:              ;
-LB46D:  JSR LoadSQ2ChannelSFX       ;($B374)Prepare to load SQ2 channel with data.
-LB470:  BEQ ++              ;Branch always.
-MusicBranch01:              ;
+LB468:* JSR LoadSQ1ChannelSFX   ;($B368)Prepare to load SQ1 channel with data.
+LB46B:  BEQ ++                  ;Branch always.
+MusicBranch00:                  ;
+LB46D:  JSR LoadSQ2ChannelSFX   ;($B374)Prepare to load SQ2 channel with data.
+LB470:  BEQ ++                  ;Branch always.
+MusicBranch01:                  ;
 LB472:  JSR LoadTriangleChannelSFX  ;($B36C)Prepare to load triangle channel with data.
-LB475:  BEQ ++              ;Branch always.
-LB477:* JSR LoadNoiseChannelSFX     ;($B370)Prepare to load noise channel with data.
+LB475:  BEQ ++                  ;Branch always.
+LB477:* JSR LoadNoiseChannelSFX ;($B370)Prepare to load noise channel with data.
 LB47A:* JSR UpdateContFlags     ;($B493)Set continuation flags for this SFX.
-LB47D:  TXA             ;
+LB47D:  TXA                     ;
 LB47E:  STA NoiseInUse,X        ;Indicate sound channel is in use.
-LB481:  LDA #$00            ;
-LB483:  STA ThisNoiseFrame,X        ;
+LB481:  LDA #$00                ;
+LB483:  STA ThisNoiseFrame,X    ;
 LB486:  STA NoiseSFXData,X      ;Clears all the following addresses before going
 LB489:  STA MultiSFXData,X      ;to the proper SFX handling routine.
-LB48C:  STA ScrewAttackSFXData,X    ;
-LB48F:  STA WriteMultiChannelData   ;
-LB492:  RTS             ;
+LB48C:  STA ScrewAtkSFXData,X    ;
+LB48F:  STA WrtMultiChnDat      ;
+LB492:  RTS                      ;
 
 UpdateContFlags:
 LB493:* LDX ChannelType         ;Loads X register with sound channel just changed.
 LB496:  LDA NoiseContSFX,X      ;Clear existing continuation SFX
-LB499:  AND #$00            ;flags for that channel.
+LB499:  AND #$00                ;flags for that channel.
 LB49B:  ORA CurrentSFXFlags     ;Load new continuation flags.
 LB49E:  STA NoiseContSFX,X      ;Save results.
-LB4A1:  RTS             ;
+LB4A1:  RTS                     ;
 
 ClearCurrentSFXFlags:
-LB4A2:  LDA #$00            ;Once SFX has completed, this block clears the
+LB4A2:  LDA #$00                ;Once SFX has completed, this block clears the
 LB4A4:  STA CurrentSFXFlags     ;SFX flag from the current flag register.
-LB4A7:  BEQ -               ;
+LB4A7:  BEQ -                   ;
 
 IncrementSFXFrame:
 LB4A9:  LDX ChannelType         ;Load SFX channel number.
-LB4AC:  INC ThisNoiseFrame,X        ;increment current frame to play on given channel.
-LB4AF:  LDA ThisNoiseFrame,X        ;Load current frame to play on given channel.
-LB4B2:  CMP NoiseSFXLength,X        ;Check to see if current frame is last frame to play.
-LB4B5:  BNE +               ;
-LB4B7:  LDA #$00            ;If current frame is last frame,
-LB4B9:  STA ThisNoiseFrame,X        ;reset current frame to 0.
-LB4BC:* RTS                 ;
+LB4AC:  INC ThisNoiseFrame,X    ;increment current frame to play on given channel.
+LB4AF:  LDA ThisNoiseFrame,X    ;Load current frame to play on given channel.
+LB4B2:  CMP NoiseSFXLength,X    ;Check to see if current frame is last frame to play.
+LB4B5:  BNE +                   ;
+LB4B7:  LDA #$00                ;If current frame is last frame,
+LB4B9:  STA ThisNoiseFrame,X    ;reset current frame to 0.
+LB4BC:* RTS                     ;
 
 ;The CheckSFXFlag routine loads E0 thru E3 with the below values:
 ;1st  SFX cycle $E0=#$BB,$E1=#$B2,$E2=#$22,$E3=#$B3.  Base address=$B289
@@ -6090,40 +6041,40 @@ LB4BC:* RTS                 ;
 
 CheckSFXFlag:
 LB4BD:  STA CurrentSFXFlags     ;Store any set flags in $064D.
-LB4C0:  STX $E4             ;
-LB4C2:  LDY #$B2            ;
-LB4C4:  STY $E5             ;
-LB4C6:  LDY #$00            ;Y=0 for counting loop ahead.
-LB4C8:* LDA ($E4),Y         ;
-LB4CA:  STA $00E0,Y         ;See table above for values loaded into $E0
-LB4CD:  INY                 ;thru $E3 during this loop.
-LB4CE:  TYA                 ;
-LB4CF:  CMP #$04            ;Loop repeats four times to load the values.
-LB4D1:  BNE -               ;
-LB4D3:  LDA ($E4),Y         ;
+LB4C0:  STX $E4                 ;
+LB4C2:  LDY #$B2                ;
+LB4C4:  STY $E5                 ;
+LB4C6:  LDY #$00                ;Y=0 for counting loop ahead.
+LB4C8:* LDA ($E4),Y             ;
+LB4CA:  STA $00E0,Y             ;See table above for values loaded into $E0
+LB4CD:  INY                     ;thru $E3 during this loop.
+LB4CE:  TYA                     ;
+LB4CF:  CMP #$04                ;Loop repeats four times to load the values.
+LB4D1:  BNE -                   ;
+LB4D3:  LDA ($E4),Y             ;
 LB4D5:  STA ChannelType         ;#$00=SQ1,#$01=SQ2,#$02=Triangle,#$03=Noise
-LB4D8:  LDY #$00            ;Set y to 0 for counting loop ahead.
+LB4D8:  LDY #$00                ;Set y to 0 for counting loop ahead.
 LB4DA:  LDA CurrentSFXFlags     ;
-LB4DD:  PHA                 ;Push current SFX flags on stack.
+LB4DD:  PHA                     ;Push current SFX flags on stack.
 LB4DE:* ASL CurrentSFXFlags     ;
-LB4E1:  BCS +               ;This portion of the routine loops a maximum of
-LB4E3:  INY             ;eight times looking for any SFX flags that have
-LB4E4:  INY                 ;been set in the current SFX cycle.  If a flag
-LB4E5:  TYA                 ;is found, Branch to SFXFlagFound for further
-LB4E6:  CMP #$10            ;processing, if no flags are set, continue to
-LB4E8:  BNE -               ;next SFX cycle.
+LB4E1:  BCS +                   ;This portion of the routine loops a maximum of
+LB4E3:  INY                     ;eight times looking for any SFX flags that have
+LB4E4:  INY                     ;been set in the current SFX cycle.  If a flag
+LB4E5:  TYA                     ;is found, Branch to SFXFlagFound for further
+LB4E6:  CMP #$10                ;processing, if no flags are set, continue to
+LB4E8:  BNE -                   ;next SFX cycle.
 
 RestoreSFXFlags:
-LB4EA:  PLA             ;
+LB4EA:  PLA                     ;
 LB4EB:  STA CurrentSFXFlags     ;Restore original data in CurrentSFXFlags.
-LB4EE:  RTS             ;
+LB4EE:  RTS                     ;
 
-SFXFlagFound:               ;
-LB4EF:* LDA ($E0),Y         ;This routine stores the starting address of the
-LB4F1:  STA $E2             ;specific SFX handling routine for the SFX flag 
-LB4F3:  INY                 ;found.  The address is stored in registers
-LB4F4:  LDA ($E0),Y         ;$E2 and $E3.
-LB4F6:  STA $E3             ;
+SFXFlagFound:                   ;
+LB4EF:* LDA ($E0),Y             ;This routine stores the starting address of the
+LB4F1:  STA $E2                 ;specific SFX handling routine for the SFX flag 
+LB4F3:  INY                     ;found.  The address is stored in registers
+LB4F4:  LDA ($E0),Y             ;$E2 and $E3.
+LB4F6:  STA $E3                 ;
 LB4F8:  JMP RestoreSFXFlags     ;($B4EA)Restore original data in CurrentSFXFlags.
 
 ;-----------------------------------[ SFX Handling Routines ]---------------------------------------
@@ -6135,149 +6086,149 @@ LB4FB:  .byte $12, $13, $14, $15, $16, $17, $18, $19, $1A, $1B, $1C, $1D, $1B, $
 LB50B:  .byte $16, $15, $14, $12
 
 SpitFlameSFXStart:
-LB50F:  LDA #$14            ;Number of frames to play sound before a change.
-LB511:  LDY #$21            ;Lower byte of sound data start address(base=$B200).
-LB513:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB50F:  LDA #$14                ;Number of frames to play sound before a change.
+LB511:  LDY #$21                ;Lower byte of sound data start address(base=$B200).
+LB513:  JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 SpitFlameSFXContinue:
-LB516:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB519:  BNE +               ;If more frames to process, branch.
+LB516:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB519:  BNE +                   ;If more frames to process, branch.
 LB51B:  JMP EndNoiseSFX         ;($B58F)End SFX.
 LB51E:* LDY NoiseSFXData        ;
-LB521:  LDA $B4FB,Y         ;Load data from table above and store in NoiseCntrl0.
+LB521:  LDA $B4FB,Y             ;Load data from table above and store in NoiseCntrl0.
 LB524:  STA NoiseCntrl0         ;
 LB527:  INC NoiseSFXData        ;Increment to next entry in data table.
 LB52A:  RTS 
 
 ScrewAttackSFXStart:
-LB52B:  LDA #$05            ;Number of frames to play sound before a change.
-LB52D:  LDY #$11            ;Lower byte of sound data start address(base=$B200).
-LB52F:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
-LB532:  LDA $B213           ;#$00.
+LB52B:  LDA #$05                ;Number of frames to play sound before a change.
+LB52D:  LDY #$11                ;Lower byte of sound data start address(base=$B200).
+LB52F:  JSR SelectSFXRoutine    ;($B452)Setup registers for SFX.
+LB532:  LDA $B213               ;#$00.
 LB535:  STA NoiseSFXData        ;Clear NoiseSFXData.
-LB538:* RTS             ;
+LB538:* RTS                     ;
 
 ScrewAttackSFXContinue:
-LB539:  LDA ScrewAttackSFXData      ;Prevents period index from being incremented until
-LB53C:  CMP #$02            ;after the tenth frame of the SFX.
-LB53E:  BEQ +               ;Branch if not ready to increment.
-LB540:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB543:  BNE -               ;
-LB545:  INC ScrewAttackSFXData      ;Increment every fifth frame.
-LB548:  RTS             ;
+LB539:  LDA ScrewAtkSFXData     ;Prevents period index from being incremented until
+LB53C:  CMP #$02                ;after the tenth frame of the SFX.
+LB53E:  BEQ +                   ;Branch if not ready to increment.
+LB540:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB543:  BNE -                   ;
+LB545:  INC ScrewAtkSFXData     ;Increment every fifth frame.
+LB548:  RTS                     ;
 
-LB549:* JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB549:* JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB54C:  BNE IncrementPeriodIndex    ;Start increasing period index after first ten frames.
 LB54E:  DEC NoiseSFXData        ;
 LB551:  DEC NoiseSFXData        ;Decrement NoiseSFXData by three every fifth frame.
 LB554:  DEC NoiseSFXData        ;
 LB557:  INC MultiSFXData        ;Increment MultiSFXData.  When it is equal to #$0F
 LB55A:  LDA MultiSFXData        ;end screw attack SFX.  MultiSFXData does not
-LB55D:  CMP #$0F            ;appear to be linked to multi SFX channels in
-LB55F:  BNE --              ;this routine.
+LB55D:  CMP #$0F                ;appear to be linked to multi SFX channels in
+LB55F:  BNE --                  ;this routine.
 LB561:  JMP EndNoiseSFX         ;($B58F)End SFX.
 
 IncrementPeriodIndex:
 LB564:  INC NoiseSFXData        ;Incrementing the period index has the effect of
 LB567:  LDA NoiseSFXData        ;lowering the frequency of the noise SFX.
 LB56A:  STA NoiseCntrl2         ;
-LB56D:  RTS             ;
+LB56D:  RTS                     ;
 
 MissileLaunchSFXStart:
-LB56E:  LDA #$18            ;Number of frames to play sound before a change.
-LB570:  LDY #$15            ;Lower byte of sound data start address(base=$B200).
+LB56E:  LDA #$18                ;Number of frames to play sound before a change.
+LB570:  LDY #$15                ;Lower byte of sound data start address(base=$B200).
 LB572:  JSR GotoSelectSFXRoutine    ;($B587)Prepare to setup registers for SFX.
-LB575:  LDA #$0A            ;
+LB575:  LDA #$0A                ;
 LB577:  STA NoiseSFXData        ;Start increment index for noise channel at #$0A.
-LB57A:  RTS             ;
+LB57A:  RTS                     ;
 
 MissileLaunchSFXContine:
-LB57B:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB57B:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB57E:  BNE IncrementPeriodIndex    ;
 LB580:  JMP EndNoiseSFX         ;($B58F)End SFX.
 
 BombExplodeSFXStart:
-LB583:  LDA #$30            ;Number of frames to play sound before a change.
-LB585:  LDY #$19            ;Lower byte of sound data start address(base=$B200).
+LB583:  LDA #$30                ;Number of frames to play sound before a change.
+LB585:  LDY #$19                ;Lower byte of sound data start address(base=$B200).
 
 GotoSelectSFXRoutine:
-LB587:* JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB587:* JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 ;The following routine is used to continue BombExplode and SamusWalk SFX.
 
 NoiseSFXContinue:
-LB58A:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB58A:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB58D:  BNE MusicBranch02       ;If more frames to process, branch to exit. 
 
 EndNoiseSFX:
 LB58F:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
-LB592:  LDA #$10            ;
+LB592:  LDA #$10                ;
 LB594:  STA NoiseCntrl0         ;disable envelope generator(sound off).
 
 MusicBranch02:
-LB597:  RTS             ;Exit for multiple routines.
+LB597:  RTS                     ;Exit for multiple routines.
  
 SamusWalkSFXStart:
 LB598:  LDA NoiseContSFX        ;If MissileLaunch, SamusWalk or SpitFire SFX are
-LB59B:  AND #$34            ;already being played, branch to exit.
+LB59B:  AND #$34                ;already being played, branch to exit.
 LB59D:  BNE MusicBranch02       ;
-LB59F:  LDA #$03            ;Number of frames to play sound before a change.
-LB5A1:  LDY #$1D            ;Lower byte of sound data start address(base=$B200).
-LB5A3:  BNE -               ;Branch always.
+LB59F:  LDA #$03                ;Number of frames to play sound before a change.
+LB5A1:  LDY #$1D                ;Lower byte of sound data start address(base=$B200).
+LB5A3:  BNE -                   ;Branch always.
 
 MultiSFXInit:
 LB5A5:  STA MultiSFXLength      ;
-LB5A8:  JSR LoadSQ2ChannelSFX       ;($B374)Set SQ2 SFX data.
+LB5A8:  JSR LoadSQ2ChannelSFX   ;($B374)Set SQ2 SFX data.
 LB5AB:  JSR UpdateContFlags     ;($B493)Set continue SFX flag.
-LB5AE:  LDA #$01            ;
+LB5AE:  LDA #$01                ;
 LB5B0:  STA SQ1InUse            ;Disable music from using SQ1 and SQ2 while
-LB5B3:  LDA #$02            ;SFX are playing.
+LB5B3:  LDA #$02                ;SFX are playing.
 LB5B5:  STA SQ2InUse            ;
-LB5B8:  LDA #$00            ;
+LB5B8:  LDA #$00                ;
 LB5BA:  STA SQ1ContSFX          ;
 LB5BD:  STA SQ1SFXData          ;
 LB5C0:  STA SQ1SQ2SFXData       ;Clear all listed memory addresses.
 LB5C3:  STA SQ1SFXPeriodLow     ;
 LB5C6:  STA ThisMultiFrame      ;
-LB5C9:  STA WriteMultiChannelData   ;
-LB5CC:  RTS             ;
+LB5C9:  STA WrtMultiChnDat   ;
+LB5CC:  RTS                     ;
 
 EndMultiSFX:
-LB5CD:  LDA #$10            ;
+LB5CD:  LDA #$10                ;
 LB5CF:  STA SQ1Cntrl0           ;Disable SQ1 envelope generator(sound off).
 LB5D2:  STA SQ2Cntrl0           ;Disable SQ2 envelope generator(sound off).
-LB5D5:  LDA #$7F            ;
+LB5D5:  LDA #$7F                ;
 LB5D7:  STA SQ1Cntrl1           ;Disable SQ1 sweep.
 LB5DA:  STA SQ2Cntrl1           ;Disable SQ2 sweep.
 LB5DD:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
-LB5E0:  LDA #$00            ;
+LB5E0:  LDA #$00                ;
 LB5E2:  STA SQ1InUse            ;
 LB5E5:  STA SQ2InUse            ;Allows music player to use SQ1 and SQ2 channels.
-LB5E8:  INC WriteMultiChannelData   ;
-LB5EB:  RTS             ;
+LB5E8:  INC WrtMultiChnDat   ;
+LB5EB:  RTS                     ;
 
 BossHitSFXStart:
-LB5EC:  LDY #$2D            ;Low byte of SQ1 sound data start address(base=$B200).
-LB5EE:  JSR LoadSQ1ChannelSFX       ;($B368)Set SQ1 SFX data.
-LB5F1:  LDY #$29            ;Low byte of SQ2 sound data start address(base=$B200).
+LB5EC:  LDY #$2D                ;Low byte of SQ1 sound data start address(base=$B200).
+LB5EE:  JSR LoadSQ1ChannelSFX   ;($B368)Set SQ1 SFX data.
+LB5F1:  LDY #$29                ;Low byte of SQ2 sound data start address(base=$B200).
 LB5F3:  JMP MultiSFXInit        ;($B5A5)Initiate multi channel SFX.
 
 BossHitSFXContinue:
 LB5F6:  INC SQ1SFXData          ;Increment index to data in table below.
 LB5F9:  LDY SQ1SFXData          ;
-LB5FC:  LDA $B63C,Y         ;
+LB5FC:  LDA $B63C,Y             ;
 LB5FF:  STA SQ1Cntrl0           ;Load SQ1Cntrl0 and SQ2Cntrl0 from table below.
 LB602:  STA SQ2Cntrl0           ;
 LB605:  LDA SQ1SFXData          ;
-LB608:  CMP #$14            ;After #$14 frames, end SFX.
-LB60A:  BEQ ++              ;
-LB60C:  CMP #$06            ;After six or more frames of SFX, branch.
-LB60E:  BCC +               ;
+LB608:  CMP #$14                ;After #$14 frames, end SFX.
+LB60A:  BEQ ++                  ;
+LB60C:  CMP #$06                ;After six or more frames of SFX, branch.
+LB60E:  BCC +                   ;
 LB610:  LDA RandomNumber1       ;
-LB612:  ORA #$10            ;Set bit 5.
-LB614:  AND #$7F            ;Randomly set bits 7, 3, 2, 1 and 0.
+LB612:  ORA #$10                ;Set bit 5.
+LB614:  AND #$7F                ;Randomly set bits 7, 3, 2, 1 and 0.
 LB616:  STA SQ1SFXPeriodLow     ;Store in SQ1 period low.
-LB619:  ROL             ;
+LB619:  ROL                     ;
 LB61A:  STA SQ1SQ2SFXData       ;
 LB61D:  JMP WriteSQ1SQ2PeriodLow    ;($B62C)Write period low data to SQ1 and SQ2.
 LB620:* INC SQ1SQ2SFXData       ;
@@ -6290,7 +6241,7 @@ LB62C:  LDA SQ1SQ2SFXData       ;
 LB62F:  STA SQ2Cntrl2           ;Write new SQ1 and SQ2 period lows to SQ1 and SQ2
 LB632:  LDA SQ1SFXPeriodLow     ;channels.
 LB635:  STA SQ1Cntrl2           ;
-LB638:  RTS             ;
+LB638:  RTS                     ;
 
 LB639:* JMP EndMultiSFX         ;($B5CD)End SFX.
 
@@ -6299,52 +6250,52 @@ LB63C:  .byte $38, $3D, $3F, $3F, $3F, $3F, $3F, $3D, $3B, $39, $3B, $3D, $3F, $
 LB64C:  .byte $3B, $3D, $3F, $39
 
 SamusHitSFXContinue:
-LB650:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB653:  BNE +               ;If more SFX frames to process, branch.
+LB650:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB653:  BNE +                   ;If more SFX frames to process, branch.
 LB655:  JMP EndMultiSFX         ;($B5CD)End SFX.
-LB658:* LDY #$25            ;Low byte of SQ1 sound data start address(base=$B200).
-LB65A:  JSR LoadSQ1ChannelSFX       ;($B368)Set SQ1 SFX data.
+LB658:* LDY #$25                ;Low byte of SQ1 sound data start address(base=$B200).
+LB65A:  JSR LoadSQ1ChannelSFX   ;($B368)Set SQ1 SFX data.
 LB65D:  LDA RandomNumber1       ;
-LB65F:  AND #$0F            ;Randomly set last four bits of SQ1 period low.
+LB65F:  AND #$0F                ;Randomly set last four bits of SQ1 period low.
 LB661:  STA SQ1Cntrl2           ;
-LB664:  LDY #$25            ;Low byte of SQ2 sound data start address(base=$B200).
-LB666:  JSR LoadSQ2ChannelSFX       ;($B374)Set SQ2 SFX data.
+LB664:  LDY #$25                ;Low byte of SQ2 sound data start address(base=$B200).
+LB666:  JSR LoadSQ2ChannelSFX   ;($B374)Set SQ2 SFX data.
 LB669:  LDA RandomNumber1       ;
-LB66B:  LSR             ;Multiply random number by 4.
-LB66C:  LSR             ;
-LB66D:  AND #$0F            ;
+LB66B:  LSR                     ;Multiply random number by 4.
+LB66C:  LSR                     ;
+LB66D:  AND #$0F                ;
 LB66F:  STA SQ2Cntrl2           ;Randomly set bits 2 and 3 of SQ2 period low.
-LB672:  RTS             ;
+LB672:  RTS                     ;
 
 SamusHitSFXStart:
-LB673:  LDY #$25            ;Low byte of SQ1 sound data start address(base=$B200).
-LB675:  JSR LoadSQ1ChannelSFX       ;($B368)Set SQ1 SFX data.
+LB673:  LDY #$25                ;Low byte of SQ1 sound data start address(base=$B200).
+LB675:  JSR LoadSQ1ChannelSFX   ;($B368)Set SQ1 SFX data.
 LB678:  LDA RandomNumber1       ;
-LB67A:  AND #$0F            ;Randomly set last four bits of SQ1 period low.
+LB67A:  AND #$0F                ;Randomly set last four bits of SQ1 period low.
 LB67C:  STA SQ1Cntrl2           ;
-LB67F:  CLC             ;
+LB67F:  CLC                     ;
 LB680:  LDA RandomNumber1       ;Randomly set last three bits of SQ2 period low+1.
-LB682:  AND #$03            ;
-LB684:  ADC #$01            ;Number of frames to play sound before a change.
-LB686:  LDY #$25            ;Low byte of SQ2 sound data start address(base=$B200).
+LB682:  AND #$03                ;
+LB684:  ADC #$01                ;Number of frames to play sound before a change.
+LB686:  LDY #$25                ;Low byte of SQ2 sound data start address(base=$B200).
 LB688:  JSR MultiSFXInit        ;($B5A5)Initiate multi channel SFX.
 LB68B:  LDA RandomNumber1       ;
-LB68D:  LSR             ;Multiply random number by 4.
-LB68E:  LSR             ;
-LB68F:  AND #$0F            ;
+LB68D:  LSR                     ;Multiply random number by 4.
+LB68E:  LSR                     ;
+LB68F:  AND #$0F                ;
 LB691:  STA SQ2Cntrl2           ;Randomly set bits 2 and 3 of SQ2 period low.
-LB694:* RTS             ;
+LB694:* RTS                     ;
 
 IncorrectPasswordSFXStart:
-LB695:  LDY #$31            ;Low byte of SQ1 sound data start address(base=$B200).
-LB697:  JSR LoadSQ1ChannelSFX       ;($B368)Set SQ1 SFX data.
-LB69A:  LDA #$20            ;Number of frames to play sound before a change.
-LB69C:  LDY #$35            ;Low byte of SQ2 sound data start address(base=$B200).
+LB695:  LDY #$31                ;Low byte of SQ1 sound data start address(base=$B200).
+LB697:  JSR LoadSQ1ChannelSFX   ;($B368)Set SQ1 SFX data.
+LB69A:  LDA #$20                ;Number of frames to play sound before a change.
+LB69C:  LDY #$35                ;Low byte of SQ2 sound data start address(base=$B200).
 LB69E:  JMP MultiSFXInit        ;($B5A5)Initiate multi channel SFX.
 
 IncorrectPasswordSFXContinue:
-LB6A1:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB6A4:  BNE -               ;If more frames to process, branch to exit.
+LB6A1:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB6A4:  BNE -                   ;If more frames to process, branch to exit.
 LB6A6:  JMP EndMultiSFX         ;($B5CD)End SFX.
 
 ;The following table is used by the below routine to load SQ1Cntrl2 data in the
@@ -6354,133 +6305,133 @@ MissilePickupSFXTbl:
 LB6A9:  .byte $BD, $8D, $7E, $5E, $46, $3E, $00 
 
 MissilePickupSFXContinue:
-LB6B0:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB6B0:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB6B3:  BNE MusicBranch03       ;If more frames to process, branch to exit.
 LB6B5:  LDY SQ1SFXData          ;
 LB6B8:  LDA MissilePickupSFXTbl,Y   ;Load SFX data from table above.
-LB6BB:  BNE +               ;
+LB6BB:  BNE +                   ;
 LB6BD:  JMP EndSQ1SFX           ;($B6F2)SFX completed.
 LB6C0:* STA SQ1Cntrl2           ;
-LB6C3:  LDA $B244           ;#$28.
+LB6C3:  LDA $B244               ;#$28.
 LB6C6:  STA SQ1Cntrl3           ;load SQ1Cntrl3 with #$28.
 LB6C9:  INC SQ1SFXData          ;Increment index to data table above every 5 frames.
 
 MusicBranch03:
-LB6CC:  RTS             ;Exit from multiple routines.
+LB6CC:  RTS                     ;Exit from multiple routines.
 
 MissilePickupSFXStart:
-LB6CD:  LDA #$05            ;Number of frames to play sound before a change.
-LB6CF:  LDY #$41            ;Lower byte of sound data start address(base=$B200).
-LB6D1:  BNE +++             ;Branch always.
+LB6CD:  LDA #$05                ;Number of frames to play sound before a change.
+LB6CF:  LDY #$41                ;Lower byte of sound data start address(base=$B200).
+LB6D1:  BNE +++                 ;Branch always.
 
 EnergyPickupSFXContinue:
-LB6D3:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB6D3:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB6D6:  BNE MusicBranch03       ;If more frames to process, branch to exit.
 LB6D8:  INC SQ1SFXData          ;
 LB6DB:  LDA SQ1SFXData          ;Every six frames, reload SFX info.  Does it
-LB6DE:  CMP #$03            ;three times for a total of 18 frames.
-LB6E0:  BEQ +               ;
-LB6E2:  LDY #$3D            ;
-LB6E4:  JMP LoadSQ1ChannelSFX       ;($B368)Set SQ1 SFX data.
+LB6DE:  CMP #$03                ;three times for a total of 18 frames.
+LB6E0:  BEQ +                   ;
+LB6E2:  LDY #$3D                ;
+LB6E4:  JMP LoadSQ1ChannelSFX   ;($B368)Set SQ1 SFX data.
 
 EnergyPickupSFXStart:
-LB6E7:  LDA #$06            ;Number of frames to play sound before a change.
-LB6E9:  LDY #$3D            ;Lower byte of sound data start address(base=$B200).
-LB6EB:  BNE +++             ;Branch always.
+LB6E7:  LDA #$06                ;Number of frames to play sound before a change.
+LB6E9:  LDY #$3D                ;Lower byte of sound data start address(base=$B200).
+LB6EB:  BNE +++                 ;Branch always.
 
 ;The following continue routine is used by the metal, out of hole,
 ;enemy hit and the Samus jump SFXs.
 
 SQ1SFXContinue:
-LB6ED:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB6ED:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB6F0:  BNE MusicBranch03       ;
 
 EndSQ1SFX:
-LB6F2:* LDA #$10            ;
+LB6F2:* LDA #$10                ;
 LB6F4:  STA SQ1Cntrl0           ;Disable envelope generator(sound off).
-LB6F7:  LDA #$00            ;
+LB6F7:  LDA #$00                ;
 LB6F9:  STA SQ1InUse            ;Allows music to use SQ1 channel.
 LB6FC:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
-LB6FF:  INC WriteMultiChannelData   ;Allows music routines to load SQ1 and SQ2 music.
-LB702:  RTS             ;
+LB6FF:  INC WrtMultiChnDat   ;Allows music routines to load SQ1 and SQ2 music.
+LB702:  RTS                     ;
 
 SamusJumpSFXStart:
 LB703:  LDA CurrentMusic        ;If escape music is playing, exit without playing
-LB706:  CMP #$04            ;Samus jump SFX.
+LB706:  CMP #$04                ;Samus jump SFX.
 LB708:  BEQ MusicBranch03       ;
-LB70A:  LDA #$0C            ;Number of frames to play sound before a change.
-LB70C:  LDY #$51            ;Lower byte of sound data start address(base=$B200).
+LB70A:  LDA #$0C                ;Number of frames to play sound before a change.
+LB70C:  LDY #$51                ;Lower byte of sound data start address(base=$B200).
 LB70E:  BNE SelectSFX1          ;Branch always.
 
 EnemyHitSFXStart:
-LB710:  LDA #$08            ;Number of frames to play sound before a change.
-LB712:  LDY #$55            ;Lower byte of sound data start address(base=$B200).
+LB710:  LDA #$08                ;Number of frames to play sound before a change.
+LB712:  LDY #$55                ;Lower byte of sound data start address(base=$B200).
 LB714:  BNE SelectSFX1          ;Branch always.
 
 BulletFireSFXStart:
 LB716:  LDA HasBeamSFX          ;
-LB719:  LSR             ;If Samus has ice beam, branch.
-LB71A:  BCS +++++           ;
+LB719:  LSR                     ;If Samus has ice beam, branch.
+LB71A:  BCS +++++               ;
 LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, BirdOutOfHole
-LB71F:  AND #$CC            ;or EnemyHit SFX already playing, branch to exit.
+LB71F:  AND #$CC                ;or EnemyHit SFX already playing, branch to exit.
 LB721:  BNE MusicBranch03       ;
 LB723:  LDA HasBeamSFX          ;
-LB726:  ASL             ;If Samus has long beam, branch.
-LB727:  BCS +               ;
-LB729:  LDA #$03            ;Number of frames to play sound before a change.
-LB72B:  LDY #$4D            ;Lower byte of sound data start address(base=$B200).
+LB726:  ASL                     ;If Samus has long beam, branch.
+LB727:  BCS +                   ;
+LB729:  LDA #$03                ;Number of frames to play sound before a change.
+LB72B:  LDY #$4D                ;Lower byte of sound data start address(base=$B200).
 LB72D:  BNE SelectSFX1          ;Branch always (Plays ShortBeamSFX).
 
 HasLongBeamSFXStart:
-LB72F:* LDA #$07            ;Number of frames to play sound before a change.
-LB731:  LDY #$49            ;Lower byte of sound data start address(base=$B200).
+LB72F:* LDA #$07                ;Number of frames to play sound before a change.
+LB731:  LDY #$49                ;Lower byte of sound data start address(base=$B200).
 LB733:  BNE SelectSFX1          ;Branch always.
 
 MetalSFXStart:
-LB735:  LDA #$0B            ;Number of frames to play sound before a change.
-LB737:  LDY #$45            ;Lower byte of sound data start address(base=$B200).
+LB735:  LDA #$0B                ;Number of frames to play sound before a change.
+LB737:  LDY #$45                ;Lower byte of sound data start address(base=$B200).
 
 SelectSFX1:
-LB739:* JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB739:* JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 BirdOutOfHoleSFXStart:
 LB73C:  LDA CurrentMusic        ;If escape music is playing, use this SFX to make
-LB73F:  CMP #$04            ;the bomb ticking sound, else play regular SFX.
-LB741:  BEQ +               ;
-LB743:  LDA #$16            ;Number of frames to play sound before a change.
-LB745:  LDY #$59            ;Lower byte of sound data start address(base=$B200).
+LB73F:  CMP #$04                ;the bomb ticking sound, else play regular SFX.
+LB741:  BEQ +                   ;
+LB743:  LDA #$16                ;Number of frames to play sound before a change.
+LB745:  LDY #$59                ;Lower byte of sound data start address(base=$B200).
 LB747:  BNE SelectSFX1          ;Branch always.
-LB749:* LDA #$07            ;Number of frames to play sound before a change.
-LB74B:  LDY #$39            ;Lower byte of sound data start address(base=$B200).
+LB749:* LDA #$07                ;Number of frames to play sound before a change.
+LB74B:  LDY #$39                ;Lower byte of sound data start address(base=$B200).
 LB74D:  BNE SelectSFX1          ;Branch always.
 
 BulletFireSFXContinue:
 LB74F:  LDA HasBeamSFX          ;
-LB752:  LSR             ;If Samus has ice beam, branch.
-LB753:  BCS +++             ;
-LB755:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB758:  BNE +               ;If more frames to process, branch to exit.
+LB752:  LSR                     ;If Samus has ice beam, branch.
+LB753:  BCS +++                 ;
+LB755:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB758:  BNE +                   ;If more frames to process, branch to exit.
 LB75A:  JMP EndSQ1SFX           ;($B6F2)If SFX finished, jump.
-LB75D:* RTS             ;
+LB75D:* RTS                     ;
 
 HasIceBeamSFXStart:
-LB75E:* LDA #$07            ;Number of frames to play sound before a change.
-LB760:  LDY #$61            ;Lower byte of sound data start address(base=$B200).
-LB762:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB75E:* LDA #$07                ;Number of frames to play sound before a change.
+LB760:  LDY #$61                ;Lower byte of sound data start address(base=$B200).
+LB762:  JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 HasIceBeamSFXContinue:
-LB765:* JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB768:  BNE +               ;If more frames to process, branch.
+LB765:* JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB768:  BNE +                   ;If more frames to process, branch.
 LB76A:  JMP EndSQ1SFX           ;($B6F2)If SFX finished, jump.
 LB76D:* LDA SQ1SFXData          ;
-LB770:  AND #$01            ;Determine index for IceBeamSFXDataTbl below.
-LB772:  TAY             ;
+LB770:  AND #$01                ;Determine index for IceBeamSFXDataTbl below.
+LB772:  TAY                     ;
 LB773:  LDA IceBeamSFXDataTbl,Y     ;Loads A with value from IceBeamSFXDataTbl below.
-LB776:  BNE ++              ;
+LB776:  BNE ++                  ;
 
 IceBeamSFXDataTbl:
-LB778:  .byte $93           ;Ice beam SFX period low data.
-LB779:  .byte $81           ;
+LB778:  .byte $93               ;Ice beam SFX period low data.
+LB779:  .byte $81               ;
 
 WaveBeamSFXStart:
 LB77A:  LDA #$08            ;Number of frames to play sound before a change.
@@ -6519,14 +6470,14 @@ LB7AB:  .byte $00           ;
 
 DoorOpenCloseSFXStart:
 LB7AC:  LDA $B287           ;#$30.
-LB7AF:  STA TrianglePeriodLow       ;Set triangle period low data byte.
+LB7AF:  STA TriPeriodLow       ;Set triangle period low data byte.
 LB7B2:  LDA $B288           ;#$B2.
 LB7B5:  AND #$07            ;Set triangle period high data byte.
-LB7B7:  STA TrianglePeriodHigh      ;#$B7.
+LB7B7:  STA TriPeriodHigh      ;#$B7.
 LB7BA:  LDA #$0F            ;
-LB7BC:  STA TriangleChangeLow       ;Change triangle channel period low every frame by #$0F.
+LB7BC:  STA TriChangeLow       ;Change triangle channel period low every frame by #$0F.
 LB7BF:  LDA #$00            ;
-LB7C1:  STA TriangleChangeHigh      ;No change in triangle channel period high.
+LB7C1:  STA TriChangeHigh      ;No change in triangle channel period high.
 LB7C4:  LDA #$1F            ;Number of frames to play sound before a change.
 LB7C6:  LDY #$85            ;Lower byte of sound data start address(base=$B200).
 LB7C8:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
@@ -6553,14 +6504,14 @@ LB7EC:  JMP EndTriangleSFX      ;($B896)End SFX.
 
 BigEnemyHitSFXStart:
 LB7EF:  LDA #$12            ;Increase triangle low period by #$12 every frame.
-LB7F1:  STA TriangleChangeLow       ;
+LB7F1:  STA TriChangeLow       ;
 LB7F4:  LDA #$00            ;
-LB7F6:  STA TriangleChangeHigh      ;Does not change triangle period high.
+LB7F6:  STA TriChangeHigh      ;Does not change triangle period high.
 LB7F9:  LDA $B27F           ;#$42.
-LB7FC:  STA TrianglePeriodLow       ;Save new triangle period low data.
+LB7FC:  STA TriPeriodLow       ;Save new triangle period low data.
 LB7FF:  LDA $B280           ;#$18.
 LB802:  AND #$07            ;#$1F.
-LB804:  STA TrianglePeriodHigh      ;Save new triangle period high data.
+LB804:  STA TriPeriodHigh      ;Save new triangle period high data.
 LB807:  LDA #$0A            ;Number of frames to play sound before a change.
 LB809:  LDY #$7D            ;Lower byte of sound data start address(base=$B200).
 LB80B:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
@@ -6573,11 +6524,11 @@ LB816:* JSR IncreaseTrianglePeriods ;($B978)Increase periods.
 LB819:  LDA RandomNumber1       ;
 LB81B:  AND #$3C            ;
 LB81D:  STA TriangleSFXData     ;
-LB820:  LDA TrianglePeriodLow       ;Randomly set or clear bits 2, 3, 4 and 5 in
+LB820:  LDA TriPeriodLow       ;Randomly set or clear bits 2, 3, 4 and 5 in
 LB823:  AND #$C3            ;triangle channel period low.
 LB825:  ORA TriangleSFXData     ;
 LB828:  STA TriangleCntrl2      ;
-LB82B:  LDA TrianglePeriodHigh      ;
+LB82B:  LDA TriPeriodHigh      ;
 LB82E:  ORA #$40            ;Set 4th bit in triangle channel period high.
 LB830:  STA TriangleCntrl3      ;
 LB833:  RTS             ;
@@ -6587,12 +6538,12 @@ LB834:  LDA #$08            ;Number of frames to play sound before a change.
 LB836:  LDY #$6D            ;Lower byte of sound data start address(base=$B200).
 LB838:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
 LB83B:  LDA #$05            ;
-LB83D:  STA PercentDifference       ;Stores percent difference. In this case 5 = 1/5 = 20%.
+LB83D:  STA PercentDiff       ;Stores percent difference. In this case 5 = 1/5 = 20%.
 LB840:  LDA $B26F           ;#$DD.
-LB843:  STA TrianglePeriodLow       ;Save new triangle period low data.
+LB843:  STA TriPeriodLow       ;Save new triangle period low data.
 LB846:  LDA $B270           ;#$3B.
 LB849:  AND #$07            ;#$02.
-LB84B:  STA TrianglePeriodHigh      ;Save new triangle period high data.
+LB84B:  STA TriPeriodHigh      ;Save new triangle period high data.
 LB84E:  RTS             ;
 
 SamusToBallSFXContinue:
@@ -6600,17 +6551,17 @@ LB84F:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
 LB852:  BNE +               ;If more frames to process, branch.
 LB854:  JMP EndTriangleSFX      ;($B896)End SFX.
 LB857:* JSR DivideTrianglePeriods   ;($B9A0)reduces triangle period low by 20% each frame.
-LB85A:  LDA TriangleLowPercentage   ;
-LB85D:  STA TriangleChangeLow       ;Store new values to change triangle periods.
-LB860:  LDA TriangleHighPercentage  ;
-LB863:  STA TriangleChangeHigh      ;
+LB85A:  LDA TriLoPercentage   ;
+LB85D:  STA TriChangeLow       ;Store new values to change triangle periods.
+LB860:  LDA TriHiPercentage  ;
+LB863:  STA TriChangeHigh      ;
 LB866:  JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
 
 WriteTrianglePeriods:
-LB869:  LDA TrianglePeriodLow       ;Write TrianglePeriodLow to triangle channel.
+LB869:  LDA TriPeriodLow       ;Write TriPeriodLow to triangle channel.
 LB86C:  STA TriangleCntrl2      ;
-LB86F:  LDA TrianglePeriodHigh      ;
-LB872:  ORA #$08            ;Write TrianglePeriodHigh to triangle channel.
+LB86F:  LDA TriPeriodHigh      ;
+LB872:  ORA #$08            ;Write TriPeriodHigh to triangle channel.
 LB874:  STA TriangleCntrl3      ;
 LB877:  RTS             ;
 
@@ -6671,20 +6622,20 @@ LB8D5:  LDA #$0E            ;Number of frames to play sound before a change.
 LB8D7:  LDY #$75            ;Lower byte of sound data start address(base=$B200).
 LB8D9:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
 LB8DC:  LDA #$15            ;Decrease triangle SFX periods by 4.8% every frame.
-LB8DE:  STA PercentDifference       ;
+LB8DE:  STA PercentDiff       ;
 LB8E1:  LDA $B277           ;#$40.
-LB8E4:  STA TrianglePeriodLow       ;
+LB8E4:  STA TriPeriodLow       ;
 LB8E7:  LDA #$00            ;Initial values of triangle periods.
-LB8E9:  STA TrianglePeriodHigh      ;
+LB8E9:  STA TriPeriodHigh      ;
 LB8EC:* RTS             ;
 
 SamusDieSFXContinue:
 LB8ED:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
 LB8F0:  BNE +               ;
 LB8F2:  LDA #$20            ;Store change in triangle period low.
-LB8F4:  STA TriangleChangeLow       ;
+LB8F4:  STA TriChangeLow       ;
 LB8F7:  LDA #$00            ;
-LB8F9:  STA TriangleChangeHigh      ;No change in triangle period high.
+LB8F9:  STA TriChangeHigh      ;No change in triangle period high.
 LB8FC:  JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
 LB8FF:  INC TriangleSFXData     ;
 LB902:  LDA TriangleSFXData     ;
@@ -6692,23 +6643,23 @@ LB905:  CMP #$06            ;
 LB907:  BNE -               ;If more frames to process, branch to exit.
 LB909:  JMP EndTriangleSFX      ;($B896)End SFX.
 LB90C:* JSR DivideTrianglePeriods   ;($B9A0)reduces triangle period low.
-LB90F:  LDA TriangleLowPercentage   ;
-LB912:  STA TriangleChangeLow       ;Update triangle periods.
-LB915:  LDA TriangleHighPercentage  ;
-LB918:  STA TriangleChangeHigh      ;
+LB90F:  LDA TriLoPercentage   ;
+LB912:  STA TriChangeLow       ;Update triangle periods.
+LB915:  LDA TriHiPercentage  ;
+LB918:  STA TriChangeHigh      ;
 LB91B:  JSR IncreaseTrianglePeriods ;($B978)Increase periods.
 LB91E:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
 
 StatueRaiseSFXStart:
 LB921:  LDA $B283           ;#$11.
-LB924:  STA TrianglePeriodLow       ;Save period low data.
+LB924:  STA TriPeriodLow       ;Save period low data.
 LB927:  LDA $B284           ;#$09.
 LB92A:  AND #$07            ;
-LB92C:  STA TrianglePeriodHigh      ;Store last three bits in $B284.
+LB92C:  STA TriPeriodHigh      ;Store last three bits in $B284.
 LB92F:  LDA #$00            ;
-LB931:  STA TriangleChangeHigh      ;No change in Triangle period high.
+LB931:  STA TriChangeHigh      ;No change in Triangle period high.
 LB934:  LDA #$0B            ;
-LB936:  STA TriangleChangeLow       ;
+LB936:  STA TriChangeLow       ;
 LB939:  LDA #$06            ;Number of frames to play sound before a change.
 LB93B:  LDY #$81            ;Lower byte of sound data start address(base=$B200).
 LB93D:  JMP SelectSFXroutine        ;($B452)Setup registers for SFX.
@@ -6721,71 +6672,71 @@ LB948:  LDA TriangleSFXData     ;
 LB94B:  CMP #$09            ;When TriangleSFXData = #$09, end SFX.
 LB94D:  BNE +               ;
 LB94F:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB952:* LDA TriangleChangeLow       ;
+LB952:* LDA TriChangeLow       ;
 LB955:  PHA             ;Save triangle periods.
-LB956:  LDA TriangleChangeHigh      ;
+LB956:  LDA TriChangeHigh      ;
 LB959:  PHA             ;
 LB95A:  LDA #$25            ;
-LB95C:  STA TriangleChangeLow       ;
+LB95C:  STA TriChangeLow       ;
 LB95F:  LDA #$00            ;No change in triangle period high.
-LB961:  STA TriangleChangeHigh      ;
+LB961:  STA TriChangeHigh      ;
 LB964:  JSR IncreaseTrianglePeriods ;($B978)Increase periods.
 LB967:  PLA             ;
-LB968:  STA TriangleChangeHigh      ;Restore triangle periods.
+LB968:  STA TriChangeHigh      ;Restore triangle periods.
 LB96B:  PLA             ;
-LB96C:  STA TriangleChangeLow       ;
+LB96C:  STA TriChangeLow       ;
 LB96F:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
 LB972:* JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
 LB975:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
 
 IncreaseTrianglePeriods:
 LB978:  CLC 
-LB979:  LDA TrianglePeriodLow       ;
-LB97C:  ADC TriangleChangeLow       ;Calculate new TrianglePeriodLow.
-LB97F:  STA TrianglePeriodLow       ;
-LB982:  LDA TrianglePeriodHigh      ;
-LB985:  ADC TriangleChangeHigh      ;Calculate new TrianglePeriodHigh.
-LB988:  STA TrianglePeriodHigh      ;
+LB979:  LDA TriPeriodLow       ;
+LB97C:  ADC TriChangeLow       ;Calculate new TriPeriodLow.
+LB97F:  STA TriPeriodLow       ;
+LB982:  LDA TriPeriodHigh      ;
+LB985:  ADC TriChangeHigh      ;Calculate new TriPeriodHigh.
+LB988:  STA TriPeriodHigh      ;
 LB98B:  RTS             ;
 
 DecreaseTrianglePeriods:
 LB98C:  SEC 
-LB98D:  LDA TrianglePeriodLow       ;
-LB990:  SBC TriangleChangeLow       ;Calculate new TrianglePeriodLow.
-LB993:  STA TrianglePeriodLow       ;
-LB996:  LDA TrianglePeriodHigh      ;
-LB999:  SBC TriangleChangeHigh      ;Calculate new TrianglePeriodHigh.
-LB99C:  STA TrianglePeriodHigh      ;
+LB98D:  LDA TriPeriodLow       ;
+LB990:  SBC TriChangeLow       ;Calculate new TriPeriodLow.
+LB993:  STA TriPeriodLow       ;
+LB996:  LDA TriPeriodHigh      ;
+LB999:  SBC TriChangeHigh      ;Calculate new TriPeriodHigh.
+LB99C:  STA TriPeriodHigh      ;
 LB99F:  RTS             ;
 
 DivideTrianglePeriods:
-LB9A0:  LDA TrianglePeriodLow       ;
-LB9A3:  PHA             ;Store TrianglePeriodLow and TrianglePeriodHigh.
-LB9A4:  LDA TrianglePeriodHigh      ;
+LB9A0:  LDA TriPeriodLow       ;
+LB9A3:  PHA             ;Store TriPeriodLow and TriPeriodHigh.
+LB9A4:  LDA TriPeriodHigh      ;
 LB9A7:  PHA             ;
 LB9A8:  LDA #$00            ;
 LB9AA:  STA DivideData          ;
 LB9AD:  LDX #$10            ;
-LB9AF:  ROL TrianglePeriodLow       ;
-LB9B2:  ROL TrianglePeriodHigh      ;
+LB9AF:  ROL TriPeriodLow       ;
+LB9B2:  ROL TriPeriodHigh      ;
 LB9B5:* ROL DivideData          ;The following routine takes the triangle period
 LB9B8:  LDA DivideData          ;high and triangle period low values and reduces
-LB9BB:  CMP PercentDifference       ;them by a certain percent.  The percent is
+LB9BB:  CMP PercentDiff       ;them by a certain percent.  The percent is
 LB9BE:  BCC +               ;determined by the value stored in
-LB9C0:  SBC PercentDifference       ;PercentDifference.  If PercentDifference=#$05,
+LB9C0:  SBC PercentDiff       ;PercentDiff.  If PercentDiff=#$05,
 LB9C3:  STA DivideData          ;then the values will be reduced by 20%(1/5).
-LB9C6:* ROL TrianglePeriodLow       ;If PercentDifference=#$0A,Then the value will
-LB9C9:  ROL TrianglePeriodHigh      ;be reduced by 10%(1/10), etc. This function is
+LB9C6:* ROL TriPeriodLow       ;If PercentDiff=#$0A,Then the value will
+LB9C9:  ROL TriPeriodHigh      ;be reduced by 10%(1/10), etc. This function is
 LB9CC:  DEX             ;basically a software emulation of a sweep function.
 LB9CD:  BNE --              ;
-LB9CF:  LDA TrianglePeriodLow       ;
-LB9D2:  STA TriangleLowPercentage   ;
-LB9D5:  LDA TrianglePeriodHigh      ;
-LB9D8:  STA TriangleHighPercentage  ;
+LB9CF:  LDA TriPeriodLow       ;
+LB9D2:  STA TriLoPercentage   ;
+LB9D5:  LDA TriPeriodHigh      ;
+LB9D8:  STA TriHiPercentage  ;
 LB9DB:  PLA             ;
-LB9DC:  STA TrianglePeriodHigh      ;Restore TrianglePerodLow and TrianglePeriodHigh.
+LB9DC:  STA TriPeriodHigh      ;Restore TrianglePerodLow and TriPeriodHigh.
 LB9DF:  PLA             ;
-LB9E0:  STA TrianglePeriodLow       ;
+LB9E0:  STA TriPeriodLow       ;
 LB9E3:  RTS             ;
 
 ;--------------------------------------[ End SFX routines ]-------------------------------------
@@ -6799,32 +6750,32 @@ LB9EF:  STY SQ2DutyEnvelope     ;
 LB9F2:  RTS             ;
 
 ResetVolumeIndex:
-LB9F3:  LDA SQ1MusicFrameCount      ;If at the beginning of a new SQ1 note, set
+LB9F3:  LDA SQ1MusicFrameCnt      ;If at the beginning of a new SQ1 note, set
 LB9F6:  CMP #$01            ;SQ1VolumeIndex = #$01.
 LB9F8:  BNE +               ;
 LB9FA:  STA SQ1VolumeIndex      ;
-LB9FD:* LDA SQ2MusicFrameCount      ;
+LB9FD:* LDA SQ2MusicFrameCnt      ;
 LBA00:  CMP #$01            ;If at the beginning of a new SQ2 note, set
 LBA02:  BNE +               ;SQ2VolumeIndex = #$01.
 LBA04:  STA SQ2VolumeIndex      ;
 LBA07:* RTS                 ;
 
 LoadSQ1SQ2Periods:
-LBA08:  LDA WriteMultiChannelData   ;If a Multi channel data does not need to be
+LBA08:  LDA WrtMultiChnDat   ;If a Multi channel data does not need to be
 LBA0B:  BEQ +               ;loaded, branch to exit.
 LBA0D:  LDA #$00            ;
-LBA0F:  STA WriteMultiChannelData   ;Clear multi channel data write flag.
+LBA0F:  STA WrtMultiChnDat   ;Clear multi channel data write flag.
 LBA12:  LDA MusicSQ1Sweep       ;
 LBA15:  STA SQ1Cntrl1           ;
-LBA18:  LDA MusicSQ1PeriodLow       ;
+LBA18:  LDA MusicSQ1PrdLow       ;
 LBA1B:  STA SQ1Cntrl2           ;Loads SQ1 channel addresses $4001, $4002, $4003.
-LBA1E:  LDA MusicSQ1PeriodHigh      ;
+LBA1E:  LDA MusicSQ1PrdHi      ;
 LBA21:  STA SQ1Cntrl3           ;
 LBA24:  LDA MusicSQ2Sweep       ;
 LBA27:  STA SQ2Cntrl1           ;
-LBA2A:  LDA MusicSQ2PeriodLow       ;
+LBA2A:  LDA MusicSQ2PeriodLo       ;
 LBA2D:  STA SQ2Cntrl2           ;Loads SQ2 channel addresses $4005, $4006, $4007.
-LBA30:  LDA MusicSQ2PeriodHigh      ;
+LBA30:  LDA MusicSQ2PeriodHi      ;
 LBA33:  STA SQ2Cntrl3           ;
 LBA36:* RTS             ;
 
@@ -6838,20 +6789,20 @@ LBA40:  RTS             ;
 WriteSQCntrl0:
 LBA41:  LDA SQ1VolumeCntrl,X        ;Load SQ channel volume data. If zero, branch to exit.
 LBA44:  BEQ +++++           ;
-LBA46:  STA VolumeCntrlAddress      ;
+LBA46:  STA VolCntrlAddress      ;
 LBA48:  JSR LoadSQ1SQ2Periods       ;($BA08)Load SQ1 and SQ2 control information.
 LBA4B:  LDA SQ1VolumeData,X     ;
 LBA4E:  CMP #$10            ;If sound channel is not currently
 LBA50:  BEQ +++++++         ;playing sound, branch.
 LBA52:  LDY #$00            ;
-LBA54:* DEC VolumeCntrlAddress      ;Desired entry in VolumeCntrlAdressTbl.
+LBA54:* DEC VolCntrlAddress      ;Desired entry in VolumeCntrlAdressTbl.
 LBA56:  BEQ +               ;
 LBA58:  INY             ;*2(2 byte address to find voulume control data).
 LBA59:  INY             ;
 LBA5A:  BNE -               ;Keep decrementing until desired address is found.
-LBA5C:* LDA VolumeCntrlAddressTbl,Y ;Base is $BCB0.
+LBA5C:* LDA VolCntrlAddressTbl,Y ;Base is $BCB0.
 LBA5F:  STA $EC             ;Volume data address low byte.
-LBA61:  LDA VolumeCntrlAddressTbl+1,Y   ;Base is $BCB1.
+LBA61:  LDA VolCntrlAddressTbl+1,Y   ;Base is $BCB1.
 LBA64:  STA $ED             ;Volume data address high byte.
 LBA66:  LDY SQ1VolumeIndex,X        ;Index to desired volume data.
 LBA69:  LDA ($EC),Y         ;Load desired volume for current channel into
@@ -6927,12 +6878,12 @@ LBAD2:  BEQ --              ;to find data for next sound channel.
 LBAD4:  TXA             ;
 LBAD5:  LSR             ;/2. Determine current sound channel (0,1,2 or3).
 LBAD6:  TAX             ;
-LBAD7:  DEC SQ1MusicFrameCount,X    ;Decrement the current sound channel frame count
+LBAD7:  DEC SQ1MusicFrameCnt,X    ;Decrement the current sound channel frame count
 LBADA:  BNE IncrementToNextChannel  ;If not zero, branch to check next channel, else
                     ;load the next set of sound channel data.
 LoadNextChannelIndexData:
-LBADC:  LDY SQ1MusicIndexIndex,X    ;Load current channel index to music data index.
-LBADF:  INC SQ1MusicIndexIndex,X    ;Increment current channel index to music data index.
+LBADC:  LDY SQ1MusicIdxIdx,X    ;Load current channel index to music data index.
+LBADF:  INC SQ1MusicIdxIdx,X    ;Increment current channel index to music data index.
 LBAE2:  LDA ($E6),Y         ;
 LBAE4:  BEQ ----                ;Branch if music has reached the end.
 LBAE6:  TAY             ;Transfer music data index to Y (base=$BE77) .
@@ -6948,7 +6899,7 @@ LBAF4:* LDA SQ1RepeatCounter,X      ;If loop counter has reached zero, branch to
 LBAF7:  BEQ ++              ;
 LBAF9:  DEC SQ1RepeatCounter,X      ;Decrement loop counter.
 LBAFC:  LDA SQ1LoopIndex,X      ;Load loop index for proper channel and store it in
-LBAFF:  STA SQ1MusicIndexIndex,X    ;music index index address.
+LBAFF:  STA SQ1MusicIdxIdx,X    ;music index index address.
 LBB02:  BNE ++              ;Branch unless music has reached the end.
 
 StartNewMusicLoop:
@@ -6956,7 +6907,7 @@ LBB04:* TYA             ;
 LBB05:  AND #$3F            ;Remove last six bits of loop controller and save
 LBB07:  STA SQ1RepeatCounter,X      ;in repeat counter addresses.  # of times to loop.
 LBB0A:  DEC SQ1RepeatCounter,X      ;Decrement loop counter.
-LBB0D:  LDA SQ1MusicIndexIndex,X    ;Store location of loop start in loop index address.
+LBB0D:  LDA SQ1MusicIdxIdx,X    ;Store location of loop start in loop index address.
 LBB10:  STA SQ1LoopIndex,X      ;
 LBB13:* JMP LoadNextChannelIndexData    ;($BADC)Load next channel index data.
 
@@ -6972,18 +6923,18 @@ LBB21:  BNE +               ;
 LBB23:  TYA             ;
 LBB24:  AND #$0F            ;Separate note length data.
 LBB26:  CLC             ;
-LBB27:  ADC NoteLengthTblOffset     ;Find proper note lengths table for current music.
+LBB27:  ADC NoteLenTblOffset     ;Find proper note lengths table for current music.
 LBB2A:  TAY             ;
 LBB2B:  LDA NoteLengths0Tbl,Y       ;(Base is $BEF7)Load note length and store in 
-LBB2E:  STA SQ1FrameCountInit,X     ;frame count init address.
+LBB2E:  STA SQ1FrmCountInit,X     ;frame count init address.
 LBB31:  TAY             ;Y now contains note length.
 LBB32:  TXA             ;
 LBB33:  CMP #$02            ;If loading Triangle channel data, branch.
 LBB35:  BEQ -               ;
 
 LoadSoundDataIndexIndex:
-LBB37:  LDY SQ1MusicIndexIndex,X    ;Load current index to sound data index.
-LBB3A:  INC SQ1MusicIndexIndex,X    ;Increment music index index address.
+LBB37:  LDY SQ1MusicIdxIdx,X    ;Load current index to sound data index.
+LBB3A:  INC SQ1MusicIdxIdx,X    ;Increment music index index address.
 LBB3D:  LDA ($E6),Y         ;Load index to sound channel music data.
 LBB3F:  TAY             ;
 LBB40:* TXA             ;
@@ -6993,10 +6944,10 @@ LBB45:  PHA             ;Push music channel number on stack(0, 1 or 2).
 LBB46:  LDX ThisSoundChannel        ;
 LBB49:  LDA MusicNotesTbl+1,Y       ;(Base=$BE78)Load A with music channel period low data.
 LBB4C:  BEQ +               ;If data is #$00, skip period high and low loading.
-LBB4E:  STA MusicSQ1PeriodLow,X     ;Store period low data in proper period low address.
+LBB4E:  STA MusicSQ1PrdLow,X     ;Store period low data in proper period low address.
 LBB51:  LDA MusicNotesTbl,Y     ;(Base=$BE77)Load A with music channel period high data.
 LBB54:  ORA #$08            ;Ensure minimum index length of 1.
-LBB56:  STA MusicSQ1PeriodHigh,X    ;Store period high data in proper period high address.
+LBB56:  STA MusicSQ1PrdHi,X    ;Store period high data in proper period high address.
 LBB59:* TAY             ;
 LBB5A:  PLA             ;Pull stack and restore channel number to X.
 LBB5B:  TAX             ;
@@ -7031,16 +6982,16 @@ LBB8C:* LDA Cntrl0Data          ;
 LBB8E:  STA SQ1Cntrl0,Y         ;Write Cntrl0Data.
 LBB91:* LDA Cntrl0Data          ;
 LBB93:  STA SQ1VolumeData,X     ;Store volume data index to volume data.
-LBB96:  LDA MusicSQ1PeriodLow,Y     ;
+LBB96:  LDA MusicSQ1PrdLow,Y     ;
 LBB99:  STA SQ1Cntrl2,Y         ;
-LBB9C:  LDA MusicSQ1PeriodHigh,Y    ;Write data to three sound channel addresses.
+LBB9C:  LDA MusicSQ1PrdHi,Y    ;Write data to three sound channel addresses.
 LBB9F:  STA SQ1Cntrl3,Y         ;
 LBBA2:  LDA MusicSQ1Sweep,X     ;
 LBBA5:  STA SQ1Cntrl1,Y         ;
 
 LoadNewMusicFrameCount:
-LBBA8:  LDA SQ1FrameCountInit,X     ;Load new music frame count and store it in music
-LBBAB:  STA SQ1MusicFrameCount,X    ;frame count address.
+LBBA8:  LDA SQ1FrmCountInit,X     ;Load new music frame count and store it in music
+LBBAB:  STA SQ1MusicFrameCnt,X    ;frame count address.
 LBBAE:  JMP IncrementToNextChannel  ;($BAB3)Move to next sound channel.
 
 SQ1SQ2InUse:
@@ -7048,10 +6999,10 @@ LBBB1:* INC SQ1InUse,X          ;Restore in use status of SQ1 or SQ1.
 LBBB4:  JMP LoadNewMusicFrameCount  ;($BBA8)Load new music frame count.
 
 LoadTriangleCntrl0:
-LBBB7:  LDA TriangleCounterCntrl    ;
+LBBB7:  LDA TriCounterCntrl    ;
 LBBBA:  AND #$0F            ;If lower bits set, branch to play shorter note. 
 LBBBC:  BNE ++              ;
-LBBBE:  LDA TriangleCounterCntrl    ;
+LBBBE:  LDA TriCounterCntrl    ;
 LBBC1:  AND #$F0            ;If upper bits are set, branch to play longer note.
 LBBC3:  BNE +               ;
 LBBC5:  TYA             ;
@@ -7136,7 +7087,7 @@ LBC34:  .word $BC80         ;Brinstar music.
 ;-----------------------------------[ Entry point for music routines ]--------------------------------
 
 LoadMusicTempFlags:
-LBC36:  LDA CurrentMusicRepeat      ;Load A with temp music flags, (9th SFX cycle).
+LBC36:  LDA CrntMusicRepeat      ;Load A with temp music flags, (9th SFX cycle).
 LBC39:  LDX #$B6            ;Lower address byte in ChooseNextSFXRoutineTbl.
 LBC3B:  BNE +               ;Branch always.
 
@@ -7235,7 +7186,7 @@ LBCAC:  LDY #$96            ;Duty cycle and volume data for SQ2.
 LBCAE:  BNE -               ;Branch always
 
 ;The following address table provides starting addresses of the volume data tables below:
-VolumeCntrlAddressTbl:
+VolCntrlAddressTbl:
 LBCB0:  .word $BCBA, $BCC5, $BCCF, $BCDA, $BD03
 
 VolumeDataTbl1:
@@ -7322,175 +7273,175 @@ LBDC0:  .byte $0B, $FF, $03, $00, $00
 LBDC5:  .word $BE59, $BE47, $BE62, $0000
 
 ItemRoomTriangleIndexData:
-LBDCD:  .byte $C8           ;
-LBDCE:  .byte $B0           ;3/32 seconds   +
-LBDCF:  .byte $38           ;E3             |
-LBDD0:  .byte $3A           ;F3             |
-LBDD1:  .byte $3C           ;F#3            |
-LBDD2:  .byte $3E           ;G3             |
-LBDD3:  .byte $40           ;Ab3            | Repeat 8 times
-LBDD4:  .byte $3E           ;G3             |
-LBDD5:  .byte $3C           ;F#3            |
-LBDD6:  .byte $3A           ;F3             |
-LBDD7:  .byte $B6           ;1 3/16 seconds |
-LBDD8:  .byte $02           ;no sound       +
-LBDD9:  .byte $FF           ;
+LBDCD:  .byte $C8               ;
+LBDCE:  .byte $B0               ;3/32 seconds   +
+LBDCF:  .byte $38               ;E3             |
+LBDD0:  .byte $3A               ;F3             |
+LBDD1:  .byte $3C               ;F#3            |
+LBDD2:  .byte $3E               ;G3             |
+LBDD3:  .byte $40               ;Ab3            | Repeat 8 times
+LBDD4:  .byte $3E               ;G3             |
+LBDD5:  .byte $3C               ;F#3            |
+LBDD6:  .byte $3A               ;F3             |
+LBDD7:  .byte $B6               ;1 3/16 seconds |
+LBDD8:  .byte $02               ;no sound       +
+LBDD9:  .byte $FF               ;
 
 ItemRoomSQ1IndexData:
-LBDDA:  .byte $B8           ;1/4 seconds
-LBDDB:  .byte $02           ;No sound
+LBDDA:  .byte $B8               ;1/4 seconds
+LBDDB:  .byte $02               ;No sound
 
 ItemRoomSQ2IndexData:
-LBDDC:  .byte $B3           ;3/4 seconds
-LBDDD:  .byte $02           ;No sound
-LBDDE:  .byte $B2           ;3/8 seconds
-LBDDF:  .byte $74           ;A#6
-LBDE0:  .byte $02           ;No sound
-LBDE1:  .byte $6A           ;F5
-LBDE2:  .byte $02           ;No sound
-LBDE3:  .byte $72           ;A6
-LBDE4:  .byte $02           ;No sound
-LBDE5:  .byte $62           ;C#5
-LBDE6:  .byte $B4           ;1 1/2 seconds
-LBDE7:  .byte $02           ;No sound
-LBDE8:  .byte $B2           ;3/8 seconds
-LBDE9:  .byte $60           ;C5
-LBDEA:  .byte $02           ;No sound
-LBDEB:  .byte $6C           ;F#5
-LBDEC:  .byte $02           ;No sound
-LBDED:  .byte $76           ;B6
-LBDEE:  .byte $B3           ;3/4 seconds
-LBDEF:  .byte $02           ;No sound
-LBDF0:  .byte $B2           ;3/8 seconds
-LBDF1:  .byte $7E           ;F6
-LBDF2:  .byte $02           ;No sound
-LBDF3:  .byte $7C           ;D6
-LBDF4:  .byte $B3           ;3/4 seconds
-LBDF5:  .byte $02           ;No sound
-LBDF6:  .byte $00           ;End item room music.
+LBDDC:  .byte $B3               ;3/4 seconds
+LBDDD:  .byte $02               ;No sound
+LBDDE:  .byte $B2               ;3/8 seconds
+LBDDF:  .byte $74               ;A#6
+LBDE0:  .byte $02               ;No sound
+LBDE1:  .byte $6A               ;F5
+LBDE2:  .byte $02               ;No sound
+LBDE3:  .byte $72               ;A6
+LBDE4:  .byte $02               ;No sound
+LBDE5:  .byte $62               ;C#5
+LBDE6:  .byte $B4               ;1 1/2 seconds
+LBDE7:  .byte $02               ;No sound
+LBDE8:  .byte $B2               ;3/8 seconds
+LBDE9:  .byte $60               ;C5
+LBDEA:  .byte $02               ;No sound
+LBDEB:  .byte $6C               ;F#5
+LBDEC:  .byte $02               ;No sound
+LBDED:  .byte $76               ;B6
+LBDEE:  .byte $B3               ;3/4 seconds
+LBDEF:  .byte $02               ;No sound
+LBDF0:  .byte $B2               ;3/8 seconds
+LBDF1:  .byte $7E               ;F6
+LBDF2:  .byte $02               ;No sound
+LBDF3:  .byte $7C               ;D6
+LBDF4:  .byte $B3               ;3/4 seconds
+LBDF5:  .byte $02               ;No sound
+LBDF6:  .byte $00               ;End item room music.
 
 PowerUpSQ1IndexData:
-LBDF7:  .byte $B3           ;1/2 seconds
-LBDF8:  .byte $48           ;C4
-LBDF9:  .byte $42           ;A4
-LBDFA:  .byte $B2           ;1/4 seconds
-LBDFB:  .byte $3E           ;G3
-LBDFC:  .byte $38           ;E3
-LBDFD:  .byte $30           ;C3
-LBDFE:  .byte $38           ;E3
-LBDFF:  .byte $4C           ;D4
-LBE00:  .byte $44           ;A#4
-LBE01:  .byte $3E           ;G3
-LBE02:  .byte $36           ;D#3
-LBE03:  .byte $C8           ;
-LBE04:  .byte $B0           ;1/16 seconds   +
-LBE05:  .byte $38           ;E3             | Repeat 8 times
-LBE06:  .byte $3C           ;F#3            +
+LBDF7:  .byte $B3               ;1/2 seconds
+LBDF8:  .byte $48               ;C4
+LBDF9:  .byte $42               ;A4
+LBDFA:  .byte $B2               ;1/4 seconds
+LBDFB:  .byte $3E               ;G3
+LBDFC:  .byte $38               ;E3
+LBDFD:  .byte $30               ;C3
+LBDFE:  .byte $38               ;E3
+LBDFF:  .byte $4C               ;D4
+LBE00:  .byte $44               ;A#4
+LBE01:  .byte $3E               ;G3
+LBE02:  .byte $36               ;D#3
+LBE03:  .byte $C8               ;
+LBE04:  .byte $B0               ;1/16 seconds   +
+LBE05:  .byte $38               ;E3             | Repeat 8 times
+LBE06:  .byte $3C               ;F#3            +
 LBE07:  .byte $FF
 
 PowerUpTriangleIndexData:
-LBE08:  .byte $B4           ;1 second
-LBE09:  .byte $2C           ;A#3
-LBE0A:  .byte $2A           ;A3
-LBE0B:  .byte $1E           ;D#2
-LBE0C:  .byte $1C           ;D2
+LBE08:  .byte $B4               ;1 second
+LBE09:  .byte $2C               ;A#3
+LBE0A:  .byte $2A               ;A3
+LBE0B:  .byte $1E               ;D#2
+LBE0C:  .byte $1C               ;D2
 
 PowerUpSQ2IndexData:
-LBE0D:  .byte $B2           ;1/4 seconds
-LBE0E:  .byte $22           ;F2
-LBE0F:  .byte $2C           ;A#3
-LBE10:  .byte $30           ;C3
-LBE11:  .byte $34           ;D3
-LBE12:  .byte $38           ;E3
-LBE13:  .byte $30           ;C3
-LBE14:  .byte $26           ;G2
-LBE15:  .byte $30           ;C3
-LBE16:  .byte $3A           ;F3
-LBE17:  .byte $34           ;D3
-LBE18:  .byte $2C           ;A#3
-LBE19:  .byte $26           ;G2
-LBE1A:  .byte $B4           ;1 second
-LBE1B:  .byte $2A           ;A3
-LBE1C:  .byte $00           ;End power up music.
+LBE0D:  .byte $B2               ;1/4 seconds
+LBE0E:  .byte $22               ;F2
+LBE0F:  .byte $2C               ;A#3
+LBE10:  .byte $30               ;C3
+LBE11:  .byte $34               ;D3
+LBE12:  .byte $38               ;E3
+LBE13:  .byte $30               ;C3
+LBE14:  .byte $26               ;G2
+LBE15:  .byte $30               ;C3
+LBE16:  .byte $3A               ;F3
+LBE17:  .byte $34               ;D3
+LBE18:  .byte $2C               ;A#3
+LBE19:  .byte $26               ;G2
+LBE1A:  .byte $B4               ;1 second
+LBE1B:  .byte $2A               ;A3
+LBE1C:  .byte $00               ;End power up music.
 
 FadeInSQ2IndexData:
 LBE1D:  .byte $C4
-LBE1E:  .byte $B0           ;3/32 seconds   +
-LBE1F:  .byte $3E           ;G3             | Repeat 4 times
-LBE20:  .byte $30           ;C3             +
-LBE21:  .byte $FF           ;
-LBE22:  .byte $C4           ;
-LBE23:  .byte $42           ;A4             + Repeat 4 times
-LBE24:  .byte $30           ;C3             +
-LBE25:  .byte $FF           ;
-LBE26:  .byte $C4           ;
-LBE27:  .byte $3A           ;F3             + Repeat 4 times
-LBE28:  .byte $2C           ;A#3            +
-LBE29:  .byte $FF           ;
-LBE2A:  .byte $C4           ;
-LBE2B:  .byte $38           ;E3             + Repeat 4 times
-LBE2C:  .byte $26           ;G2             +
-LBE2D:  .byte $FF           ;
-LBE2E:  .byte $C4           ;
-LBE2F:  .byte $34           ;D3             + Repeat 4 times
-LBE30:  .byte $20           ;E2             +
-LBE31:  .byte $FF           ;
-LBE32:  .byte $E0           ;
-LBE33:  .byte $34           ;D3             + Repeat 32 times
-LBE34:  .byte $24           ;F#2            +
-LBE35:  .byte $FF           ;
+LBE1E:  .byte $B0               ;3/32 seconds   +
+LBE1F:  .byte $3E               ;G3             | Repeat 4 times
+LBE20:  .byte $30               ;C3             +
+LBE21:  .byte $FF               ;
+LBE22:  .byte $C4               ;
+LBE23:  .byte $42               ;A4             + Repeat 4 times
+LBE24:  .byte $30               ;C3             +
+LBE25:  .byte $FF               ;
+LBE26:  .byte $C4               ;
+LBE27:  .byte $3A               ;F3             + Repeat 4 times
+LBE28:  .byte $2C               ;A#3            +
+LBE29:  .byte $FF               ;
+LBE2A:  .byte $C4               ;
+LBE2B:  .byte $38               ;E3             + Repeat 4 times
+LBE2C:  .byte $26               ;G2             +
+LBE2D:  .byte $FF               ;
+LBE2E:  .byte $C4               ;
+LBE2F:  .byte $34               ;D3             + Repeat 4 times
+LBE30:  .byte $20               ;E2             +
+LBE31:  .byte $FF               ;
+LBE32:  .byte $E0               ;
+LBE33:  .byte $34               ;D3             + Repeat 32 times
+LBE34:  .byte $24               ;F#2            +
+LBE35:  .byte $FF               ;
 
 FadeInTriangleIndexData:
-LBE36:  .byte $B3           ;3/4 seconds
-LBE37:  .byte $36           ;D#3
-LBE38:  .byte $34           ;D3
-LBE39:  .byte $30           ;C3
-LBE3A:  .byte $2A           ;A3
-LBE3B:  .byte $B4           ;1 1/2 seconds
-LBE3C:  .byte $1C           ;D2
-LBE3D:  .byte $1C           ;D2
+LBE36:  .byte $B3               ;3/4 seconds
+LBE37:  .byte $36               ;D#3
+LBE38:  .byte $34               ;D3
+LBE39:  .byte $30               ;C3
+LBE3A:  .byte $2A               ;A3
+LBE3B:  .byte $B4               ;1 1/2 seconds
+LBE3C:  .byte $1C               ;D2
+LBE3D:  .byte $1C               ;D2
 
 FadeInSQ1IndexData:
-LBE3E:  .byte $B3           ;3/4 seconds
-LBE3F:  .byte $34           ;D3
-LBE40:  .byte $3A           ;F3
-LBE41:  .byte $34           ;D3
-LBE42:  .byte $30           ;C3
-LBE43:  .byte $B4           ;1 1/2 seconds
-LBE44:  .byte $2A           ;A3
-LBE45:  .byte $2A           ;A3
-LBE46:  .byte $00           ;End fade in music.
+LBE3E:  .byte $B3               ;3/4 seconds
+LBE3F:  .byte $34               ;D3
+LBE40:  .byte $3A               ;F3
+LBE41:  .byte $34               ;D3
+LBE42:  .byte $30               ;C3
+LBE43:  .byte $B4               ;1 1/2 seconds
+LBE44:  .byte $2A               ;A3
+LBE45:  .byte $2A               ;A3
+LBE46:  .byte $00               ;End fade in music.
 
 TourianSQ2IndexData:
-LBE47:  .byte $B4           ;1 1/2 seconds
-LBE48:  .byte $12           ;A2
-LBE49:  .byte $B3           ;3/4 seconds
-LBE4A:  .byte $10           ;Ab1
-LBE4B:  .byte $18           ;C2
-LBE4C:  .byte $16           ;B2
-LBE4D:  .byte $0A           ;F1
-LBE4E:  .byte $B4           ;1 1/2 seconds
-LBE4F:  .byte $14           ;A#2
-LBE50:  .byte $12           ;A2
-LBE51:  .byte $B3           ;3/4 seconds
-LBE52:  .byte $10           ;Ab1
-LBE53:  .byte $06           ;D1
-LBE54:  .byte $0E           ;G1
-LBE55:  .byte $04           ;C#1
-LBE56:  .byte $B4           ;1 1/2 seconds
-LBE57:  .byte $0C           ;F#1
-LBE58:  .byte $00           ;End Tourian music.
+LBE47:  .byte $B4               ;1 1/2 seconds
+LBE48:  .byte $12               ;A2
+LBE49:  .byte $B3               ;3/4 seconds
+LBE4A:  .byte $10               ;Ab1
+LBE4B:  .byte $18               ;C2
+LBE4C:  .byte $16               ;B2
+LBE4D:  .byte $0A               ;F1
+LBE4E:  .byte $B4               ;1 1/2 seconds
+LBE4F:  .byte $14               ;A#2
+LBE50:  .byte $12               ;A2
+LBE51:  .byte $B3               ;3/4 seconds
+LBE52:  .byte $10               ;Ab1
+LBE53:  .byte $06               ;D1
+LBE54:  .byte $0E               ;G1
+LBE55:  .byte $04               ;C#1
+LBE56:  .byte $B4               ;1 1/2 seconds
+LBE57:  .byte $0C               ;F#1
+LBE58:  .byte $00               ;End Tourian music.
 
 TourianSQ1IndexData:
-LBE59:  .byte $E0           ;
-LBE5A:  .byte $B0           ;3/32 seconds   +
-LBE5B:  .byte $54           ;F#4            |
-LBE5C:  .byte $4E           ;D#4            |
-LBE5D:  .byte $48           ;C4             | Repeat 32 times
-LBE5E:  .byte $42           ;A4             |
-LBE5F:  .byte $48           ;C4             |
-LBE60:  .byte $4E           ;D#4            +
-LBE61:  .byte $FF           ;
+LBE59:  .byte $E0               ;
+LBE5A:  .byte $B0               ;3/32 seconds   +
+LBE5B:  .byte $54               ;F#4            |
+LBE5C:  .byte $4E               ;D#4            |
+LBE5D:  .byte $48               ;C4             | Repeat 32 times
+LBE5E:  .byte $42               ;A4             |
+LBE5F:  .byte $48               ;C4             |
+LBE60:  .byte $4E               ;D#4            +
+LBE61:  .byte $FF               ;
 
 TourianTriangleIndexData:
 LBE62:  .byte $E0               ;
@@ -7598,33 +7549,33 @@ LBEF5:  .byte $00, $27          ;2796Hz  (F7)  SQ1/SQ2 (F6)  TRI - Index #$7E
 ;Used by power up music and Kraid area music.
 
 NoteLengths0Tbl:
-LBEF7:  .byte $04           ;About    1/16 seconds ($B0)
-LBEF8:  .byte $08           ;About    1/8  seconds ($B1)
-LBEF9:  .byte $10           ;About    1/4  seconds ($B2)
-LBEFA:  .byte $20           ;About    1/2  seconds ($B3)
-LBEFB:  .byte $40           ;About 1       seconds ($B4)
-LBEFC:  .byte $18           ;About    3/8  seconds ($B5)
-LBEFD:  .byte $30           ;About    3/4  seconds ($B6)
-LBEFE:  .byte $0C           ;About    3/16 seconds ($B7)
-LBEFF:  .byte $0B           ;About   11/64 seconds ($B8)
-LBF00:  .byte $05           ;About    5/64 seconds ($B9)
-LBF01:  .byte $02           ;About    1/32 seconds ($BA)
+LBEF7:  .byte $04               ;About    1/16 seconds ($B0)
+LBEF8:  .byte $08               ;About    1/8  seconds ($B1)
+LBEF9:  .byte $10               ;About    1/4  seconds ($B2)
+LBEFA:  .byte $20               ;About    1/2  seconds ($B3)
+LBEFB:  .byte $40               ;About 1       seconds ($B4)
+LBEFC:  .byte $18               ;About    3/8  seconds ($B5)
+LBEFD:  .byte $30               ;About    3/4  seconds ($B6)
+LBEFE:  .byte $0C               ;About    3/16 seconds ($B7)
+LBEFF:  .byte $0B               ;About   11/64 seconds ($B8)
+LBF00:  .byte $05               ;About    5/64 seconds ($B9)
+LBF01:  .byte $02               ;About    1/32 seconds ($BA)
 
 ;Used by item room, fade in, Brinstar music, Ridley area music, Mother brain music,
 ;escape music, Norfair music and Tourian music.
 
 NoteLengths1Tbl:
-LBF02:  .byte $06           ;About    3/32 seconds ($B0)
-LBF03:  .byte $0C           ;About    3/16 seconds ($B1)
-LBF04:  .byte $18           ;About    3/8  seconds ($B2)
-LBF05:  .byte $30           ;About    3/4  seconds ($B3)
-LBF06:  .byte $60           ;About 1  1/2  seconds ($B4)
-LBF07:  .byte $24           ;About    9/16 seconds ($B5)
-LBF08:  .byte $48           ;About 1  3/16 seconds ($B6)
-LBF09:  .byte $12           ;About    9/32 seconds ($B7)
-LBF0A:  .byte $10           ;About    1/4  seconds ($B8)
-LBF0B:  .byte $08           ;About    1/8  seconds ($B9)
-LBF0C:  .byte $03           ;About    3/64 seconds ($BA)
+LBF02:  .byte $06               ;About    3/32 seconds ($B0)
+LBF03:  .byte $0C               ;About    3/16 seconds ($B1)
+LBF04:  .byte $18               ;About    3/8  seconds ($B2)
+LBF05:  .byte $30               ;About    3/4  seconds ($B3)
+LBF06:  .byte $60               ;About 1  1/2  seconds ($B4)
+LBF07:  .byte $24               ;About    9/16 seconds ($B5)
+LBF08:  .byte $48               ;About 1  3/16 seconds ($B6)
+LBF09:  .byte $12               ;About    9/32 seconds ($B7)
+LBF0A:  .byte $10               ;About    1/4  seconds ($B8)
+LBF0B:  .byte $08               ;About    1/8  seconds ($B9)
+LBF0C:  .byte $03               ;About    3/64 seconds ($BA)
 
 ;Used by intro and end game music.
 
@@ -7658,7 +7609,7 @@ LBF29:  TAY                     ;
 LBF2A:  LDX #$00                ;Zero out index.
 
 LBF2C:* LDA InitMusicTbl,Y      ;Base is $BD31.
-LBF2F:  STA NoteLengthTblOffset,X   ;
+LBF2F:  STA NoteLenTblOffset,X   ;
 LBF32:  INY                 ;The following loop repeats 13 times to
 LBF33:  INX                 ;load the initial music addresses 
 LBF34:  TXA                 ;(registers $062B thru $0637).
@@ -7666,15 +7617,15 @@ LBF35:  CMP #$0D            ;
 LBF37:  BNE -               ;
 
 LBF39:  LDA #$01                    ;Resets addresses $0640 thru $0643 to #$01.
-LBF3B:  STA SQ1MusicFrameCount      ;These addresses are used for counting the
-LBF3E:  STA SQ2MusicFrameCount      ;number of frames music channels have been playing.
-LBF41:  STA TriangleMusicFrameCount ;
-LBF44:  STA NoiseMusicFrameCount    ;
+LBF3B:  STA SQ1MusicFrameCnt      ;These addresses are used for counting the
+LBF3E:  STA SQ2MusicFrameCnt      ;number of frames music channels have been playing.
+LBF41:  STA TriMusicFrameCnt ;
+LBF44:  STA NseMusicFrameCnt    ;
 LBF47:  LDA #$00                    ;
-LBF49:  STA SQ1MusicIndexIndex      ;
-LBF4C:  STA SQ2MusicIndexIndex      ;Resets addresses $0638 thru $063B to #$00.
-LBF4F:  STA TriangleMusicIndexIndex ;These are the index to find sound channel data index.
-LBF52:  STA NoiseMusicIndexIndex    ;
+LBF49:  STA SQ1MusicIdxIdx      ;
+LBF4C:  STA SQ2MusicIdxIdx      ;Resets addresses $0638 thru $063B to #$00.
+LBF4F:  STA TriMusicIdxIdx ;These are the index to find sound channel data index.
+LBF52:  STA NoiseMusicIdxIdx    ;
 LBF55:  RTS                         ;
 
 ;----------------------------------------------------------------------------------------------------

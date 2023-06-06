@@ -1,10 +1,12 @@
-
-
-;-------------------------------------------[ Defines ]----------------------------------------------
+;-----------------------------------[ General Purpose Variables ]------------------------------------
 
 .alias GenPtr00         $00     ;General use pointer.
 .alias GenPtr00LB       $00     ;General use pointer, lower byte.
 .alias GenPtr00UB       $01     ;General use pointer, upper byte.
+
+.alias GenByte33        $33     ;General purpose byte.  
+
+;----------------------------------------[ Variable Defines ]----------------------------------------
 
 .alias CodePtr          $0C     ;Pointer to an indirect function call.
 .alias CodePtrUB        $0C     ;Pointer to an indirect function call, lower byte.
@@ -44,54 +46,51 @@
 .alias RoomPtrLB        $33     ;Room pointer, lower byte.
 .alias RoomPtrUB        $34     ;Room pointer, upper byte.
 
-
-.alias StructPtr        $35 ;Low bute of structure pointer address.
-;      StructPtr+1      $36 ;High byte of structure pointer address.
+.alias StructPtr        $35     ;Structure pointer.
+.alias StructPtrLB      $35     ;Structure pointer, lower byte.
+.alias StructPtrUB      $36     ;Structure pointer, upper byte.
                 
-.alias CartRAMWorkPtr       $37 ;Low byte of pointer to current position in room RAM.
-;      CartRAMWorkPtr+1     $38 ;High byte of pointer to current position in room RAM.
-                    ;The CartRAMWorkPtr points to the current memory address
-                    ;in the room RAM that is being loaded.
+.alias CartRAMWorkPtr   $37     ;Pointer to current position in room RAM.
+.alias CartRAMWorkPtrLB $37     ;Pointer to current position in room RAM, lower byte.
+.alias CartRAMWorkPtrUB $38     ;Pointer to current position in room RAM, upper byte.
+                                ;The CartRAMWorkPtr points to the current memory address
+                                ;in the room RAM that is being loaded.
 
-.alias CartRAMPtr           $39 ;Low byte of pointer to room RAM (#$00).
-;      CartRAMPtr+1     $3A ;High byte of pointer to room RAM (#$60 or #$64).
-                    ;Room RAM is a screen buffer where the objects that make
-                    ;up a room are loaded.  There are two room RAM memory
-                    ;areas and they are the exact same size as the two name
-                    ;tables and attribute tables in the PPU. Once the room
-                    ;RAM conatins a completed room in it, the entire contents
-                    ;of the room RAM is loaded into the PPU. 
+.alias CartRAMPtr       $39     ;pointer to room RAM.
+.alias CartRAMPtrLB     $39     ;pointer to room RAM, lower byte.
+.alias CartRAMPtrUB     $3A     ;pointer to room RAM, upper byte.
+                                ;Room RAM is a screen buffer where the objects that make
+                                ;up a room are loaded.  There are two room RAM memory
+                                ;areas and they are the exact same size as the two name
+                                ;tables and attribute tables in the PPU. Once the room
+                                ;RAM conatins a completed room in it, the entire contents
+                                ;of the room RAM is loaded into the PPU. 
 
-.alias RoomPtrTable     $3B ;Low byte of start of room pointer table.
-;      RoomPtrTable+1       $3C ;High byte of start of room pointer table.
+.alias RoomPtrTable     $3B     ;start of room pointer table.
+.alias RoomPtrTableLB   $3B     ;start of room pointer table, lower byte.
+.alias RoomPtrTableUB   $3C     ;start of room pointer table, upper byte.
 
-.alias StructPtrTable       $3D ;Low byte of start of structure pointer table.
-;      StructPtrTable+1     $3E ;High byte of structure pointer table.
+.alias StructPtrTable   $3D     ;start of structure pointer table.
+.alias StructPtrTableLB $3D     ;start of structure pointer table, lower byte.
+.alias StructPtrTableUB $3E     ;start of structure pointer table, upper byte.
 
-.alias MacroPtr         $3F ;Low byte of pointer into macro definitions.
-;      MacroPtr+1       $40 ;High byte of pointer into macro definitions.
+.alias MacroPtr         $3F     ;Pointer into macro definitions.
+.alias MacroPtrLB       $3F     ;Pointer into macro definitions, lower byte.
+.alias MacroPtrUB       $40     ;Pointer into macro definitions, upper byte.
 
-.alias EnmyFrameTbl1Ptr     $41 ;Low byte of pointer into address table to find enemy animations.
-;      EnmyFrameTbl1Ptr+1   $42 ;High byte of pointer into address table to find enemy animations.
-
-.alias EnmyFrameTbl2Ptr     $43 ;Same as above except in a second table because there are
-;      EnmyFrameTbl2Ptr+1   $44 ;too many entries to fit into one table.
-
-.alias EnmyPlaceTblPtr      $45 ;Low byte of pointer into enemy frame placement table.
-;      EnmyPlaceTblPtr+1    $46 ;High byte of pointer into enemy frame placement table.
-
-.alias EnemyAnimPtr     $47 ;Low byte of start of EnemyAnimIndexTbl.
-;      EnemyAnimPtr+1       $48 ;High byte of start of EnemyAnimIndexTbl.
+.alias EnemyAnimPtr     $47     ;EnemyAnimIndexTbl pointer.
+.alias EnemyAnimPtrLB   $47     ;EnemyAnimIndexTbl pointer, lower byte.
+.alias EnemyAnimPtrUB   $48     ;EnemyAnimIndexTbl pointer, upper byte.
 
 .alias ScrollDir        $49     ;0=Up, 1=Down, 2=Left, 3=Right.
 
-.alias TempScrollDir        $4A ;Stores ScrollDir when room is initially loaded.
+.alias TempScrollDir    $4A     ;Stores ScrollDir when room is initially loaded.
 
-.alias PageIndex        $4B ;Index to object data.
-                    ;#$D0, #$E0, #$F0 = projectile indices(including bombs).
-                    ;
-.alias ItemIndex        $4C ;#$00 or #$08. Added to PowerUpType addresses to determine if
-                    ;the first or second item slot is being checked. 
+.alias PageIndex        $4B     ;Index to object data.
+                                ;#$D0, #$E0, #$F0 = projectile indices(including bombs).
+                                ;
+.alias ItemIndex        $4C     ;#$00 or #$08. Added to PowerUpType addresses to determine if
+                                ;the first or second item slot is being checked. 
 
 .alias SamusDir         $4D     ;0 = Right, 1 = Left.
 .alias SamusDoorDir     $4E     ;Direction Samus passed through door.
@@ -106,142 +105,140 @@
                                 ;is 3 or 4, a door was entered while in a verticle shaft and
                                 ;the door was not centered on the screen and up or down
                                 ;scrolling needs to occur before scrolling to the next room.
-.alias DoorScrollStatus     $57 ;#$01=Entered right hand door from horizontal area.
-                    ;#$02=Entered left hand door from horizontal area.
-                    ;#$03=Entered door from verticle shaft and room needs to
-                    ;be centered before horizontal scrolling. #$04=Entered
-                    ;door from verticle shaft and room was already centered.
-.alias SamusDoorData        $58 ;The upper 4 bits store either 1 or 2. If 1 is stored(bit 4
-                    ;set), the scrolling after Samus exits the door is toggled.
-                    ;If 2 is stored(bit 5 set), the scrolling is set to
-                    ;horizontal scrolling after Samus exits the door. This
-                    ;happens mostly in item rooms. The lower 4 bits store Samus'
-                    ;action status as she enters the door. This is used to set
-                    ;Samus' action after she exits and keeps her looking the same.
-.alias DoorDelay        $59 ;Number of frames to delay when Samus entering/exiting doors.
-.alias RoomNumber       $5A ;Room number currently being loaded.
-.alias SpritePagePos        $5B ;Index into sprite RAM used to load object sprite data.
-.alias SamusInLava      $64 ;#$01=Samus in lava, #$00=She is not.
-.alias ObjectCounter        $65 ;Counts such things as object explosion time.
-.alias ObjectPal        $67 ;Attrib. table info for room object(#$00 thru #$03).
+.alias DoorScrollStatus $57     ;#$01=Entered right hand door from horizontal area.
+                                ;#$02=Entered left hand door from horizontal area.
+                                ;#$03=Entered door from verticle shaft and room needs to
+                                ;be centered before horizontal scrolling. #$04=Entered
+                                ;door from verticle shaft and room was already centered.
+.alias SamusDoorData    $58     ;The upper 4 bits store either 1 or 2. If 1 is stored(bit 4
+                                ;set), the scrolling after Samus exits the door is toggled.
+                                ;If 2 is stored(bit 5 set), the scrolling is set to
+                                ;horizontal scrolling after Samus exits the door. This
+                                ;happens mostly in item rooms. The lower 4 bits store Samus'
+                                ;action status as she enters the door. This is used to set
+                                ;Samus' action after she exits and keeps her looking the same.
+.alias DoorDelay        $59     ;Number of frames to delay when Samus entering/exiting doors.
+.alias RoomNumber       $5A     ;Room number currently being loaded.
+.alias SpritePagePos    $5B     ;Index into sprite RAM used to load object sprite data.
+.alias SamusInLava      $64     ;#$01=Samus in lava, #$00=She is not.
+.alias ObjectCounter    $65     ;Counts such things as object explosion time.
+.alias ObjectPal        $67     ;Attrib. table info for room object(#$00 thru #$03).
 .alias RoomPal          $68
 .alias TempX            $69
 .alias TempY            $6A
-.alias ObjectCntrl      $6B ;Controls object properties such as mirroring and color
-                    ;bits. Bit 4 controls object mirroring.
-
-.alias DoorOnNameTable3     $6C ;The following two addresses are used to keep track of the
-.alias DoorOnNameTable0     $6D ;doors loaded on the name tables. The information is used
-                    ;in the GetRoomNum routine to prevent the loading of a
-                    ;room behind a door when scrolling horizontally. This has
-                    ;the effect of stopping scrolling until Samus walks through
-                    ;the door. #$01=Left door on name table. #$02=right door
-                    ;on name table. #$03 two doors on the same name table.
-                    ;#$00 is possible in $6D if 2 doors are on name table 0
-                    ;while vertically scrolling.
-
-.alias HealthLoChange       $6E ;Amount to add/subtract from HealthLo.
-.alias HealthHiChange       $6F ;Amount to add/subtract from HealthHi.
+.alias ObjectCntrl      $6B     ;Controls object properties such as mirroring and color
+                                ;bits. Bit 4 controls object mirroring.
+.alias DoorOnNameTable3 $6C     ;The following two addresses are used to keep track of the
+.alias DoorOnNameTable0 $6D     ;doors loaded on the name tables. The information is used
+                                ;in the GetRoomNum routine to prevent the loading of a
+                                ;room behind a door when scrolling horizontally. This has
+                                ;the effect of stopping scrolling until Samus walks through
+                                ;the door. #$01=Left door on name table. #$02=right door
+                                ;on name table. #$03 two doors on the same name table.
+                                ;#$00 is possible in $6D if 2 doors are on name table 0
+                                ;while vertically scrolling.
+.alias HealthLoChange   $6E     ;Amount to add/subtract from HealthLo.
+.alias HealthHiChange   $6F     ;Amount to add/subtract from HealthHi.
 
 .alias SamusBlink       $70
-.alias UpdatingProjectile   $71 ;#$01=Projectile update in process. #$00=not in process.
-.alias DamagePushDirection  $72 ;#$00=Push Samus left when hit, #$01=Push right, #$FF=No push. 
-.alias InArea           $74 ;#$10(or #$00)=Brinstar, #$11=Norfair, #$12=Kraid hideout,
-                    ;#$13=Tourian, #$14=Ridley hideout.
+.alias UpdtngPrjctl     $71     ;#$01=Projectile update in process. #$00=not in process.
+.alias DmgPushDir       $72     ;#$00=Push Samus left when hit, #$01=Push right, #$FF=No push. 
+.alias InArea           $74     ;#$10(or #$00)=Brinstar, #$11=Norfair, #$12=Kraid hideout,
+                                ;#$13=Tourian, #$14=Ridley hideout.
 
-.alias SpareMem75       $75 ;Initialized to #$FF in AreaInit. Not used.
+.alias SpareMem75       $75     ;Initialized to #$FF in AreaInit. Not used.
 .alias PalToggle        $76
 
-.alias ItemRoomMusicStatus  $79 ;#$00=Item room music not playing. 
-                    ;#$01=Play item room music.
-                    ;#$80=Stop item room music once door scroll complete. 
-                    ;#$81=Item room music already playing. Don't restart.
+.alias ItemRmMusicSts   $79     ;#$00=Item room music not playing. 
+                                ;#$01=Play item room music.
+                                ;#$80=Stop item room music once door scroll complete. 
+                                ;#$81=Item room music already playing. Don't restart.
 
-.alias OnFrozenEnemy        $7D ;#$01=Samus standing on frozen enemy, #$00=she is not.
+.alias OnFrozenEnemy    $7D     ;#$01=Samus standing on frozen enemy, #$00=she is not.
 
 ;--------------------------------------[ End routine specific ]--------------------------------------
 
-.alias EndMsgWrite      $7A ;0=don't write end message, 1=write end message.
-.alias IsCredits        $7B ;0=credits not rolling, 1=credits rolling.
-.alias SpriteByteCounter    $7C ;Used to indicate when Samus sprite load complete.
-.alias SpritePointerIndex   $7D ;Index to proper Samus sprite graphics at end game.
-.alias SpriteAttribByte     $7E ;#$00.  Attribute byte of some sprites.
-.alias ColorCntIndex        $7F ;Index for finding count number for ClrChangeCounter.
-.alias CreditPageNumber     $80 ;Stores current page of credits(#$00 thru #$06).
-.alias HideShowEndMsg       $81 ;0=show end message, 1=erase end message.
-.alias ClrChangeCounter     $82 ;When=#$00, change end Samus sprite colors.
-.alias WaveSpritePointer    $83 ;Address pointer to Samus hand waving sprites in end.
-.alias WaveSpriteCounter    $84 ;Stores length of wave sprite data (#$10).
+.alias EndMsgWrite      $7A     ;0=don't write end message, 1=write end message.
+.alias IsCredits        $7B     ;0=credits not rolling, 1=credits rolling.
+.alias SpriteByteCntr   $7C     ;Used to indicate when Samus sprite load complete.
+.alias SpritePtrIndex   $7D     ;Index to proper Samus sprite graphics at end game.
+.alias SpriteAttribByte $7E     ;#$00.  Attribute byte of some sprites.
+.alias ColorCntIndex    $7F     ;Index for finding count number for ClrChangeCounter.
+.alias CreditPageNumber $80     ;Stores current page of credits(#$00 thru #$06).
+.alias HideShowEndMsg   $81     ;0=show end message, 1=erase end message.
+.alias ClrChangeCounter $82     ;When=#$00, change end Samus sprite colors.
+.alias WaveSpritePtr    $83     ;Address pointer to Samus hand waving sprites in end.
+.alias WaveSpriteCntr   $84     ;Stores length of wave sprite data (#$10).
 
 ;----------------------------------------------------------------------------------------------------
 
-.alias MetroidOnSamus       $92 ;#$01=Metroid on Samus, #$00=Metroid not on Samus.
+.alias MetroidOnSamus   $92     ;#$01=Metroid on Samus, #$00=Metroid not on Samus.
 
-.alias MaxMissilePickup     $93 ;Maximum missiles power-ups that can be picked up. Randomly
-                    ;recalculated whenever Samus goes through a door.
-.alias MaxEnergyPickup      $94 ;Maximum energy power-ups that can be picked up. Randomly
-                    ;recalculated whenever Samus goes through a door.
-.alias CurrentMissilePickups    $95 ;Number of missile power-ups currently collected by Samus
-                    ;Reset to 0 when Samus goes through a door.
-.alias CurrentEnergyPickups $96 ;Number of energy power-ups currently collected by Samus
-                    ;Reset to 0 when Samus goes through a door.
+.alias MaxMissilePickup $93     ;Maximum missiles power-ups that can be picked up. Randomly
+                                ;recalculated whenever Samus goes through a door.
+.alias MaxEnergyPickup  $94     ;Maximum energy power-ups that can be picked up. Randomly
+                                ;recalculated whenever Samus goes through a door.
+.alias CrntMslePickups  $95     ;Number of missile power-ups currently collected by Samus
+                                ;Reset to 0 when Samus goes through a door.
+.alias CrntEnrgyPickups $96     ;Number of energy power-ups currently collected by Samus
+                                ;Reset to 0 when Samus goes through a door.
 
-.alias MotherBrainStatus    $98 ;#$00=Mother brain not in room, #$01=Mother brain in room,
-                    ;#$02=Mother brain hit, #$03=Mother brain dying
-                    ;#$04=Mother brain dissapearing, #$05=Mother brain gone,
-                    ;#$06=Time bomb set, #$07=Time bomb exploded,
-                    ;#$08=Initialize mother brain,
-                    ;#$09, #$0A=Mother brain already dead.
-.alias MotherBrainHits      $99 ;Number of times mother brain has been hit. Dies at #$20.
+.alias MthrBrainStatus  $98     ;#$00=Mother brain not in room, #$01=Mother brain in room,
+                                ;#$02=Mother brain hit, #$03=Mother brain dying
+                                ;#$04=Mother brain dissapearing, #$05=Mother brain gone,
+                                ;#$06=Time bomb set, #$07=Time bomb exploded,
+                                ;#$08=Initialize mother brain,
+                                ;#$09, #$0A=Mother brain already dead.
+.alias MotherBrainHits  $99     ;Number of times mother brain has been hit. Dies at #$20.
 
-.alias SpareMemB7       $B7 ;Written to in title routine and accessed by unsed routine.
-.alias SpareMemB8       $B8 ;Written to in title routine and accessed by unsed routine.
-.alias SpareMemBB       $BB ;Written to in title routine, but never accessed.
+.alias SpareMemB7       $B7     ;Written to in title routine and accessed by unsed routine.
+.alias SpareMemB8       $B8     ;Written to in title routine and accessed by unsed routine.
+.alias SpareMemBB       $BB     ;Written to in title routine, but never accessed.
 
-.alias First4SlowCntr       $BC ;This address holds an 8 frame delay. when the delay is up,
-                    ;The crosshair sprites double their speed.
-.alias Second4Delay     $BD ;This address holds a 32 frame delay.  When the delay is
-                    ;up, the second set of crosshair sprites start their movement.
-.alias ScndCrshrSprts   $BF ;#$01=Second crosshair sprites active in intro.
+.alias First4SlowCntr   $BC     ;This address holds an 8 frame delay. when the delay is up,
+                                ;The crosshair sprites double their speed.
+.alias Second4Delay     $BD     ;This address holds a 32 frame delay.  When the delay is
+                                ;up, the second set of crosshair sprites start their movement.
+.alias ScndCrshrSprts   $BF     ;#$01=Second crosshair sprites active in intro.
 
-.alias FlashScreen      $C0 ;#$01=Flash screen during crosshairs routine.
+.alias FlashScreen      $C0     ;#$01=Flash screen during crosshairs routine.
 .alias PalDataIndex     $C1
-.alias ScrnFlashPalInd  $C2 ;Index to palette data to flash screen during intro.
-.alias IntroStarOffset      $C3 ;Contains offset into IntroStarPntr table for twinkle effect.
-.alias FadeDataIndex        $C4 ;Index to palette data to fade items in and out during intro.
+.alias ScrnFlashPalInd  $C2     ;Index to palette data to flash screen during intro.
+.alias IntroStarOffset  $C3     ;Contains offset into IntroStarPntr table for twinkle effect.
+.alias FadeDataIndex    $C4     ;Index to palette data to fade items in and out during intro.
 
-.alias SpareMemC5       $C5 ;Written to in title routine, but never accessed.
-.alias CrossDataIndex       $C6 ;#$00 thru #$04. Index to find cross sprite data.
-.alias DrawCross        $C7 ;#$01=Draw cross on screen during crosshairs routine.
-.alias SpriteLoadPending    $C8 ;Set to #$00 after sprite RAM load complete.
-.alias SpareMemC9       $C9 ;Written to in title routine, but never accessed.
-.alias SpareMemCB       $CB ;Written to in title routine, but never accessed.
-.alias SpareMemCC       $CC ;Written to in title routine, but never accessed.
-.alias SpareMemCD       $CD ;Written to in title routine, but never accessed.
-.alias SpareMemCE       $CE ;Written to in title routine, but never accessed.
-.alias SpareMemCF       $CF ;Written to in title routine, but never accessed.
-.alias SpareMemD0       $D0 ;Written to in title routine, but never accessed.
-.alias SpareMemD1       $D1 ;Written to in title routine, but never accessed.
-.alias SpareMemD2       $D2 ;Written to in title routine, but never accessed.
-.alias SpareMemD3       $D3 ;Written to in title routine, but never accessed.
-.alias SpareMemD7       $D7 ;Written to in title routine, but never accessed.
-.alias IntroMusicRestart    $D8 ;After all title routines run twice, restarts intro music.
-.alias ABStatus         $F0 ;Stores A and B button status in AreaInit. Never used.
-;               $F7
+.alias SpareMemC5       $C5     ;Written to in title routine, but never accessed.
+.alias CrossDataIndex   $C6     ;#$00 thru #$04. Index to find cross sprite data.
+.alias DrawCross        $C7     ;#$01=Draw cross on screen during crosshairs routine.
+.alias SpriteLoadPend   $C8     ;Set to #$00 after sprite RAM load complete.
+.alias SpareMemC9       $C9     ;Written to in title routine, but never accessed.
+.alias SpareMemCB       $CB     ;Written to in title routine, but never accessed.
+.alias SpareMemCC       $CC     ;Written to in title routine, but never accessed.
+.alias SpareMemCD       $CD     ;Written to in title routine, but never accessed.
+.alias SpareMemCE       $CE     ;Written to in title routine, but never accessed.
+.alias SpareMemCF       $CF     ;Written to in title routine, but never accessed.
+.alias SpareMemD0       $D0     ;Written to in title routine, but never accessed.
+.alias SpareMemD1       $D1     ;Written to in title routine, but never accessed.
+.alias SpareMemD2       $D2     ;Written to in title routine, but never accessed.
+.alias SpareMemD3       $D3     ;Written to in title routine, but never accessed.
+.alias SpareMemD7       $D7     ;Written to in title routine, but never accessed.
+.alias IntroMusRstrt    $D8     ;After all title routines run twice, restarts intro music.
+.alias ABStatus         $F0     ;Stores A and B button status in AreaInit. Never used.
+;                       $F7
 
-.alias MirrorCntrl      $FA ;If bit 3 is set, PPU set to horizontal mirroring
-                    ;else if bit 3 is clear, PPU is set to vertical
-                    ;mirroring. No other bits seem to matter.
+.alias MirrorCntrl      $FA     ;If bit 3 is set, PPU set to horizontal mirroring
+                                ;else if bit 3 is clear, PPU is set to vertical
+                                ;mirroring. No other bits seem to matter.
 
-.alias ScrollY          $FC ;Y value loaded into scroll register. 
-.alias ScrollX          $FD ;X value loaded into scroll register.
-.alias PPUCNT1ZP        $FE ;Data byte to be loaded into PPU control register 1.
-.alias PPUCNT0ZP        $FF ;Data byte to be loaded into PPU control register 0.
+.alias ScrollY          $FC     ;Y value loaded into scroll register. 
+.alias ScrollX          $FD     ;X value loaded into scroll register.
+.alias PPUCNT1ZP        $FE     ;Data byte to be loaded into PPU control register 1.
+.alias PPUCNT0ZP        $FF     ;Data byte to be loaded into PPU control register 0.
 
 .alias HealthLo         $0106   ;Lower health digit in upper 4 bits.
 .alias HealthHi         $0107   ;Upper health digit in lower 4 bits
-                                        ;# of full tanks in upper 4 bits.
-.alias MiniBossKillDelay    $0108   ;Initiate power up music and delay after Kraid/Ridley killed.
+                                ;# of full tanks in upper 4 bits.
+.alias MiniBossKillDly  $0108   ;Initiate power up music and delay after Kraid/Ridley killed.
 .alias PowerUpDelay     $0109   ;Initiate power up music and delay after item pickup.
 
 .alias EndTimerLo       $010A   ;Lower byte of end game escape timer.
@@ -249,72 +246,7 @@
 
 .alias MissileToggle    $010E   ;0=fire bullets, 1=fire missiles.
 
-;-----------------------------------------[ Sprite RAM ]---------------------------------------------
-
-.alias Sprite00RAM      $0200   ;
-.alias Sprite01RAM      $0204   ;
-.alias Sprite02RAM      $0208   ;
-.alias Sprite03RAM      $020C   ;
-.alias Sprite04RAM      $0210   ;
-.alias Sprite05RAM      $0214   ;
-.alias Sprite06RAM      $0218   ;
-.alias Sprite07RAM      $021C   ;
-.alias Sprite08RAM      $0220   ;
-.alias Sprite09RAM      $0224   ;
-.alias Sprite0ARAM      $0228   ;
-.alias Sprite0BRAM      $022C   ;
-.alias Sprite0CRAM      $0230   ;
-.alias Sprite0DRAM      $0234   ;
-.alias Sprite0ERAM      $0238   ;
-.alias Sprite0FRAM      $023C   ;
-.alias Sprite10RAM      $0240   ;
-.alias Sprite11RAM      $0244   ;
-.alias Sprite12RAM      $0248   ;
-.alias Sprite13RAM      $024C   ;
-.alias Sprite14RAM      $0250   ;
-.alias Sprite15RAM      $0254   ;
-.alias Sprite16RAM      $0258   ;
-.alias Sprite17RAM      $025C   ;
-.alias Sprite18RAM      $0260   ;
-.alias Sprite19RAM      $0264   ;
-.alias Sprite1ARAM      $0268   ;These 256 bytes of memory are loaded into sprite
-.alias Sprite1BRAM      $026C   ;RAM using the DMA sprite register $4014.
-.alias Sprite1CRAM      $0270   ;
-.alias Sprite1DRAM      $0274   ;
-.alias Sprite1ERAM      $0278   ;
-.alias Sprite1FRAM      $027C   ;
-.alias Sprite20RAM      $0280   ;
-.alias Sprite21RAM      $0284   ;
-.alias Sprite22RAM      $0288   ;
-.alias Sprite23RAM      $028C   ;
-.alias Sprite24RAM      $0290   ;
-.alias Sprite25RAM      $0294   ;
-.alias Sprite26RAM      $0298   ;
-.alias Sprite27RAM      $029C   ;
-.alias Sprite28RAM      $02A0   ;
-.alias Sprite29RAM      $02A4   ;
-.alias Sprite2ARAM      $02A8   ;
-.alias Sprite2BRAM      $02AC   ;
-.alias Sprite2CRAM      $02B0   ;
-.alias Sprite2DRAM      $02B4   ;
-.alias Sprite2ERAM      $02B8   ;
-.alias Sprite2FRAM      $02BC   ;
-.alias Sprite30RAM      $02C0   ;
-.alias Sprite31RAM      $02C4   ;
-.alias Sprite32RAM      $02C8   ;
-.alias Sprite33RAM      $02CC   ;
-.alias Sprite34RAM      $02D0   ;
-.alias Sprite35RAM      $02D4   ;
-.alias Sprite36RAM      $02D8   ;
-.alias Sprite37RAM      $02DC   ;
-.alias Sprite38RAM      $02E0   ;
-.alias Sprite39RAM      $02E4   ;
-.alias Sprite3ARAM      $02E8   ;
-.alias Sprite3BRAM      $02EC   ;
-.alias Sprite3CRAM      $02F0   ;
-.alias Sprite3DRAM      $02F4   ;
-.alias Sprite3ERAM      $02F8   ;
-.alias Sprite3FRAM      $02FC   ;
+.alias SpriteRAM        $0200   ;Through $02FF. Sprite RAM.
 
 ;-----------------------------------------[ Object RAM ]---------------------------------------------
 
@@ -324,100 +256,100 @@
 .alias ObjRadX          $0302   ;Distance in pixels from object center to left or right side.
 .alias AnimFrame        $0303   ;*2 = Index into FramePtrTable for current animation.
 .alias AnimDelay        $0304   ;Number of frames to delay between animation frames.
-.alias AnimResetIndex       $0305   ;Restart index-1 when AnimIndex finished with last frame. 
+.alias AnimResetIndex   $0305   ;Restart index-1 when AnimIndex finished with last frame. 
 .alias AnimIndex        $0306   ;Current index into ObjectAnimIndexTbl.
-.alias SamusOnElevator      $0307   ;0=Samus not on elevator, 1=Samus on elevator.
+.alias SamusOnElevator  $0307   ;0=Samus not on elevator, 1=Samus on elevator.
 .alias ObjVertSpeed     $0308   ;MSB set=moving up(#$FA max), MSB clear=moving down(#$05 max).
 .alias ObjHorzSpeed     $0309   ;MSB set=moving lft(#$FE max), MSB clear=moving rt(#$01 max).
 .alias SamusHit         $030A   ;Samus hit by enemy.
-.alias ObjectOnScreen       $030B   ;1=Object on screen, 0=Object beyond screen boundaries.
+.alias ObjectOnScreen   $030B   ;1=Object on screen, 0=Object beyond screen boundaries.
 .alias ObjectHi         $030C   ;0=Object on nametable 0, 1=Object on nametable 3.
 .alias ObjectY          $030D   ;Object y position in room(not actual screen position).
 .alias ObjectX          $030E   ;Object x position in room(not actual screen position).
-.alias SamusJumpDsplcmnt    $030F   ;Number of pixels vertically displaced from jump point.
-.alias VertCntrNonLinear    $0310   ;Verticle movement counter. Exponential change in speed.
-.alias HorzCntrNonLinear    $0311   ;Horizontal movement counter. Exponential change in speed.
-.alias VertCntrLinear       $0312   ;Verticle movement counter. Linear change in speed.
-.alias HorzCntrLinear       $0313   ;Horizontal movement counter. Linear change in speed.
+.alias SamusJmpDsplcmnt $030F   ;Number of pixels vertically displaced from jump point.
+.alias VertCntrNonLinr  $0310   ;Verticle movement counter. Exponential change in speed.
+.alias HorzCntrNonLinr  $0311   ;Horizontal movement counter. Exponential change in speed.
+.alias VertCntrLinear   $0312   ;Verticle movement counter. Linear change in speed.
+.alias HorzCntrLinear   $0313   ;Horizontal movement counter. Linear change in speed.
 .alias SamusGravity     $0314   ;Value used in calculating vertical acceleration on Samus.
-.alias SamusHorzAccel       $0315   ;Value used in calculating horizontal acceleration on Samus.
-.alias SamusHorzSpeedMax    $0316   ;Used to calc maximum horizontal speed Samus can reach.
+.alias SamusHorzAccel   $0315   ;Value used in calculating horizontal acceleration on Samus.
+.alias SamusHorzSpdMax  $0316   ;Used to calc maximum horizontal speed Samus can reach.
 
 ;Elevator RAM.
-.alias ElevatorStatus       $0320   ;#$01=Elevator present, #$00=Elevator not present.
+.alias ElevatorStatus   $0320   ;#$01=Elevator present, #$00=Elevator not present.
 
 ;Power-up item RAM.
-.alias PowerUpAnimFrame     $0343   ;*2 = Index into FramePtrTable for current animation.
+.alias PowerUpAnimFrame $0343   ;*2 = Index into FramePtrTable for current animation.
 .alias PowerUpHi        $034C   ;Name table power up item is located on.
 .alias PowerUpY         $034D   ;Room Y coord of power up item.
 .alias PowerUpX         $034E   ;Room x coord of power up item.
 
 ;-------------------------------------[ Title routine specific ]-------------------------------------
 
-.alias PasswordCursor       $0320   ;Password write position (#$00 - #$17).
+.alias PasswordCursor   $0320   ;Password write position (#$00 - #$17).
 .alias InputRow         $0321   ;Password character select row (#$00 - #$04).
 .alias InputColumn      $0322   ;Password character select column (#$00 - #$0C).
-.alias PasswordStat00       $0324   ;Does not appear to have a function.
-.alias StartContinue        $0325   ;0=START selected, 1=CONTINUE selected.
+.alias PasswordStat00   $0324   ;Does not appear to have a function.
+.alias StartContinue    $0325   ;0=START selected, 1=CONTINUE selected.
 
 ;------------------------------------------[ Enemy RAM ]---------------------------------------------
 
 .alias EnYRoomPos       $0400   ;Enemy y position in room.(not actual screen position).
 .alias EnXRoomPos       $0401   ;Enemy x position in room.(not actual screen position).
-;               $0402
-;               $0403
-;               $0404
-;               $0405
+;                       $0402
+;                       $0403
+;                       $0404
+;                       $0405
 .alias EnCounter        $0406   ;Counts such things as explosion time.
-;               $0407
-;               $0408
+;                       $0407
+;                       $0408
 .alias EnDelay          $0409   ;Delay counter between enemy actions.
-;               $040A
+;                       $040A
 .alias EnHitPoints      $040B   ;Current hit points of enemy.
-;               $040C
-;               $040D
-;               $040E
-.alias EnSpecialAttribs     $040F   ;Bit 7 set=tough version of enemy, bit 6 set=mini boss.
+;                       $040C
+;                       $040D
+;                       $040E
+.alias EnSpecialAttribs $040F   ;Bit 7 set=tough version of enemy, bit 6 set=mini boss.
 
 ;----------------------------------------------------------------------------------------------------
 
 ;Tile respawning
 .alias TileRoutine      $0500
-.alias TileAnimFrame        $0503
-.alias TileAnimDelay        $0504
-.alias TileAnimIndex        $0506
+.alias TileAnimFrame    $0503
+.alias TileAnimDelay    $0504
+.alias TileAnimIndex    $0506
 .alias TileDelay        $0507
 .alias TileWRAMLo       $0508
 .alias TileWRAMHi       $0509
 .alias TileType         $050A
 
-;---------------------------------[ Sound engine memory addresses ]----------------------------------
+;---------------------------------[ Sound Engine Memory Addresses ]----------------------------------
 
 .alias Cntrl0Data       $EA     ;Temp storage for data of first address sound channel
-.alias VolumeCntrlAddress   $EB ;Desired address number in VolumeCntrlAdressTbl
+.alias VolCntrlAddress  $EB     ;Desired address number in VolumeCntrlAdressTbl
 
-.alias MusicSQ1PeriodLow    $0600   ;Loaded into SQ1Cntrl2 when playing music
-.alias MusicSQ1PeriodHigh   $0601   ;Loaded into SQ1Cntrl3 when playing music
+.alias MusicSQ1PrdLow   $0600   ;Loaded into SQ1Cntrl2 when playing music
+.alias MusicSQ1PrdHi    $0601   ;Loaded into SQ1Cntrl3 when playing music
 
 .alias SFXPaused        $0602   ;0=Game not paused, 1=Game paused
-.alias PauseSFXStatus       $0603   ;Plays PauseMusic SFX if less than #$12
+.alias PauseSFXStatus   $0603   ;Plays PauseMusic SFX if less than #$12
 
-.alias MusicSQ2PeriodLow    $0604   ;Loaded into SQ2Cntrl2 when playing music
-.alias MusicSQ2PeriodHigh   $0605   ;Loaded into SQ2Cntrl3 when playing music
+.alias MusicSQ2PeriodLo $0604   ;Loaded into SQ2Cntrl2 when playing music
+.alias MusicSQ2PeriodHi $0605   ;Loaded into SQ2Cntrl3 when playing music
 
-.alias WriteMultiChannelData    $0607   ;1=data needs to be written, 0=no data to write
+.alias WrtMultiChnDat   $0607   ;1=data needs to be written, 0=no data to write
 
-.alias MusicTriPeriodLow    $0608   ;Loaded into TriangleCntrl2 when playing music
-.alias MisicTriPeriodHigh   $0609   ;Loaded into TriangleCntrl3 when playing music 
+.alias MusTriPeriodLo   $0608   ;Loaded into TriangleCntrl2 when playing music
+.alias MusTriPeriodHi   $0609   ;Loaded into TriangleCntrl3 when playing music 
 
-.alias TrianglePeriodLow    $0610   ;Stores triangle SFX period low for processing
-.alias TrianglePeriodHigh   $0611   ;Stroes triangle SFX period high for processing
-.alias TriangleChangeLow    $0612   ;Stores triangle SFX change in period low
-.alias TriangleChangeHigh   $0613   ;Stores triangle SFX change in period high
+.alias TriPeriodLow     $0610   ;Stores triangle SFX period low for processing
+.alias TriPeriodHigh    $0611   ;Stroes triangle SFX period high for processing
+.alias TriChangeLow     $0612   ;Stores triangle SFX change in period low
+.alias TriChangeHigh    $0613   ;Stores triangle SFX change in period high
 
-.alias TriangleLowPercentage    $0614   ;Stores percent to change period low by each frame
-.alias TriangleHighPercentage   $0615   ;Stores percent to change period high by each frame 
-.alias PercentDifference    $0616   ;if=5, percent=1/5(20%), if=0A, percent=1/10(10%), etc
+.alias TriLoPercentage  $0614   ;Stores percent to change period low by each frame
+.alias TriHiPercentage  $0615   ;Stores percent to change period high by each frame 
+.alias PercentDiff      $0616   ;if=5, percent=1/5(20%), if=0A, percent=1/10(10%), etc
 .alias DivideData       $0617   ;Used in DivideTrianglePeriods
 
 .alias HasBeamSFX       $061F   ;Bit 7 set=has long beam, bit 0 set=has ice beam
@@ -425,93 +357,93 @@
 ;The following addresses are loaded into $0640 thru $0643 when those 
 ;addresses decrement to zero.  These addresses do not decrement.
 
-.alias SQ1FrameCountInit    $0620   ;Holds number of frames to play sq1 channel data
-.alias SQ2FrameCountInit    $0621   ;Holds number of frames to play sq2 channel data
-.alias TriangleFrameCountInit   $0622   ;Holds number of frames to play triangle channel data
-.alias NoiseFrameCountInit  $0623   ;Holds number of frames to play noise channel data
+.alias SQ1FrmCountInit  $0620   ;Holds number of frames to play sq1 channel data
+.alias SQ2FrmCountInit  $0621   ;Holds number of frames to play sq2 channel data
+.alias TriFrmCountInit  $0622   ;Holds number of frames to play triangle channel data
+.alias NseFrmCountInit  $0623   ;Holds number of frames to play noise channel data
 
-.alias SQ1RepeatCounter     $0624   ;Number of times to repeat SQ1 music loop
-.alias SQ2RepeatCounter     $0625   ;Number of times to repeat SQ2 music loop
-.alias TriangleRepeatCounter    $0626   ;Number of times to repeat Triangle music loop
-.alias NoiseRepeatCounter   $0627   ;Number of times to repeat Noise music loop
+.alias SQ1RepeatCounter $0624   ;Number of times to repeat SQ1 music loop
+.alias SQ2RepeatCounter $0625   ;Number of times to repeat SQ2 music loop
+.alias TriRepeatCounter $0626   ;Number of times to repeat Triangle music loop
+.alias NseRepeatCounter $0627   ;Number of times to repeat Noise music loop
 
-.alias SQ1DutyEnvelope      $0628   ;Loaded into SQ1Cntrl0 when playing music
-.alias SQ2DutyEnvelope      $0629   ;Loaded into SQ2Cntrl0 when playing music
-.alias TriLinearCount       $062A   ;disable\enable counter, linear count length
+.alias SQ1DutyEnvelope  $0628   ;Loaded into SQ1Cntrl0 when playing music
+.alias SQ2DutyEnvelope  $0629   ;Loaded into SQ2Cntrl0 when playing music
+.alias TriLinearCount   $062A   ;disable\enable counter, linear count length
 
-.alias NoteLengthTblOffset  $062B   ;Stores the offset to find proper note length table
+.alias NoteLenTblOffset $062B   ;Stores the offset to find proper note length table
 .alias MusicRepeat      $062C   ;0=Music does not repeat, Nonzero=music repeats
-.alias TriangleCounterCntrl $062D   ;$F0=disable length cntr, $00=long note, $0F=short note
-.alias SQ1VolumeCntrl       $062E   ;Entry number in VolumeCntrlAdressTbl for SQ1
-.alias SQ2VolumeCntrl       $062F   ;Entry number in VolumeCntrlAdressTbl for SQ2
-.alias SQ1LowBaseByte       $0630   ;low byte of base address for SQ1 music data
-.alias SQ1HighBaseByte      $0631   ;High byte of base address for SQ1 music data
-.alias SQ2LowBaseByte       $0632   ;low byte of base address for SQ2 music data
-.alias SQ2HighBaseByte      $0633   ;High byte of base address for SQ2 music data
-.alias TriangleLowBaseByte  $0634   ;low byte of base address for Triangle music data
-.alias TriangleHighBaseByte $0635   ;High byte of base address for Triangle music data
-.alias NoiseLowBaseByte     $0636   ;low byte of base address for Noise music data
-.alias NoiseHighBaseByte    $0637   ;High byte of base address for Noise music data
+.alias TriCounterCntrl  $062D   ;$F0=disable length cntr, $00=long note, $0F=short note
+.alias SQ1VolumeCntrl   $062E   ;Entry number in VolumeCntrlAdressTbl for SQ1
+.alias SQ2VolumeCntrl   $062F   ;Entry number in VolumeCntrlAdressTbl for SQ2
+.alias SQ1LowBaseByte   $0630   ;low byte of base address for SQ1 music data
+.alias SQ1HighBaseByte  $0631   ;High byte of base address for SQ1 music data
+.alias SQ2LowBaseByte   $0632   ;low byte of base address for SQ2 music data
+.alias SQ2HighBaseByte  $0633   ;High byte of base address for SQ2 music data
+.alias TriLowBaseByte   $0634   ;low byte of base address for Triangle music data
+.alias TriHighBaseByte  $0635   ;High byte of base address for Triangle music data
+.alias NoiseLowBaseByte $0636   ;low byte of base address for Noise music data
+.alias NseHighBaseByte  $0637   ;High byte of base address for Noise music data
 
-.alias SQ1MusicIndexIndex   $0638   ;Index to find sQ1 sound data index. Base=$630,$631
-.alias SQ2MusicIndexIndex   $0639   ;Index to find SQ2 sound data index. Base=$632,$633
-.alias TriangleMusicIndexIndex  $063A   ;Index to find Tri sound data index. Base=$634,$635
-.alias NoiseMusicIndexIndex $063B   ;Index to find Noise sound data index. Base=$636,$637
+.alias SQ1MusicIdxIdx   $0638   ;Index to find sQ1 sound data index. Base=$630,$631
+.alias SQ2MusicIdxIdx   $0639   ;Index to find SQ2 sound data index. Base=$632,$633
+.alias TriMusicIdxIdx   $063A   ;Index to find Tri sound data index. Base=$634,$635
+.alias NoiseMusicIdxIdx $063B   ;Index to find Noise sound data index. Base=$636,$637
 
 .alias SQ1LoopIndex     $063C   ;SQ1 Loop start index
 .alias SQ2LoopIndex     $063D   ;SQ2 loop start index
-.alias TriangleLoopIndex    $063E   ;Triangle loop start index
-.alias NoiseLoopIndex       $063F   ;Noise loop start index
+.alias TriangleLoopIdx  $063E   ;Triangle loop start index
+.alias NoiseLoopIndex   $063F   ;Noise loop start index
 
-.alias SQ1MusicFrameCount   $0640   ;Decrements every sq1 frame. When 0, load new data
-.alias SQ2MusicFrameCount   $0641   ;Decrements every sq2 frame. when 0, load new data
-.alias TriangleMusicFrameCount  $0642   ;Decrements every triangle frame. When 0, load new data
-.alias NoiseMusicFrameCount $0643   ;Decrements every noise frame. When 0, load new data
+.alias SQ1MusicFrameCnt $0640   ;Decrements every sq1 frame. When 0, load new data
+.alias SQ2MusicFrameCnt $0641   ;Decrements every sq2 frame. when 0, load new data
+.alias TriMusicFrameCnt $0642   ;Decrements every triangle frame. When 0, load new data
+.alias NseMusicFrameCnt $0643   ;Decrements every noise frame. When 0, load new data
 
-.alias MusicSQ1Sweep        $0648   ;Value is loaded into SQ1Cntrl1 when playing music
-.alias MusicSQ2Sweep        $0649   ;Value is loaded into SQ2Cntrl1 when playing music
-.alias TriangleSweep        $064A   ;Loaded into TriangleCntrl1(not used)
+.alias MusicSQ1Sweep    $0648   ;Value is loaded into SQ1Cntrl1 when playing music
+.alias MusicSQ2Sweep    $0649   ;Value is loaded into SQ2Cntrl1 when playing music
+.alias TriangleSweep    $064A   ;Loaded into TriangleCntrl1(not used)
 
-.alias ThisSoundChannel     $064B   ;Least sig. byte of current channel(00,04,08 or 0C)
+.alias ThisSoundChannel $064B   ;Least sig. byte of current channel(00,04,08 or 0C)
 
-.alias CurrentSFXFlags      $064D   ;Stores flags of SFX currently being processed.
+.alias CurrentSFXFlags  $064D   ;Stores flags of SFX currently being processed.
 
 .alias NoiseInUse       $0652   ;Noise in use? (Not used)
 .alias SQ1InUse         $0653   ;1=SQ1 channel being used by SFX, 0=not in use
 .alias SQ2InUse         $0654   ;2=SQ2 channel being used by SFX, 0=not in use
-.alias TriangleInUse        $0655   ;3=Triangle channel being used by SFX, 0=not in use
+.alias TriangleInUse    $0655   ;3=Triangle channel being used by SFX, 0=not in use
 
 .alias ChannelType      $065C   ;Stores channel type being processed(0,1,2,3 or 4)
-.alias CurrentMusicRepeat   $065D   ;Stores flags of music to repeat
-.alias MusicInitIndex       $065E   ;index for loading $62B thru $637(base=$BD31).
+.alias CrntMusicRepeat  $065D   ;Stores flags of music to repeat
+.alias MusicInitIndex   $065E   ;index for loading $62B thru $637(base=$BD31).
 
-.alias NoiseSFXLength       $0660   ;Stores number of frames to play Noise SFX
+.alias NoiseSFXLength   $0660   ;Stores number of frames to play Noise SFX
 .alias SQ1SFXLength     $0661   ;Stores number of frames to play SQ1 SFX
 .alias SQ2SFXLngth      $0662   ;Stores number of frames to play SQ2 SFX
-.alias TriangleSFXLength    $0663   ;Stores number of frames to play Triangle SFX
-.alias MultiSFXLength       $0664   ;Stores number of frames to play Multi SFX
+.alias TriangleSFXLngth $0663   ;Stores number of frames to play Triangle SFX
+.alias MultiSFXLength   $0664   ;Stores number of frames to play Multi SFX
 
-.alias ThisNoiseFrame       $0665   ;Stores current frame number for noise SFX
+.alias ThisNoiseFrame   $0665   ;Stores current frame number for noise SFX
 .alias ThisSQ1Frame     $0666   ;Stores current frame number for sq1 SFX
 .alias ThisSQ2Frame     $0667   ;Stores current frame number for SQ2 SFX
-.alias ThisTriangleFrame    $0668   ;Stores current frame number for triangle SFX
-.alias ThisMultiFrame       $0669   ;Stores current frame number for Multi SFX
+.alias ThisTriFrame     $0668   ;Stores current frame number for triangle SFX
+.alias ThisMultiFrame   $0669   ;Stores current frame number for Multi SFX
 
-.alias SQ1VolumeIndex       $066A   ;Stores index to SQ1 volume data in a volume data tbl
-.alias SQ2VolumeIndex       $066B   ;Stores index to SQ2 volume data in a volume data tbl
+.alias SQ1VolumeIndex   $066A   ;Stores index to SQ1 volume data in a volume data tbl
+.alias SQ2VolumeIndex   $066B   ;Stores index to SQ2 volume data in a volume data tbl
 
-.alias SQ1VolumeData        $066C   ;stores duty cycle and this frame volume data of SQ1
-.alias SQ2VolumeData        $066D   ;Stores duty cycle and this frame volume data of SQ2
+.alias SQ1VolumeData    $066C   ;stores duty cycle and this frame volume data of SQ1
+.alias SQ2VolumeData    $066D   ;Stores duty cycle and this frame volume data of SQ2
 
 .alias NoiseSFXData     $0670   ;Stores additional info for Noise SFX
 .alias SQ1SFXData       $0671   ;Stores additional info for SQ1 SFX
 .alias SQ2SFXData       $0672   ;Stores additional info for SQ2 SFX
-.alias TriangleSFXData      $0673   ;Stores additional info for triangle SFX
+.alias TriangleSFXData  $0673   ;Stores additional info for triangle SFX
 .alias MultiSFXData     $0674   ;Stores additional info for Multi SFX
-.alias SQ1SQ2SFXData        $0675   ;Stores additional info for SQ1 and SQ2 SFX
+.alias SQ1SQ2SFXData    $0675   ;Stores additional info for SQ1 and SQ2 SFX
 
-.alias ScrewAttackSFXData   $0678   ;Contains extra data for screw attack SFX
-.alias SQ1SFXPeriodLow      $0679   ;Period low data for processing multi SFX routines
+.alias ScrewAtkSFXData  $0678   ;Contains extra data for screw attack SFX
+.alias SQ1SFXPeriodLow  $0679   ;Period low data for processing multi SFX routines
 
 .alias NoiseSFXFlag     $0680   ;Initialization flags for noise SFX
 .alias SQ1SFXFlag       $0681   ;Initialization flags for SQ1 SFX
@@ -538,8 +470,8 @@
 .alias PowerUpBType     $0750   ;Holds the description byte of a second power-up(if any).
 .alias PowerUpBYCoord   $0751   ;Y coordinate of second power-up.
 .alias PowerUpBXCoord   $0752   ;X coordiante of second power-up.
-.alias PowerUpBNameTable    $0753   ;#$00 if on name table 0, #$01 if on name table 3.
-.alias PowerUpBAnimIndex    $0757   ;Entry into FramePtrTable for item animation.
+.alias PowerUpBNameTbl  $0753   ;#$00 if on name table 0, #$01 if on name table 3.
+.alias PowerUpBAnimIdx  $0757   ;Entry into FramePtrTable for item animation.
 
 .alias TileSize         $0780   ;4 MSBs=Y size of tile to erase.4 LSBs=X size of tile to erase.
 .alias TileInfo0        $0781   ;
@@ -563,7 +495,7 @@
 
 .alias PPUDataString        $07A1   ;Thru $07F0. String of data bytes to be written to PPU.
 
-;-------------------------------------[ Hardware defines ]-------------------------------------------
+;-------------------------------------[ Hardware Defines ]-------------------------------------------
 
 .alias PPUControl0      $2000   ;
 .alias PPUControl1      $2001   ;
@@ -632,19 +564,19 @@
 .alias EraseGame        $6884   ;MSB set=erase selected saved game(not used in password carts).
 
 .alias DataSlot         $6885   ;#$00 thru #$02. Stored Samus data to load. Apparently a save
-                    ;game system was going to be used instead of a password routine.
-                    ;The code that uses this memory address is never accessed in
-                    ;the actual game. It looks like three player slots were going
-                    ;to be used to store game data(like Zelda).  
+                                ;game system was going to be used instead of a password routine.
+                                ;The code that uses this memory address is never accessed in
+                                ;the actual game. It looks like three player slots were going
+                                ;to be used to store game data(like Zelda).  
 
-.alias NumberOfUniqueItems  $6886   ;Counts number of power-ups and red doors
-                    ;opened.  Does not count different beams
-                    ;picked up (ice, long, wave). increments by 2.
+.alias NumUniqueItems   $6886  ;Counts number of power-ups and red doors
+                               ;opened.  Does not count different beams
+                               ;picked up (ice, long, wave). increments by 2.
 
-.alias UniqueItemHistory    $6887   ;Thru $68FC. History of Unique items collected.
-.alias EndItemHistory       $68FC   ;Two bytes per item.
+.alias UnqItmHist       $6887   ;Thru $68FC. History of Unique items collected.
+.alias EndItemHistory   $68FC   ;Two bytes per item.
 
-.alias KraidRidleyPresent   $6987   ;#$01=Kraid/Ridley present, #$00=Kraid/Ridley not present.
+.alias KrdRdlyPresent   $6987   ;#$01=Kraid/Ridley present, #$00=Kraid/Ridley not present.
 
 .alias PasswordByte00   $6988   ;Stores status of items 0 thru 7.
 .alias PasswordByte01   $6989   ;Stores status of items 8 thru 15.
@@ -698,217 +630,176 @@
 ;---------------------------------------[ More enemy RAM ]-------------------------------------------
 
 .alias Enstatus         $6AF4   ;Keeps track of enemy statuses. #$00=Enemy slot not in use,
-                    ;#$04=Enemy frozen.
+                                ;#$04=Enemy frozen.
 .alias EnRadY           $6AF5   ;Distance in pixels from middle of enemy to top or botom.
 .alias EnRadX           $6AF6   ;Distance in pixels from middle of enemy to left or right.
 .alias EnAnimFrame      $6AF7   ;Index into enemy animation frame data.
 .alias EnAnimDelay      $6AF8   ;Number of frames to delay between animation frames.
-.alias EnResetAnimIndex     $6AF9   ;Index to beginning of animation sequence.
+.alias EnResetAnimIndex $6AF9   ;Index to beginning of animation sequence.
 .alias EnAnimIndex      $6AFA   ;Index to current animation.
 .alias EnNameTable      $6AFB   ;#$00=Enemy on name table 0, #$01=Enemy on name table 3.
-;               $6AFC
-;               $6AFD
-;               $6AFE
-;               $6AFF
-;               $6B00
-;               $6B01
+;                       $6AFC
+;                       $6AFD
+;                       $6AFE
+;                       $6AFF
+;                       $6B00
+;                       $6B01
 .alias EnDataIndex      $6B02   ;Contains index into enemy data tables.
-;               $6B03
+;                       $6B03
 
-;-------------------------------------[ Intro sprite defines ]---------------------------------------
-
-.alias IntroStarSprite00    $6E00   ;thru $6E9F
-.alias IntroStarSprite01    $6E04   ;
-.alias IntroStarSprite02    $6E08   ;
-.alias IntroStarSprite03    $6E0C   ;
-.alias IntroStarSprite04    $6E10   ;
-.alias IntroStarSprite05    $6E14   ;
-.alias IntroStarSprite06    $6E18   ;
-.alias IntroStarSprite07    $6E1C   ;
-.alias IntroStarSprite08    $6E20   ;
-.alias IntroStarSprite09    $6E24   ;
-.alias IntroStarSprite0A    $6E28   ;
-.alias IntroStarSprite0B    $6E2C   ;
-.alias IntroStarSprite0C    $6E30   ;
-.alias IntroStarSprite0D    $6E34   ;
-.alias IntroStarSprite0E    $6E38   ;
-.alias IntroStarSprite0F    $6E3C   ;
-.alias IntroStarSprite10    $6E40   ;
-.alias IntroStarSprite11    $6E44   ;
-.alias IntroStarSprite12    $6E48   ;
-.alias IntroStarSprite13    $6E4C   ;
-.alias IntroStarSprite14    $6E50   ;RAM used for storing intro star sprite data.
-.alias IntroStarSprite15    $6E54   ;
-.alias IntroStarSprite16    $6E58   ;
-.alias IntroStarSprite17    $6E5C   ;
-.alias IntroStarSprite18    $6E60   ;
-.alias IntroStarSprite19    $6E64   ;
-.alias IntroStarSprite1A    $6E68   ;
-.alias IntroStarSprite1B    $6E6C   ;
-.alias IntroStarSprite1C    $6E70   ;
-.alias IntroStarSprite1D    $6E74   ;
-.alias IntroStarSprite1E    $6E78   ;
-.alias IntroStarSprite1F    $6E7C   ;
-.alias IntroStarSprite20    $6E80   ;
-.alias IntroStarSprite21    $6E84   ;
-.alias IntroStarSprite22    $6E88   ;
-.alias IntroStarSprite23    $6E8C   ;
-.alias IntroStarSprite24    $6E90   ;
-.alias IntroStarSprite25    $6E94   ;
-.alias IntroStarSprite26    $6E98   ;
-.alias IntroStarSprite27    $6E9C   ;
+.alias IntroStrSprt00   $6E00   ;thru $6E9F. RAM used for storing intro star sprite data.
 
 ;Intro sprite 0 and sparkle sprite.
-.alias IntroSpr0YCoord      $6EA0   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr0PattTbl     $6EA1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr0Cntrl       $6EA2   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr0XCoord      $6EA3   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr0Index       $6EA4   ;Index to next sparkle sprite data byte.
-.alias IntroSpr0NextCntr    $6EA5   ;Decrements each frame. When 0, load new sparkle sprite data.
-.alias SprklSpr0YChange     $6EA6   ;Sparkle sprite y coordinate change.
-.alias IntroSpr0XChange     $6EA6   ;Intro sprite x total movement distance.
-.alias SprklSpr0XChange     $6EA7   ;Sparkle sprite x coordinate change.
-.alias IntroSpr0YChange     $6EA7   ;Intro sprite y total movement distance.
-.alias IntroSpr0ChngCntr    $6EA8   ;decrements each frame from #$20. At 0, change sparkle sprite.
-.alias IntroSpr0ByteType    $6EA9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8
+.alias IntroSpr0YCoord  $6EA0   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr0PattTbl $6EA1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr0Cntrl   $6EA2   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr0XCoord  $6EA3   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr0Index   $6EA4   ;Index to next sparkle sprite data byte.
+.alias IntroSpr0NxtCntr $6EA5   ;Decrements each frame. When 0, load new sparkle sprite data.
+.alias SprklSpr0YChange $6EA6   ;Sparkle sprite y coordinate change.
+.alias IntroSpr0XChange $6EA6   ;Intro sprite x total movement distance.
+.alias SprklSpr0XChange $6EA7   ;Sparkle sprite x coordinate change.
+.alias IntroSpr0YChange $6EA7   ;Intro sprite y total movement distance.
+.alias IntroSpr0ChngCnt $6EA8   ;decrements each frame from #$20. At 0, change sparkle sprite.
+.alias IntroSpr0ByteTyp $6EA9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8
                                 ;bits for x coord change. if #$00, next data byte contains
                                 ;4 bits for x coord change and 4 bits for y coord change.
-.alias IntroSpr0Complete    $6EAA   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr0SpareB      $6EAB   ;Not used.
-.alias IntroSpr0XRun        $6EAC   ;x displacement of sprite movement(run).
-.alias IntroSpr0YRise       $6EAD   ;y displacement of sprite movement(rise).
-.alias IntroSpr0XDir        $6EAE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr0YDir        $6EAF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr0Comp    $6EAA   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr0SpareB  $6EAB   ;Not used.
+.alias IntroSpr0XRun    $6EAC   ;x displacement of sprite movement(run).
+.alias IntroSpr0YRise   $6EAD   ;y displacement of sprite movement(rise).
+.alias IntroSpr0XDir    $6EAE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr0YDir    $6EAF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 1 and sparkle sprite.
-.alias IntroSpr1YCoord      $6EB0   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr1PattTbl     $6EB1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr1Cntrl       $6EB2   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr1XCoord      $6EB3   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr1Index       $6EB4   ;Index to next sparkle sprite data byte.
-.alias IntroSpr1NextCntr    $6EB5   ;Decrements each frame. When 0, load new sparkle sprite data.
-.alias SparkleSpr1YChange   $6EB6   ;Sparkle sprite y coordinate change.
-.alias IntroSpr1XChange     $6EB6   ;Intro sprite x total movement distance.
-.alias SparkleSpr1XChange   $6EB7   ;Sparkle sprite x coordinate change.
-.alias IntroSpr1YChange     $6EB7   ;Intro sprite y total movement distance.
-.alias IntroSpr1ChngCntr    $6EB8   ;decrements each frame from #$20. At 0, change sparkle sprite.
-.alias IntroSpr1ByteType    $6EB9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8
-                                    ;bits for x coord change. if #$00, next data byte contains
-                                    ;4 bits for x coord change and 4 bits for y coord change.
-.alias IntroSpr1Complete    $6EBA   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr1SpareB      $6EBB   ;Not used.
-.alias IntroSpr1XRun        $6EBC   ;x displacement of sprite movement(run).
-.alias IntroSpr1YRise       $6EBD   ;y displacement of sprite movement(rise).
-.alias IntroSpr1XDir        $6EBE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr1YDir        $6EBF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr1YCoord  $6EB0   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr1PattTbl $6EB1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr1Cntrl   $6EB2   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr1XCoord  $6EB3   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr1Index   $6EB4   ;Index to next sparkle sprite data byte.
+.alias IntroSpr1NextCnt $6EB5   ;Decrements each frame. When 0, load new sparkle sprite data.
+.alias SparkleSpr1YChng $6EB6   ;Sparkle sprite y coordinate change.
+.alias IntroSpr1XChange $6EB6   ;Intro sprite x total movement distance.
+.alias SparkleSpr1XChng $6EB7   ;Sparkle sprite x coordinate change.
+.alias IntroSpr1YChange $6EB7   ;Intro sprite y total movement distance.
+.alias IntroSp1ChngCntr $6EB8   ;decrements each frame from #$20. At 0, change sparkle sprite.
+.alias IntroSpr1BtType  $6EB9   ;#$00 or #$01. When #$01, next sparkle data byte uses all 8
+                                ;bits for x coord change. if #$00, next data byte contains
+                                ;4 bits for x coord change and 4 bits for y coord change.
+.alias IntroSpr1Comp    $6EBA   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr1SpareB  $6EBB   ;Not used.
+.alias IntroSpr1XRun    $6EBC   ;x displacement of sprite movement(run).
+.alias IntroSpr1YRise   $6EBD   ;y displacement of sprite movement(rise).
+.alias IntroSpr1XDir    $6EBE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr1YDir    $6EBF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 2.
-.alias IntroSpr2YCoord      $6EC0   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr2PattTbl     $6EC1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr2Cntrl       $6EC2   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr2XCoord      $6EC3   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr2Spare5      $6EC4   ;Not used.
-.alias IntroSpr2Spare6      $6EC5   ;Not used.
-.alias IntroSpr2XChange     $6EC6   ;Intro sprite x total movement distance.
-.alias IntroSpr2YChange     $6EC7   ;Intro sprite y total movement distance.
-.alias IntroSpr2Spare8      $6EC8   ;Not used.
-.alias IntroSpr2Spare9      $6EC9   ;Not used.
-.alias IntroSpr2Complete    $6ECA   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr2SpareB      $6ECB   ;Not used.
-.alias IntroSpr2XRun        $6ECC   ;x displacement of sprite movement(run).
-.alias IntroSpr2YRise       $6ECD   ;y displacement of sprite movement(rise).
-.alias IntroSpr2XDir        $6ECE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr2YDir        $6ECF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr2YCoord  $6EC0   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr2PattTbl $6EC1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr2Cntrl   $6EC2   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr2XCoord  $6EC3   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr2Spare5  $6EC4   ;Not used.
+.alias IntroSpr2Spare6  $6EC5   ;Not used.
+.alias IntroSpr2XChange $6EC6   ;Intro sprite x total movement distance.
+.alias IntroSpr2YChange $6EC7   ;Intro sprite y total movement distance.
+.alias IntroSpr2Spare8  $6EC8   ;Not used.
+.alias IntroSpr2Spare9  $6EC9   ;Not used.
+.alias IntroSpr2Comp    $6ECA   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr2SpareB  $6ECB   ;Not used.
+.alias IntroSpr2XRun    $6ECC   ;x displacement of sprite movement(run).
+.alias IntroSpr2YRise   $6ECD   ;y displacement of sprite movement(rise).
+.alias IntroSpr2XDir    $6ECE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr2YDir    $6ECF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 3.
-.alias IntroSpr3YCoord      $6ED0   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr3PattTbl     $6ED1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr3Cntrl       $6ED2   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr3XCoord      $6ED3   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr3Spare5      $6ED4   ;Not used.
-.alias IntroSpr3Spare6      $6ED5   ;Not used.
-.alias IntroSpr3XChange     $6ED6   ;Intro sprite x total movement distance.
-.alias IntroSpr3YChange     $6ED7   ;Intro sprite y total movement distance.
-.alias IntroSpr3Spare8      $6ED8   ;Not used.
-.alias IntroSpr3Spare9      $6ED9   ;Not used.
-.alias IntroSpr3Complete    $6EDA   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr3SpareB      $6EDB   ;Not used.
-.alias IntroSpr3XRun        $6EDC   ;x displacement of sprite movement(run).
-.alias IntroSpr3YRise       $6EDD   ;y displacement of sprite movement(rise).
-.alias IntroSpr3XDir        $6EDE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr3YDir        $6EDF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr3YCoord  $6ED0   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr3PattTbl $6ED1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr3Cntrl   $6ED2   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr3XCoord  $6ED3   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr3Spare5  $6ED4   ;Not used.
+.alias IntroSpr3Spare6  $6ED5   ;Not used.
+.alias IntroSpr3XChange $6ED6   ;Intro sprite x total movement distance.
+.alias IntroSpr3YChange $6ED7   ;Intro sprite y total movement distance.
+.alias IntroSpr3Spare8  $6ED8   ;Not used.
+.alias IntroSpr3Spare9  $6ED9   ;Not used.
+.alias IntroSpr3Comp    $6EDA   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr3SpareB  $6EDB   ;Not used.
+.alias IntroSpr3XRun    $6EDC   ;x displacement of sprite movement(run).
+.alias IntroSpr3YRise   $6EDD   ;y displacement of sprite movement(rise).
+.alias IntroSpr3XDir    $6EDE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr3YDir    $6EDF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 4.
-.alias IntroSpr4YCoord      $6EE0   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr4PattTbl     $6EE1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr4Cntrl       $6EE2   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr4XCoord      $6EE3   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr4Spare5      $6EE4   ;Not used.
-.alias IntroSpr4Spare6      $6EE5   ;Not used.
-.alias IntroSpr4XChange     $6EE6   ;Intro sprite x total movement distance.
-.alias IntroSpr4YChange     $6EE7   ;Intro sprite y total movement distance.
-.alias IntroSpr4Spare8      $6EE8   ;Not used.
-.alias IntroSpr4Spare9      $6EE9   ;Not used.
-.alias IntroSpr4Complete    $6EEA   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr4SpareB      $6EEB   ;Not used.
-.alias IntroSpr4XRun        $6EEC   ;x displacement of sprite movement(run).
-.alias IntroSpr4YRise       $6EED   ;y displacement of sprite movement(rise).
-.alias IntroSpr4XDir        $6EEE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr4YDir        $6EEF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr4YCoord  $6EE0   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr4PattTbl $6EE1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr4Cntrl   $6EE2   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr4XCoord  $6EE3   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr4Spare5  $6EE4   ;Not used.
+.alias IntroSpr4Spare6  $6EE5   ;Not used.
+.alias IntroSpr4XChange $6EE6   ;Intro sprite x total movement distance.
+.alias IntroSpr4YChange $6EE7   ;Intro sprite y total movement distance.
+.alias IntroSpr4Spare8  $6EE8   ;Not used.
+.alias IntroSpr4Spare9  $6EE9   ;Not used.
+.alias IntroSpr4Comp    $6EEA   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr4SpareB  $6EEB   ;Not used.
+.alias IntroSpr4XRun    $6EEC   ;x displacement of sprite movement(run).
+.alias IntroSpr4YRise   $6EED   ;y displacement of sprite movement(rise).
+.alias IntroSpr4XDir    $6EEE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr4YDir    $6EEF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 5.
-.alias IntroSpr5YCoord      $6EF0   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr5PattTbl     $6EF1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr5Cntrl       $6EF2   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr5XCoord      $6EF3   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr5Spare5      $6EF4   ;Not used.
-.alias IntroSpr5Spare6      $6EF5   ;Not used.
-.alias IntroSpr5XChange     $6EF6   ;Intro sprite x total movement distance.
-.alias IntroSpr5YChange     $6EF7   ;Intro sprite y total movement distance.
-.alias IntroSpr5Spare8      $6EF8   ;Not used.
-.alias IntroSpr5Spare9      $6EF9   ;Not used.
-.alias IntroSpr5Complete    $6EFA   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr5SpareB      $6EFB   ;Not used.
-.alias IntroSpr5XRun        $6EFC   ;x displacement of sprite movement(run).
-.alias IntroSpr5YRise       $6EFD   ;y displacement of sprite movement(rise).
-.alias IntroSpr5XDir        $6EFE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr5YDir        $6EFF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr5YCoord  $6EF0   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr5PattTbl $6EF1   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr5Cntrl   $6EF2   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr5XCoord  $6EF3   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr5Spare5  $6EF4   ;Not used.
+.alias IntroSpr5Spare6  $6EF5   ;Not used.
+.alias IntroSpr5XChange $6EF6   ;Intro sprite x total movement distance.
+.alias IntroSpr5YChange $6EF7   ;Intro sprite y total movement distance.
+.alias IntroSpr5Spare8  $6EF8   ;Not used.
+.alias IntroSpr5Spare9  $6EF9   ;Not used.
+.alias IntroSpr5Comp    $6EFA   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr5SpareB  $6EFB   ;Not used.
+.alias IntroSpr5XRun    $6EFC   ;x displacement of sprite movement(run).
+.alias IntroSpr5YRise   $6EFD   ;y displacement of sprite movement(rise).
+.alias IntroSpr5XDir    $6EFE   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr5YDir    $6EFF   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 6.
-.alias IntroSpr6YCoord      $6F00   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr6PattTbl     $6F01   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr6Cntrl       $6F02   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr6XCoord      $6F03   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr6Spare5      $6F04   ;Not used.
-.alias IntroSpr6Spare6      $6F05   ;Not used.
-.alias IntroSpr6XChange     $6F06   ;Intro sprite x total movement distance.
-.alias IntroSpr6YChange     $6F07   ;Intro sprite y total movement distance.
-.alias IntroSpr6Spare8      $6F08   ;Not used.
-.alias IntroSpr6Spare9      $6F09   ;Not used.
-.alias IntroSpr6Complete    $6F0A   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr6SpareB      $6F0B   ;Not used.
-.alias IntroSpr6XRun        $6F0C   ;x displacement of sprite movement(run).
-.alias IntroSpr6YRise       $6F0D   ;y displacement of sprite movement(rise).
-.alias IntroSpr6XDir        $6F0E   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr6YDir        $6F0F   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr6YCoord  $6F00   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr6PattTbl $6F01   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr6Cntrl   $6F02   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr6XCoord  $6F03   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr6Spare5  $6F04   ;Not used.
+.alias IntroSpr6Spare6  $6F05   ;Not used.
+.alias IntroSpr6XChange $6F06   ;Intro sprite x total movement distance.
+.alias IntroSpr6YChange $6F07   ;Intro sprite y total movement distance.
+.alias IntroSpr6Spare8  $6F08   ;Not used.
+.alias IntroSpr6Spare9  $6F09   ;Not used.
+.alias IntroSpr6Comp    $6F0A   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr6SpareB  $6F0B   ;Not used.
+.alias IntroSpr6XRun    $6F0C   ;x displacement of sprite movement(run).
+.alias IntroSpr6YRise   $6F0D   ;y displacement of sprite movement(rise).
+.alias IntroSpr6XDir    $6F0E   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr6YDir    $6F0F   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;Intro sprite 7.
-.alias IntroSpr7YCoord      $6F10   ;Loaded into byte 0 of sprite RAM(Y position).
-.alias IntroSpr7PattTbl     $6F11   ;Loaded into byte 1 of sprite RAM(Pattern table index).
-.alias IntroSpr7Cntrl       $6F12   ;Loaded into byte 2 of sprite RAM(Control byte).
-.alias IntroSpr7XCoord      $6F13   ;Loaded into byte 3 of sprite RAM(X position).
-.alias IntroSpr7Spare5      $6F14   ;Not used.
-.alias IntroSpr7Spare6      $6F15   ;Not used.
-.alias IntroSpr7XChange     $6F16   ;Intro sprite x total movement distance.
-.alias IntroSpr7YChange     $6F17   ;Intro sprite y total movement distance.
-.alias IntroSpr7Spare8      $6F18   ;Not used.
-.alias IntroSpr7Spare9      $6F19   ;Not used.
-.alias IntroSpr7Complete    $6F1A   ;#$01=sprite has completed its task, #$00 if not complete.
-.alias IntroSpr7SpareB      $6F1B   ;Not used.
-.alias IntroSpr7XRun        $6F1C   ;x displacement of sprite movement(run).
-.alias IntroSpr7YRise       $6F1D   ;y displacement of sprite movement(rise).
-.alias IntroSpr7XDir        $6F1E   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
-.alias IntroSpr7YDir        $6F1F   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
+.alias IntroSpr7YCoord  $6F10   ;Loaded into byte 0 of sprite RAM(Y position).
+.alias IntroSpr7PattTbl $6F11   ;Loaded into byte 1 of sprite RAM(Pattern table index).
+.alias IntroSpr7Cntrl   $6F12   ;Loaded into byte 2 of sprite RAM(Control byte).
+.alias IntroSpr7XCoord  $6F13   ;Loaded into byte 3 of sprite RAM(X position).
+.alias IntroSpr7Spare5  $6F14   ;Not used.
+.alias IntroSpr7Spare6  $6F15   ;Not used.
+.alias IntroSpr7XChange $6F16   ;Intro sprite x total movement distance.
+.alias IntroSpr7YChange $6F17   ;Intro sprite y total movement distance.
+.alias IntroSpr7Spare8  $6F18   ;Not used.
+.alias IntroSpr7Spare9  $6F19   ;Not used.
+.alias IntroSpr7Comp    $6F1A   ;#$01=sprite has completed its task, #$00 if not complete.
+.alias IntroSpr7SpareB  $6F1B   ;Not used.
+.alias IntroSpr7XRun    $6F1C   ;x displacement of sprite movement(run).
+.alias IntroSpr7YRise   $6F1D   ;y displacement of sprite movement(rise).
+.alias IntroSpr7XDir    $6F1E   ;MSB set=decrease sprite x pos, else increase sprite  x pos.
+.alias IntroSpr7YDir    $6F1F   ;MSB set=decrease sprite y pos, else increase sprite  y pos.
 
 ;----------------------------------------------------------------------------------------------------
 
@@ -916,14 +807,14 @@
 
 .alias SamusData        $77FE   ;Thru $782D. Samus saved game data (not used).
 
-;------------------------------------------[MMC Registers]-------------------------------------------
+;-----------------------------------------[ MMC Registers ]------------------------------------------
 
 .alias MMC1Reg0         $8000   ;Writing to any of these addresses or any 
 .alias MMC1Reg1         $A000   ;address in between will write configuration
 .alias MMC1Reg2         $C000   ;bits to the MMC chip.
 .alias MMC1Reg3         $E000   ;
 
-;--------------------------------------------[Constants]---------------------------------------------
+;-------------------------------------------[ Constants ]--------------------------------------------
 
 ;Bitmask defs used for SamusGear.
 .alias gr_BOMBS         %00000001
@@ -955,24 +846,24 @@
 
 ;Animations
 .alias an_SamusRun      $00
-.alias an_SamusFront        $04
-.alias an_SamusStand        $07
+.alias an_SamusFront    $04
+.alias an_SamusStand    $07
 .alias an_SamusJump     $0C
-.alias an_SamusSalto        $0E
-.alias an_SamusRunJump      $13
+.alias an_SamusSalto    $0E
+.alias an_SamusRunJump  $13
 .alias an_SamusRoll     $16
 .alias an_Bullet        $1B
-.alias an_SamusFireJump     $20
-.alias an_SamusFireRun      $22
-.alias an_SamusPntUp        $27
+.alias an_SamusFireJump $20
+.alias an_SamusFireRun  $22
+.alias an_SamusPntUp    $27
 .alias an_Explode       $32
 .alias an_SamusJumpPntUp    $35
-.alias an_SamusRunPntUp     $37
+.alias an_SamusRunPntUp $37
 .alias an_WaveBeam      $7D
 .alias an_BombTick      $7F
-.alias an_BombExplode       $82
-.alias an_MissileLeft       $8B
-.alias an_MissileRight      $8D
+.alias an_BombExplode   $82
+.alias an_MissileLeft   $8B
+.alias an_MissileRight  $8D
 .alias an_MissileExplode    $91
 
 ;Weapon action handlers.

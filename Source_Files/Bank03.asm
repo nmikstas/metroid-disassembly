@@ -1378,8 +1378,8 @@ L8B13:  LDA DoorStatus          ;The code determines if Samus has entered a door
 L8B15:  BNE ++++            ;door status is 0, but door data information has been-->
 L8B17:  LDY SamusDoorData       ;written. If both conditions are met, Samus has just-->
 L8B19:  BEQ ++++            ;entered a door.
-L8B1B:  STA CurrentMissilePickups   ;
-L8B1D:  STA CurrentEnergyPickups    ;Reset current missile and energy power-up counters.
+L8B1B:  STA CrntMslePickups   ;
+L8B1D:  STA CrntEnrgyPickups    ;Reset current missile and energy power-up counters.
 L8B1F:  LDA RandomNumber1       ;
 L8B21:  AND #$0F            ;Randomly recalculate max missile pickups(16 max, 0 min).
 L8B23:  STA MaxMissilePickup        ;
@@ -2387,7 +2387,7 @@ L9BAB:  STA $6BF9,X
 L9BAE:  RTS
 
 L9BAF:  PHA 
-L9BB0:  LDA MotherBrainStatus
+L9BB0:  LDA MthrBrainStatus
 L9BB2:  CMP #$04
 L9BB4:  BCS $9BC6
 L9BB6:  LDY #$60
@@ -2504,7 +2504,7 @@ L9CA2:  LDX #$00
 L9CA4:  JSR $9CD6
 L9CA7:  LDX #$03
 L9CA9:  JSR $9CD6
-L9CAC:  LDA MotherBrainStatus
+L9CAC:  LDA MthrBrainStatus
 L9CAE:  BEQ $9CC3
 L9CB0:  CMP #$07
 L9CB2:  BEQ $9CC3
@@ -2515,7 +2515,7 @@ L9CBA:  EOR $02
 L9CBC:  LSR 
 L9CBD:  BCS $9CC3
 L9CBF:  LDA #$00
-L9CC1:  STA MotherBrainStatus
+L9CC1:  STA MthrBrainStatus
 L9CC3:  LDA $010D
 L9CC6:  BEQ $9CD5
 L9CC8:  LDA $010C
@@ -2566,7 +2566,7 @@ L9D1D:  STA $6BF7,X
 L9D20:  RTS
  
 L9D21:  LDA #$01
-L9D23:  STA MotherBrainStatus
+L9D23:  STA MthrBrainStatus
 L9D25:  JSR $9D88
 L9D28:  STA $9D
 L9D2A:  EOR #$01
@@ -2675,7 +2675,7 @@ L9E41:  .byte $08, $07
 L9E43:  DEC $9F
 L9E45:  BNE $9E4B
 L9E47:  LDA #$01
-L9E49:  STA MotherBrainStatus
+L9E49:  STA MthrBrainStatus
 L9E4B:  LDA $9F
 L9E4D:  AND #$02
 L9E4F:  LSR 
@@ -2689,7 +2689,7 @@ L9E5A:  TYA
 L9E5B:  ASL 
 L9E5C:  ASL 
 L9E5D:  STA $FC
-L9E5F:  LDY MotherBrainStatus
+L9E5F:  LDY MthrBrainStatus
 L9E61:  DEY 
 L9E62:  BNE $9E83
 L9E64:  STY MotherBrainHits
@@ -2701,7 +2701,7 @@ L9E6C:  JSR $9EF9
 L9E6F:  CPX #$C0
 L9E71:  BNE $9E68
 L9E73:  LDA #$04
-L9E75:  STA MotherBrainStatus
+L9E75:  STA MthrBrainStatus
 L9E77:  LDA #$28
 L9E79:  STA $9F
 L9E7B:  LDA $0680
@@ -2727,12 +2727,12 @@ L9EAB:  LDA $07A0
 L9EAE:  BNE $9EB5
 L9EB0:  LDA $9F00,Y
 L9EB3:  STA $1C
-L9EB5:  LDY MotherBrainStatus
+L9EB5:  LDY MthrBrainStatus
 L9EB7:  DEY 
 L9EB8:  BNE $9ED5
 L9EBA:  STY $9A
 L9EBC:  LDA #$04
-L9EBE:  STA MotherBrainStatus
+L9EBE:  STA MthrBrainStatus
 L9EC0:  LDA #$1C
 L9EC2:  STA $9F
 L9EC4:  LDY MotherBrainHits
@@ -2749,7 +2749,7 @@ L9ED6:  LDA $0685
 L9ED9:  ORA #$04
 L9EDB:  STA $0685
 L9EDE:  LDA #$05
-L9EE0:  STA MotherBrainStatus
+L9EE0:  STA MthrBrainStatus
 L9EE2:  LDA #$80
 L9EE4:  STA MotherBrainHits
 L9EE6:  RTS
@@ -2800,7 +2800,7 @@ L9F31:  BCS $9F38
 L9F33:  INC MotherBrainHits
 L9F35:  RTS
 
-L9F36:  INC MotherBrainStatus
+L9F36:  INC MthrBrainStatus
 L9F38:  RTS
 
 L9F39:  .byte $00, $40, $08, $48, $80, $C0, $88, $C8, $08, $02, $09, $03, $0A, $04, $0B
@@ -2809,7 +2809,7 @@ L9F48:  ORA $20
 L9F4A:  ADC #$9F
 L9F4C:  BCS $9F64
 L9F4E:  LDA #$00
-L9F50:  STA MotherBrainStatus
+L9F50:  STA MthrBrainStatus
 L9F52:  LDA #$99
 L9F54:  STA $010A
 L9F57:  STA $010B
@@ -2868,7 +2868,7 @@ L9FCA:  BNE $9FD9
 L9FCC:  LDA #$08
 L9FCE:  STA $0300
 L9FD1:  LDA #$0A
-L9FD3:  STA MotherBrainStatus
+L9FD3:  STA MthrBrainStatus
 L9FD5:  LDA #$01
 L9FD7:  STA $1C
 L9FD9:  RTS
@@ -2880,7 +2880,7 @@ L9FE1:  STA $010C
 L9FE4:  LDY #$01
 L9FE6:  STY $010D
 L9FE9:  DEY 
-L9FEA:  STY MotherBrainStatus
+L9FEA:  STY MthrBrainStatus
 L9FEC:  RTS
 
 L9FED:  LDA $9E
@@ -2902,7 +2902,7 @@ LA00F:  CMP #$D0
 LA011:  BNE $A007
 LA013:  INY 
 LA014:  LDA #$80
-LA016:  STY MotherBrainStatus
+LA016:  STY MthrBrainStatus
 LA018:  STA $9F
 LA01A:  RTS
 
@@ -3074,7 +3074,7 @@ LA172:  LDA $008C,Y
 LA175:  EOR $2D
 LA177:  LSR 
 LA178:  BCC $A15D
-LA17A:  LDA MotherBrainStatus
+LA17A:  LDA MthrBrainStatus
 LA17C:  CMP #$04
 LA17E:  BCS $A15D
 LA180:  LDA $2D
@@ -3149,7 +3149,7 @@ LA21C:  BNE $A237
 LA21E:  DEC $010B
 LA221:  STA MotherBrainHits
 LA223:  LDA #$07
-LA225:  STA MotherBrainStatus
+LA225:  STA MthrBrainStatus
 LA227:  LDA $0680
 LA22A:  ORA #$01
 LA22C:  STA $0680
@@ -4930,7 +4930,7 @@ CheckRepeatMusic:
 LB3F0:  LDA MusicRepeat         ;
 LB3F3:  BEQ +               ;If music is supposed to repeat, reset music,-->
 LB3F5:  LDA CurrentMusic        ;flags else branch to exit.
-LB3F8:  STA CurrentMusicRepeat      ;
+LB3F8:  STA CrntMusicRepeat      ;
 LB3FB:  RTS             ;
 
 CheckMusicFlags:
@@ -4946,9 +4946,9 @@ LB40D:  RTS                 ;
 
 ClearSpecialAddresses:
 LB40E:  LDA #$00            ;   
-LB410:  STA TriangleCounterCntrl    ;Clears addresses used for repeating music,-->
+LB410:  STA TriCounterCntrl    ;Clears addresses used for repeating music,-->
 LB413:  STA SFXPaused           ;pausing music and controlling triangle length.
-LB416:  STA CurrentMusicRepeat      ;
+LB416:  STA CrntMusicRepeat      ;
 LB419:  STA MusicRepeat         ;
 LB41C:  RTS             ;
 
@@ -4957,7 +4957,7 @@ LB41D:  LDA #$00            ;
 LB41F:  STA SQ1InUse            ;
 LB422:  STA SQ2InUse            ;
 LB425:  STA TriangleInUse       ;
-LB428:  STA WriteMultiChannelData   ;
+LB428:  STA WrtMultiChnDat   ;
 LB42B:  STA NoiseContSFX        ;Clears any SFX or music--> 
 LB42E:  STA SQ1ContSFX          ;currently being played.
 LB431:  STA SQ2ContSFX          ;
@@ -5005,8 +5005,8 @@ LB481:  LDA #$00            ;
 LB483:  STA ThisNoiseFrame,X        ;
 LB486:  STA NoiseSFXData,X      ;Clears all the following addresses before going-->
 LB489:  STA MultiSFXData,X      ;to the proper SFX handling routine.
-LB48C:  STA ScrewAttackSFXData,X    ;
-LB48F:  STA WriteMultiChannelData   ;
+LB48C:  STA ScrewAtkSFXData,X    ;
+LB48F:  STA WrtMultiChnDat   ;
 LB492:  RTS             ;
 
 UpdateContFlags:
@@ -5114,12 +5114,12 @@ LB535:  STA NoiseSFXData        ;Clear NoiseSFXData.
 LB538:* RTS             ;
 
 ScrewAttackSFXContinue:
-LB539:  LDA ScrewAttackSFXData      ;Prevents period index from being incremented until-->
+LB539:  LDA ScrewAtkSFXData      ;Prevents period index from being incremented until-->
 LB53C:  CMP #$02            ;after the tenth frame of the SFX.
 LB53E:  BEQ +               ;Branch if not ready to increment.
 LB540:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
 LB543:  BNE -               ;
-LB545:  INC ScrewAttackSFXData      ;Increment every fifth frame.
+LB545:  INC ScrewAtkSFXData      ;Increment every fifth frame.
 LB548:  RTS             ;
 
 LB549:* JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
@@ -5195,7 +5195,7 @@ LB5BD:  STA SQ1SFXData          ;
 LB5C0:  STA SQ1SQ2SFXData       ;Clear all listed memory addresses.
 LB5C3:  STA SQ1SFXPeriodLow     ;
 LB5C6:  STA ThisMultiFrame      ;
-LB5C9:  STA WriteMultiChannelData   ;
+LB5C9:  STA WrtMultiChnDat   ;
 LB5CC:  RTS             ;
 
 EndMultiSFX:
@@ -5209,7 +5209,7 @@ LB5DD:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
 LB5E0:  LDA #$00            ;
 LB5E2:  STA SQ1InUse            ;
 LB5E5:  STA SQ2InUse            ;Allows music player to use SQ1 and SQ2 channels.
-LB5E8:  INC WriteMultiChannelData   ;
+LB5E8:  INC WrtMultiChnDat   ;
 LB5EB:  RTS             ;
 
 BossHitSFXStart:
@@ -5357,7 +5357,7 @@ LB6F4:  STA SQ1Cntrl0           ;Disable envelope generator(sound off).
 LB6F7:  LDA #$00            ;
 LB6F9:  STA SQ1InUse            ;Allows music to use SQ1 channel.
 LB6FC:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
-LB6FF:  INC WriteMultiChannelData   ;Allows music routines to load SQ1 and SQ2 music.
+LB6FF:  INC WrtMultiChnDat   ;Allows music routines to load SQ1 and SQ2 music.
 LB702:  RTS             ;
 
 SamusJumpSFXStart:
@@ -5475,14 +5475,14 @@ LB7AB:  .byte $00           ;
 
 DoorOpenCloseSFXStart:
 LB7AC:  LDA $B287           ;#$30.
-LB7AF:  STA TrianglePeriodLow       ;Set triangle period low data byte.
+LB7AF:  STA TriPeriodLow       ;Set triangle period low data byte.
 LB7B2:  LDA $B288           ;#$B2.
 LB7B5:  AND #$07            ;Set triangle period high data byte.
-LB7B7:  STA TrianglePeriodHigh      ;#$B7.
+LB7B7:  STA TriPeriodHigh      ;#$B7.
 LB7BA:  LDA #$0F            ;
-LB7BC:  STA TriangleChangeLow       ;Change triangle channel period low every frame by #$0F.
+LB7BC:  STA TriChangeLow       ;Change triangle channel period low every frame by #$0F.
 LB7BF:  LDA #$00            ;
-LB7C1:  STA TriangleChangeHigh      ;No change in triangle channel period high.
+LB7C1:  STA TriChangeHigh      ;No change in triangle channel period high.
 LB7C4:  LDA #$1F            ;Number of frames to play sound before a change.
 LB7C6:  LDY #$85            ;Lower byte of sound data start address(base=$B200).
 LB7C8:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
@@ -5509,14 +5509,14 @@ LB7EC:  JMP EndTriangleSFX      ;($B896)End SFX.
 
 BigEnemyHitSFXStart:
 LB7EF:  LDA #$12            ;Increase triangle low period by #$12 every frame.
-LB7F1:  STA TriangleChangeLow       ;
+LB7F1:  STA TriChangeLow       ;
 LB7F4:  LDA #$00            ;
-LB7F6:  STA TriangleChangeHigh      ;Does not change triangle period high.
+LB7F6:  STA TriChangeHigh      ;Does not change triangle period high.
 LB7F9:  LDA $B27F           ;#$42.
-LB7FC:  STA TrianglePeriodLow       ;Save new triangle period low data.
+LB7FC:  STA TriPeriodLow       ;Save new triangle period low data.
 LB7FF:  LDA $B280           ;#$18.
 LB802:  AND #$07            ;#$1F.
-LB804:  STA TrianglePeriodHigh      ;Save new triangle period high data.
+LB804:  STA TriPeriodHigh      ;Save new triangle period high data.
 LB807:  LDA #$0A            ;Number of frames to play sound before a change.
 LB809:  LDY #$7D            ;Lower byte of sound data start address(base=$B200).
 LB80B:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
@@ -5529,11 +5529,11 @@ LB816:* JSR IncreaseTrianglePeriods ;($B978)Increase periods.
 LB819:  LDA RandomNumber1       ;
 LB81B:  AND #$3C            ;
 LB81D:  STA TriangleSFXData     ;
-LB820:  LDA TrianglePeriodLow       ;Randomly set or clear bits 2, 3, 4 and 5 in-->
+LB820:  LDA TriPeriodLow       ;Randomly set or clear bits 2, 3, 4 and 5 in-->
 LB823:  AND #$C3            ;triangle channel period low.
 LB825:  ORA TriangleSFXData     ;
 LB828:  STA TriangleCntrl2      ;
-LB82B:  LDA TrianglePeriodHigh      ;
+LB82B:  LDA TriPeriodHigh      ;
 LB82E:  ORA #$40            ;Set 4th bit in triangle channel period high.
 LB830:  STA TriangleCntrl3      ;
 LB833:  RTS             ;
@@ -5543,12 +5543,12 @@ LB834:  LDA #$08            ;Number of frames to play sound before a change.
 LB836:  LDY #$6D            ;Lower byte of sound data start address(base=$B200).
 LB838:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
 LB83B:  LDA #$05            ;
-LB83D:  STA PercentDifference       ;Stores percent difference. In this case 5 = 1/5 = 20%.
+LB83D:  STA PercentDiff       ;Stores percent difference. In this case 5 = 1/5 = 20%.
 LB840:  LDA $B26F           ;#$DD.
-LB843:  STA TrianglePeriodLow       ;Save new triangle period low data.
+LB843:  STA TriPeriodLow       ;Save new triangle period low data.
 LB846:  LDA $B270           ;#$3B.
 LB849:  AND #$07            ;#$02.
-LB84B:  STA TrianglePeriodHigh      ;Save new triangle period high data.
+LB84B:  STA TriPeriodHigh      ;Save new triangle period high data.
 LB84E:  RTS             ;
 
 SamusToBallSFXContinue:
@@ -5556,17 +5556,17 @@ LB84F:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
 LB852:  BNE +               ;If more frames to process, branch.
 LB854:  JMP EndTriangleSFX      ;($B896)End SFX.
 LB857:* JSR DivideTrianglePeriods   ;($B9A0)reduces triangle period low by 20% each frame.
-LB85A:  LDA TriangleLowPercentage   ;
-LB85D:  STA TriangleChangeLow       ;Store new values to change triangle periods.
-LB860:  LDA TriangleHighPercentage  ;
-LB863:  STA TriangleChangeHigh      ;
+LB85A:  LDA TriLoPercentage   ;
+LB85D:  STA TriChangeLow       ;Store new values to change triangle periods.
+LB860:  LDA TriHiPercentage  ;
+LB863:  STA TriChangeHigh      ;
 LB866:  JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
 
 WriteTrianglePeriods:
-LB869:  LDA TrianglePeriodLow       ;Write TrianglePeriodLow to triangle channel.
+LB869:  LDA TriPeriodLow       ;Write TriPeriodLow to triangle channel.
 LB86C:  STA TriangleCntrl2      ;
-LB86F:  LDA TrianglePeriodHigh      ;
-LB872:  ORA #$08            ;Write TrianglePeriodHigh to triangle channel.
+LB86F:  LDA TriPeriodHigh      ;
+LB872:  ORA #$08            ;Write TriPeriodHigh to triangle channel.
 LB874:  STA TriangleCntrl3      ;
 LB877:  RTS             ;
 
@@ -5627,20 +5627,20 @@ LB8D5:  LDA #$0E            ;Number of frames to play sound before a change.
 LB8D7:  LDY #$75            ;Lower byte of sound data start address(base=$B200).
 LB8D9:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
 LB8DC:  LDA #$15            ;Decrease triangle SFX periods by 4.8% every frame.
-LB8DE:  STA PercentDifference       ;
+LB8DE:  STA PercentDiff       ;
 LB8E1:  LDA $B277           ;#$40.
-LB8E4:  STA TrianglePeriodLow       ;
+LB8E4:  STA TriPeriodLow       ;
 LB8E7:  LDA #$00            ;Initial values of triangle periods.
-LB8E9:  STA TrianglePeriodHigh      ;
+LB8E9:  STA TriPeriodHigh      ;
 LB8EC:* RTS             ;
 
 SamusDieSFXContinue:
 LB8ED:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
 LB8F0:  BNE +               ;
 LB8F2:  LDA #$20            ;Store change in triangle period low.
-LB8F4:  STA TriangleChangeLow       ;
+LB8F4:  STA TriChangeLow       ;
 LB8F7:  LDA #$00            ;
-LB8F9:  STA TriangleChangeHigh      ;No change in triangle period high.
+LB8F9:  STA TriChangeHigh      ;No change in triangle period high.
 LB8FC:  JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
 LB8FF:  INC TriangleSFXData     ;
 LB902:  LDA TriangleSFXData     ;
@@ -5648,23 +5648,23 @@ LB905:  CMP #$06            ;
 LB907:  BNE -               ;If more frames to process, branch to exit.
 LB909:  JMP EndTriangleSFX      ;($B896)End SFX.
 LB90C:* JSR DivideTrianglePeriods   ;($B9A0)reduces triangle period low.
-LB90F:  LDA TriangleLowPercentage   ;
-LB912:  STA TriangleChangeLow       ;Update triangle periods.
-LB915:  LDA TriangleHighPercentage  ;
-LB918:  STA TriangleChangeHigh      ;
+LB90F:  LDA TriLoPercentage   ;
+LB912:  STA TriChangeLow       ;Update triangle periods.
+LB915:  LDA TriHiPercentage  ;
+LB918:  STA TriChangeHigh      ;
 LB91B:  JSR IncreaseTrianglePeriods ;($B978)Increase periods.
 LB91E:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
 
 StatueRaiseSFXStart:
 LB921:  LDA $B283           ;#$11.
-LB924:  STA TrianglePeriodLow       ;Save period low data.
+LB924:  STA TriPeriodLow       ;Save period low data.
 LB927:  LDA $B284           ;#$09.
 LB92A:  AND #$07            ;
-LB92C:  STA TrianglePeriodHigh      ;Store last three bits in $B284.
+LB92C:  STA TriPeriodHigh      ;Store last three bits in $B284.
 LB92F:  LDA #$00            ;
-LB931:  STA TriangleChangeHigh      ;No change in Triangle period high.
+LB931:  STA TriChangeHigh      ;No change in Triangle period high.
 LB934:  LDA #$0B            ;
-LB936:  STA TriangleChangeLow       ;
+LB936:  STA TriChangeLow       ;
 LB939:  LDA #$06            ;Number of frames to play sound before a change.
 LB93B:  LDY #$81            ;Lower byte of sound data start address(base=$B200).
 LB93D:  JMP SelectSFXroutine        ;($B452)Setup registers for SFX.
@@ -5677,71 +5677,71 @@ LB948:  LDA TriangleSFXData     ;
 LB94B:  CMP #$09            ;When TriangleSFXData = #$09, end SFX.
 LB94D:  BNE +               ;
 LB94F:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB952:* LDA TriangleChangeLow       ;
+LB952:* LDA TriChangeLow       ;
 LB955:  PHA             ;Save triangle periods.
-LB956:  LDA TriangleChangeHigh      ;
+LB956:  LDA TriChangeHigh      ;
 LB959:  PHA             ;
 LB95A:  LDA #$25            ;
-LB95C:  STA TriangleChangeLow       ;
+LB95C:  STA TriChangeLow       ;
 LB95F:  LDA #$00            ;No change in triangle period high.
-LB961:  STA TriangleChangeHigh      ;
+LB961:  STA TriChangeHigh      ;
 LB964:  JSR IncreaseTrianglePeriods ;($B978)Increase periods.
 LB967:  PLA             ;
-LB968:  STA TriangleChangeHigh      ;Restore triangle periods.
+LB968:  STA TriChangeHigh      ;Restore triangle periods.
 LB96B:  PLA             ;
-LB96C:  STA TriangleChangeLow       ;
+LB96C:  STA TriChangeLow       ;
 LB96F:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
 LB972:* JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
 LB975:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
 
 IncreaseTrianglePeriods:
 LB978:  CLC 
-LB979:  LDA TrianglePeriodLow       ;
-LB97C:  ADC TriangleChangeLow       ;Calculate new TrianglePeriodLow.
-LB97F:  STA TrianglePeriodLow       ;
-LB982:  LDA TrianglePeriodHigh      ;
-LB985:  ADC TriangleChangeHigh      ;Calculate new TrianglePeriodHigh.
-LB988:  STA TrianglePeriodHigh      ;
+LB979:  LDA TriPeriodLow       ;
+LB97C:  ADC TriChangeLow       ;Calculate new TriPeriodLow.
+LB97F:  STA TriPeriodLow       ;
+LB982:  LDA TriPeriodHigh      ;
+LB985:  ADC TriChangeHigh      ;Calculate new TriPeriodHigh.
+LB988:  STA TriPeriodHigh      ;
 LB98B:  RTS             ;
 
 DecreaseTrianglePeriods:
 LB98C:  SEC 
-LB98D:  LDA TrianglePeriodLow       ;
-LB990:  SBC TriangleChangeLow       ;Calculate new TrianglePeriodLow.
-LB993:  STA TrianglePeriodLow       ;
-LB996:  LDA TrianglePeriodHigh      ;
-LB999:  SBC TriangleChangeHigh      ;Calculate new TrianglePeriodHigh.
-LB99C:  STA TrianglePeriodHigh      ;
+LB98D:  LDA TriPeriodLow       ;
+LB990:  SBC TriChangeLow       ;Calculate new TriPeriodLow.
+LB993:  STA TriPeriodLow       ;
+LB996:  LDA TriPeriodHigh      ;
+LB999:  SBC TriChangeHigh      ;Calculate new TriPeriodHigh.
+LB99C:  STA TriPeriodHigh      ;
 LB99F:  RTS             ;
 
 DivideTrianglePeriods:
-LB9A0:  LDA TrianglePeriodLow       ;
-LB9A3:  PHA             ;Store TrianglePeriodLow and TrianglePeriodHigh.
-LB9A4:  LDA TrianglePeriodHigh      ;
+LB9A0:  LDA TriPeriodLow       ;
+LB9A3:  PHA             ;Store TriPeriodLow and TriPeriodHigh.
+LB9A4:  LDA TriPeriodHigh      ;
 LB9A7:  PHA             ;
 LB9A8:  LDA #$00            ;
 LB9AA:  STA DivideData          ;
 LB9AD:  LDX #$10            ;
-LB9AF:  ROL TrianglePeriodLow       ;
-LB9B2:  ROL TrianglePeriodHigh      ;
+LB9AF:  ROL TriPeriodLow       ;
+LB9B2:  ROL TriPeriodHigh      ;
 LB9B5:* ROL DivideData          ;The following routine takes the triangle period-->
 LB9B8:  LDA DivideData          ;high and triangle period low values and reduces-->
-LB9BB:  CMP PercentDifference       ;them by a certain percent.  The percent is-->
+LB9BB:  CMP PercentDiff       ;them by a certain percent.  The percent is-->
 LB9BE:  BCC +               ;determined by the value stored in-->
-LB9C0:  SBC PercentDifference       ;PercentDifference.  If PercentDifference=#$05,-->
+LB9C0:  SBC PercentDiff       ;PercentDiff.  If PercentDiff=#$05,-->
 LB9C3:  STA DivideData          ;then the values will be reduced by 20%(1/5).-->
-LB9C6:* ROL TrianglePeriodLow       ;If PercentDifference=#$0A,Then the value will-->
-LB9C9:  ROL TrianglePeriodHigh      ;be reduced by 10%(1/10), etc. This function is-->
+LB9C6:* ROL TriPeriodLow       ;If PercentDiff=#$0A,Then the value will-->
+LB9C9:  ROL TriPeriodHigh      ;be reduced by 10%(1/10), etc. This function is-->
 LB9CC:  DEX             ;basically a software emulation of a sweep function.
 LB9CD:  BNE --              ;
-LB9CF:  LDA TrianglePeriodLow       ;
-LB9D2:  STA TriangleLowPercentage   ;
-LB9D5:  LDA TrianglePeriodHigh      ;
-LB9D8:  STA TriangleHighPercentage  ;
+LB9CF:  LDA TriPeriodLow       ;
+LB9D2:  STA TriLoPercentage   ;
+LB9D5:  LDA TriPeriodHigh      ;
+LB9D8:  STA TriHiPercentage  ;
 LB9DB:  PLA             ;
-LB9DC:  STA TrianglePeriodHigh      ;Restore TrianglePerodLow and TrianglePeriodHigh.
+LB9DC:  STA TriPeriodHigh      ;Restore TrianglePerodLow and TriPeriodHigh.
 LB9DF:  PLA             ;
-LB9E0:  STA TrianglePeriodLow       ;
+LB9E0:  STA TriPeriodLow       ;
 LB9E3:  RTS             ;
 
 ;--------------------------------------[ End SFX routines ]-------------------------------------
@@ -5755,32 +5755,32 @@ LB9EF:  STY SQ2DutyEnvelope     ;
 LB9F2:  RTS             ;
 
 ResetVolumeIndex:
-LB9F3:  LDA SQ1MusicFrameCount      ;If at the beginning of a new SQ1 note, set-->
+LB9F3:  LDA SQ1MusicFrameCnt      ;If at the beginning of a new SQ1 note, set-->
 LB9F6:  CMP #$01            ;SQ1VolumeIndex = #$01.
 LB9F8:  BNE +               ;
 LB9FA:  STA SQ1VolumeIndex      ;
-LB9FD:* LDA SQ2MusicFrameCount      ;
+LB9FD:* LDA SQ2MusicFrameCnt      ;
 LBA00:  CMP #$01            ;If at the beginning of a new SQ2 note, set-->
 LBA02:  BNE +               ;SQ2VolumeIndex = #$01.
 LBA04:  STA SQ2VolumeIndex      ;
 LBA07:* RTS                 ;
 
 LoadSQ1SQ2Periods:
-LBA08:  LDA WriteMultiChannelData   ;If a Multi channel data does not need to be-->
+LBA08:  LDA WrtMultiChnDat   ;If a Multi channel data does not need to be-->
 LBA0B:  BEQ +               ;loaded, branch to exit.
 LBA0D:  LDA #$00            ;
-LBA0F:  STA WriteMultiChannelData   ;Clear multi channel data write flag.
+LBA0F:  STA WrtMultiChnDat   ;Clear multi channel data write flag.
 LBA12:  LDA MusicSQ1Sweep       ;
 LBA15:  STA SQ1Cntrl1           ;
-LBA18:  LDA MusicSQ1PeriodLow       ;
+LBA18:  LDA MusicSQ1PrdLow       ;
 LBA1B:  STA SQ1Cntrl2           ;Loads SQ1 channel addresses $4001, $4002, $4003.
-LBA1E:  LDA MusicSQ1PeriodHigh      ;
+LBA1E:  LDA MusicSQ1PrdHi      ;
 LBA21:  STA SQ1Cntrl3           ;
 LBA24:  LDA MusicSQ2Sweep       ;
 LBA27:  STA SQ2Cntrl1           ;
-LBA2A:  LDA MusicSQ2PeriodLow       ;
+LBA2A:  LDA MusicSQ2PeriodLo       ;
 LBA2D:  STA SQ2Cntrl2           ;Loads SQ2 channel addresses $4005, $4006, $4007.
-LBA30:  LDA MusicSQ2PeriodHigh      ;
+LBA30:  LDA MusicSQ2PeriodHi      ;
 LBA33:  STA SQ2Cntrl3           ;
 LBA36:* RTS             ;
 
@@ -5794,20 +5794,20 @@ LBA40:  RTS             ;
 WriteSQCntrl0:
 LBA41:  LDA SQ1VolumeCntrl,X        ;Load SQ channel volume data. If zero, branch to exit.
 LBA44:  BEQ +++++           ;
-LBA46:  STA VolumeCntrlAddress      ;
+LBA46:  STA VolCntrlAddress      ;
 LBA48:  JSR LoadSQ1SQ2Periods       ;($BA08)Load SQ1 and SQ2 control information.
 LBA4B:  LDA SQ1VolumeData,X     ;
 LBA4E:  CMP #$10            ;If sound channel is not currently-->
 LBA50:  BEQ +++++++         ;playing sound, branch.
 LBA52:  LDY #$00            ;
-LBA54:* DEC VolumeCntrlAddress      ;Desired entry in VolumeCntrlAdressTbl.
+LBA54:* DEC VolCntrlAddress      ;Desired entry in VolumeCntrlAdressTbl.
 LBA56:  BEQ +               ;
 LBA58:  INY             ;*2(2 byte address to find voulume control data).
 LBA59:  INY             ;
 LBA5A:  BNE -               ;Keep decrementing until desired address is found.
-LBA5C:* LDA VolumeCntrlAddressTbl,Y ;Base is $BCB0.
+LBA5C:* LDA VolCntrlAddressTbl,Y ;Base is $BCB0.
 LBA5F:  STA $EC             ;Volume data address low byte.
-LBA61:  LDA VolumeCntrlAddressTbl+1,Y   ;Base is $BCB1.
+LBA61:  LDA VolCntrlAddressTbl+1,Y   ;Base is $BCB1.
 LBA64:  STA $ED             ;Volume data address high byte.
 LBA66:  LDY SQ1VolumeIndex,X        ;Index to desired volume data.
 LBA69:  LDA ($EC),Y         ;Load desired volume for current channel into-->
@@ -5883,12 +5883,12 @@ LBAD2:  BEQ --              ;to find data for next sound channel.
 LBAD4:  TXA             ;
 LBAD5:  LSR             ;/2. Determine current sound channel (0,1,2 or3).
 LBAD6:  TAX             ;
-LBAD7:  DEC SQ1MusicFrameCount,X    ;Decrement the current sound channel frame count-->
+LBAD7:  DEC SQ1MusicFrameCnt,X    ;Decrement the current sound channel frame count-->
 LBADA:  BNE IncrementToNextChannel  ;If not zero, branch to check next channel, else-->
                     ;load the next set of sound channel data.
 LoadNextChannelIndexData:
-LBADC:  LDY SQ1MusicIndexIndex,X    ;Load current channel index to music data index.
-LBADF:  INC SQ1MusicIndexIndex,X    ;Increment current channel index to music data index.
+LBADC:  LDY SQ1MusicIdxIdx,X    ;Load current channel index to music data index.
+LBADF:  INC SQ1MusicIdxIdx,X    ;Increment current channel index to music data index.
 LBAE2:  LDA ($E6),Y         ;
 LBAE4:  BEQ ----                ;Branch if music has reached the end.
 LBAE6:  TAY             ;Transfer music data index to Y (base=$BE77) .
@@ -5904,7 +5904,7 @@ LBAF4:* LDA SQ1RepeatCounter,X      ;If loop counter has reached zero, branch to
 LBAF7:  BEQ ++              ;
 LBAF9:  DEC SQ1RepeatCounter,X      ;Decrement loop counter.
 LBAFC:  LDA SQ1LoopIndex,X      ;Load loop index for proper channel and store it in-->
-LBAFF:  STA SQ1MusicIndexIndex,X    ;music index index address.
+LBAFF:  STA SQ1MusicIdxIdx,X    ;music index index address.
 LBB02:  BNE ++              ;Branch unless music has reached the end.
 
 StartNewMusicLoop:
@@ -5912,7 +5912,7 @@ LBB04:* TYA             ;
 LBB05:  AND #$3F            ;Remove last six bits of loop controller and save-->
 LBB07:  STA SQ1RepeatCounter,X      ;in repeat counter addresses.  # of times to loop.
 LBB0A:  DEC SQ1RepeatCounter,X      ;Decrement loop counter.
-LBB0D:  LDA SQ1MusicIndexIndex,X    ;Store location of loop start in loop index address.
+LBB0D:  LDA SQ1MusicIdxIdx,X    ;Store location of loop start in loop index address.
 LBB10:  STA SQ1LoopIndex,X      ;
 LBB13:* JMP LoadNextChannelIndexData    ;($BADC)Load next channel index data.
 
@@ -5928,18 +5928,18 @@ LBB21:  BNE +               ;
 LBB23:  TYA             ;
 LBB24:  AND #$0F            ;Separate note length data.
 LBB26:  CLC             ;
-LBB27:  ADC NoteLengthTblOffset     ;Find proper note lengths table for current music.
+LBB27:  ADC NoteLenTblOffset     ;Find proper note lengths table for current music.
 LBB2A:  TAY             ;
 LBB2B:  LDA NoteLengths0Tbl,Y       ;(Base is $BEF7)Load note length and store in--> 
-LBB2E:  STA SQ1FrameCountInit,X     ;frame count init address.
+LBB2E:  STA SQ1FrmCountInit,X     ;frame count init address.
 LBB31:  TAY             ;Y now contains note length.
 LBB32:  TXA             ;
 LBB33:  CMP #$02            ;If loading Triangle channel data, branch.
 LBB35:  BEQ -               ;
 
 LoadSoundDataIndexIndex:
-LBB37:  LDY SQ1MusicIndexIndex,X    ;Load current index to sound data index.
-LBB3A:  INC SQ1MusicIndexIndex,X    ;Increment music index index address.
+LBB37:  LDY SQ1MusicIdxIdx,X    ;Load current index to sound data index.
+LBB3A:  INC SQ1MusicIdxIdx,X    ;Increment music index index address.
 LBB3D:  LDA ($E6),Y         ;Load index to sound channel music data.
 LBB3F:  TAY             ;
 LBB40:* TXA             ;
@@ -5949,10 +5949,10 @@ LBB45:  PHA             ;Push music channel number on stack(0, 1 or 2).
 LBB46:  LDX ThisSoundChannel        ;
 LBB49:  LDA MusicNotesTbl+1,Y       ;(Base=$BE78)Load A with music channel period low data.
 LBB4C:  BEQ +               ;If data is #$00, skip period high and low loading.
-LBB4E:  STA MusicSQ1PeriodLow,X     ;Store period low data in proper period low address.
+LBB4E:  STA MusicSQ1PrdLow,X     ;Store period low data in proper period low address.
 LBB51:  LDA MusicNotesTbl,Y     ;(Base=$BE77)Load A with music channel period high data.
 LBB54:  ORA #$08            ;Ensure minimum index length of 1.
-LBB56:  STA MusicSQ1PeriodHigh,X    ;Store period high data in proper period high address.
+LBB56:  STA MusicSQ1PrdHi,X    ;Store period high data in proper period high address.
 LBB59:* TAY             ;
 LBB5A:  PLA             ;Pull stack and restore channel number to X.
 LBB5B:  TAX             ;
@@ -5987,16 +5987,16 @@ LBB8C:* LDA Cntrl0Data          ;
 LBB8E:  STA SQ1Cntrl0,Y         ;Write Cntrl0Data.
 LBB91:* LDA Cntrl0Data          ;
 LBB93:  STA SQ1VolumeData,X     ;Store volume data index to volume data.
-LBB96:  LDA MusicSQ1PeriodLow,Y     ;
+LBB96:  LDA MusicSQ1PrdLow,Y     ;
 LBB99:  STA SQ1Cntrl2,Y         ;
-LBB9C:  LDA MusicSQ1PeriodHigh,Y    ;Write data to three sound channel addresses.
+LBB9C:  LDA MusicSQ1PrdHi,Y    ;Write data to three sound channel addresses.
 LBB9F:  STA SQ1Cntrl3,Y         ;
 LBBA2:  LDA MusicSQ1Sweep,X     ;
 LBBA5:  STA SQ1Cntrl1,Y         ;
 
 LoadNewMusicFrameCount:
-LBBA8:  LDA SQ1FrameCountInit,X     ;Load new music frame count and store it in music-->
-LBBAB:  STA SQ1MusicFrameCount,X    ;frame count address.
+LBBA8:  LDA SQ1FrmCountInit,X     ;Load new music frame count and store it in music-->
+LBBAB:  STA SQ1MusicFrameCnt,X    ;frame count address.
 LBBAE:  JMP IncrementToNextChannel  ;($BAB3)Move to next sound channel.
 
 SQ1SQ2InUse:
@@ -6004,10 +6004,10 @@ LBBB1:* INC SQ1InUse,X          ;Restore in use status of SQ1 or SQ1.
 LBBB4:  JMP LoadNewMusicFrameCount  ;($BBA8)Load new music frame count.
 
 LoadTriangleCntrl0:
-LBBB7:  LDA TriangleCounterCntrl    ;
+LBBB7:  LDA TriCounterCntrl    ;
 LBBBA:  AND #$0F            ;If lower bits set, branch to play shorter note. 
 LBBBC:  BNE ++              ;
-LBBBE:  LDA TriangleCounterCntrl    ;
+LBBBE:  LDA TriCounterCntrl    ;
 LBBC1:  AND #$F0            ;If upper bits are set, branch to play longer note.
 LBBC3:  BNE +               ;
 LBBC5:  TYA             ;
@@ -6092,7 +6092,7 @@ LBC34:  .word $BC80         ;Brinstar music.
 ;-----------------------------------[ Entry point for music routines ]--------------------------------
 
 LoadMusicTempFlags:
-LBC36:  LDA CurrentMusicRepeat      ;Load A with temp music flags, (9th SFX cycle).
+LBC36:  LDA CrntMusicRepeat      ;Load A with temp music flags, (9th SFX cycle).
 LBC39:  LDX #$B6            ;Lower address byte in ChooseNextSFXRoutineTbl.
 LBC3B:  BNE +               ;Branch always.
 
@@ -6191,7 +6191,7 @@ LBCAC:  LDY #$96            ;Duty cycle and volume data for SQ2.
 LBCAE:  BNE -               ;Branch always
 
 ;The following address table provides starting addresses of the volume data tables below:
-VolumeCntrlAddressTbl:
+VolCntrlAddressTbl:
 LBCB0:  .word $BCBA, $BCC5, $BCCF, $BCDA, $BD03
 
 VolumeDataTbl1:
@@ -6732,7 +6732,7 @@ LBF29:  TAY             ;
 LBF2A:  LDX #$00            ;
 
 LBF2C:* LDA InitMusicTbl,Y      ;Base is $BD31.
-LBF2F:  STA NoteLengthTblOffset,X   ;
+LBF2F:  STA NoteLenTblOffset,X   ;
 LBF32:  INY                 ;The following loop repeats 13 times to-->
 LBF33:  INX                 ;load the initial music addresses -->
 LBF34:  TXA                 ;(registers $062B thru $0637).
@@ -6740,15 +6740,15 @@ LBF35:  CMP #$0D            ;
 LBF37:  BNE -               ;
 
 LBF39:  LDA #$01            ;Resets addresses $0640 thru $0643 to #$01.-->
-LBF3B:  STA SQ1MusicFrameCount      ;These addresses are used for counting the-->
-LBF3E:  STA SQ2MusicFrameCount      ;number of frames music channels have been playing.
-LBF41:  STA TriangleMusicFrameCount ;
-LBF44:  STA NoiseMusicFrameCount    ;
+LBF3B:  STA SQ1MusicFrameCnt      ;These addresses are used for counting the-->
+LBF3E:  STA SQ2MusicFrameCnt      ;number of frames music channels have been playing.
+LBF41:  STA TriMusicFrameCnt ;
+LBF44:  STA NseMusicFrameCnt    ;
 LBF47:  LDA #$00            ;
-LBF49:  STA SQ1MusicIndexIndex      ;
-LBF4C:  STA SQ2MusicIndexIndex      ;Resets addresses $0638 thru $063B to #$00.-->
-LBF4F:  STA TriangleMusicIndexIndex ;These are the index to find sound channel data index.
-LBF52:  STA NoiseMusicIndexIndex    ;
+LBF49:  STA SQ1MusicIdxIdx      ;
+LBF4C:  STA SQ2MusicIdxIdx      ;Resets addresses $0638 thru $063B to #$00.-->
+LBF4F:  STA TriMusicIdxIdx ;These are the index to find sound channel data index.
+LBF52:  STA NoiseMusicIdxIdx    ;
 LBF55:  RTS             ;
 
 ;The following data is a repeat of the above routine and is not used.

@@ -1435,7 +1435,7 @@ LC825:  inx             ;X=0.
 LC826:  stx AtEnding            ;Not playing ending scenes.
 LC829:  stx DoorStatus          ;Samus not in door.
 LC82B:  stx SamusDoorData       ;Samus is not inside a door.
-LC82D:  stx UpdatingProjectile      ;No projectiles need to be updated.
+LC82D:  stx UpdtngPrjctl      ;No projectiles need to be updated.
 LC82F:  txa             ;A=0.
 
 LC830:* cpx #$65            ;Check to see if more RAM to clear in $7A thru $DE.
@@ -1475,9 +1475,9 @@ LC86C:  jsr GetRoomNum          ;($E720)Put room number at current map pos in $5
     iny
     bne -
 
-    ldy CartRAMPtr+1
+    ldy CartRAMPtrUB
     sty $01
-    ldy CartRAMPtr
+    ldy CartRAMPtrLB
     sty $00
     lda PPUCNT0ZP
     and #$FB    ; PPU increment = 1
@@ -1513,7 +1513,7 @@ LC86C:  jsr GetRoomNum          ;($E720)Put room number at current map pos in $5
 
 CopyPtrs:
     ldx #$0D
-*       lda AreaPointers+2,x
+*   lda AreaPointers+2,x
     sta RoomPtrTable,x
     dex
     bpl -
@@ -1523,12 +1523,13 @@ CopyPtrs:
 ; ==============
 
 DestroyEnemies:
-LC8BB:  lda #$00
+LC8BB:  
+    lda #$00
     tax
-*       cpx #$48
+*   cpx #$48
     bcs +
     sta $97,x
-*       sta EnStatus,x
+*   sta EnStatus,x
     pha
     pla
     inx
@@ -1565,7 +1566,7 @@ LC8DC:  ldy #sa_FadeIn0         ;
     beq +               ;Branch if Samus starting in Brinstar.
     lsr ScrollDir           ;If not in Brinstar, change scroll direction from left
     ldy #$2F            ;to down. and set PPU for horizontal mirroring.
-*       sty MirrorCntrl         ;
+*   sty MirrorCntrl         ;
     sty MaxMissilePickup
     sty MaxEnergyPickup
     lda $95D9           ;Samus' initial vertical position
@@ -1597,12 +1598,12 @@ LC940:  lda #$05            ;
 LC942:  sta MissileCount        ;
 
 LC945:* jsr UpdateWorld         ;($CB29)Update Samus, enemies and room tiles.
-LC948:  lda MiniBossKillDelay       ;
+LC948:  lda MiniBossKillDly       ;
 LC94B:  ora PowerUpDelay        ;Check if mini boss was just killed or powerup aquired.
 LC94E:  beq +               ;If not, branch.
 
 LC950:  lda #$00            ;
-LC952:  sta MiniBossKillDelay       ;Reset delay indicators.
+LC952:  sta MiniBossKillDly       ;Reset delay indicators.
 LC955:  sta PowerUpDelay        ;
 LC958:  lda #$18            ;Set timer for 240 frames(4 seconds).
 LC95A:  ldx #$03            ;GameEngine routine to run after delay expires
@@ -1614,7 +1615,7 @@ LC964:  bne ---             ;exit if not.
 LC966:  lda AnimDelay           ;Is Samus still exploding?
 LC969:  bne ---             ;Exit if still exploding.
 LC96B:  jsr SilenceMusic        ;Turn off music.
-LC96E:  lda MotherBrainStatus       ;
+LC96E:  lda MthrBrainStatus       ;
 LC970:  cmp #$0A            ;Is mother brain already dead? If so, branch.
 LC972:  beq +               ;
 LC974:  lda #$04            ;Set timer for 40 frames (.667 seconds).
@@ -1698,7 +1699,7 @@ LC9DD:  lda Timer3          ;
 LC9E0:  bne +               ;Branch if Intro still playing.
     
 ;Fade in complete.
-LC9E2:  sta ItemRoomMusicStatus     ;Make sure item room music is not playing.
+LC9E2:  sta ItemRmMusicSts     ;Make sure item room music is not playing.
 LC9E4:  lda #sa_Begin           ;Samus facing forward and can't be hurt.
 LC9E6:  sta ObjAction           ;
 LC9E8:  jsr StartMusic          ;($D92C)Start main music.
@@ -1719,7 +1720,7 @@ LCA03:  bcc Exit14          ;Only display Samus on odd frames [the blink effect]
 LCA05:  lda #an_SamusFront      ;Samus front animation is animation to display.
 LCA07:  jsr SetSamusAnim        ;($CF6B)while fading in.
 LCA0A:  lda #$00            ;
-LCA0C:  sta SpritePagePos       ;Samus sprites start at Sprite00RAM.
+LCA0C:  sta SpritePagePos       ;Samus sprites start at Sprite 0.
 LCA0E:  sta PageIndex           ;Samus RAM is first set of RAM.
 LCA10:  jmp AnimDrawObject      ;($DE47)Draw Samus on screen.
 
@@ -1782,7 +1783,7 @@ SaveGameData:
 LCA52:  lda InArea          ;Save game based on current area Samus is in. Don't know why.
 LCA54:  jsr SavedDataBaseAddr       ;($CAC6)Find index to unique item history for this saved game.
 LCA57:  ldy #$3F            ;Prepare to save unique item history which is 64 bytes
-LCA59:* lda NumberOfUniqueItems,y   ;in length.
+LCA59:* lda NumUniqueItems,y   ;in length.
 LCA5C:  sta ($00),y         ;Save unique item history in appropriate saved game slot.
 LCA5E:  dey             ;
 LCA5F:  bpl -               ;Loop until unique item history transfer complete.
@@ -1800,7 +1801,7 @@ LCA72:* pla             ;Restore A to find appropriate saved game to load.
 LCA73:  jsr SavedDataBaseAddr       ;($CAC6)Find index to unique item history for this saved game.
 LCA76:  ldy #$3F            ;Prepare to load unique item history which is 64 bytes
 LCA78:* lda ($00),y         ;in length.
-LCA7A:  sta NumberOfUniqueItems,y   ;Loop until unique item history is loaded.
+LCA7A:  sta NumUniqueItems,y   ;Loop until unique item history is loaded.
 LCA7D:  dey             ;
 LCA7E:  bpl -               ;
 LCA80:  bmi +               ;Branch always.
@@ -1958,7 +1959,7 @@ LCB57:  jsr DisplayBar          ;($E0C1)Display of status bar.
 ;Clear remaining sprite RAM
     ldx SpritePagePos
     lda #$F4
-*       sta Sprite00RAM,x
+*       sta SpriteRAM,x
     jsr Xplus4       ; X = X + 4
     bne -
     rts
@@ -2211,7 +2212,7 @@ LCC8A:  .byte sa_PntUp
 
 SetSamusExplode:
 LCC8B:  lda #$50
-    sta SamusJumpDsplcmnt
+    sta SamusJmpDsplcmnt
     lda #an_Explode
     jsr SetSamusAnim
     sta ObjectCounter
@@ -2251,7 +2252,7 @@ SamusRun:
 LCCC2:  ldx SamusDir
     lda SamusGravity
     beq +++++++
-    ldy SamusJumpDsplcmnt
+    ldy SamusJmpDsplcmnt
     bit ObjVertSpeed
     bmi +
     cpy #$18
@@ -2304,7 +2305,7 @@ LCCC2:  ldx SamusDir
     bpl +      ; branch if JUMP not pressed
 LCD40:  jsr LCFC3
     lda #$12
-    sta SamusHorzSpeedMax
+    sta SamusHorzSpdMax
     jmp LCD6B
 
 *       ora Joy1Retrig
@@ -2423,7 +2424,7 @@ LCDFA:  lda SamusHit            ;
     lda #$32            ;
     sta SamusBlink          ;Samus has been hit. Set blink for 32 frames.
     lda #$FF
-    sta DamagePushDirection
+    sta DmgPushDir
     lda $73
     sta $77
     beq ++
@@ -2434,7 +2435,7 @@ LCDFA:  lda SamusHit            ;
     lsr
     lsr
     lsr
-    sta DamagePushDirection
+    sta DmgPushDir
 *   lda #$FD
     sta ObjVertSpeed
     lda #$38            ;Samus is hit. Store Samus hit gravity.
@@ -2446,7 +2447,7 @@ LCDFA:  lda SamusHit            ;
 *   lda SamusBlink
     beq CheckHealthBeep
     dec SamusBlink
-    ldx DamagePushDirection
+    ldx DmgPushDir
     inx
     beq +++
     jsr Adiv16       ; / 16
@@ -2514,7 +2515,7 @@ LCEA1:  beq +               ;Branch if end escape timer not active.
 ClearDamage:
 LCEA3:  jmp ClearHealthChange       ;($F323)Clear health change values.
 
-LCEA6:* lda MotherBrainStatus       ;If mother brain is in the process of dying, receive
+LCEA6:* lda MthrBrainStatus       ;If mother brain is in the process of dying, receive
 LCEA8:  cmp #$03            ;no damage.
 LCEAA:  bcs ClearDamage         ;
 
@@ -2675,7 +2676,7 @@ LCFC3:  ldy #an_SamusJump
     lda #$04
     sta AnimDelay
     lda #$00
-    sta SamusJumpDsplcmnt
+    sta SamusJmpDsplcmnt
     lda #$FC
     sta ObjVertSpeed
     ldx ObjAction
@@ -2697,7 +2698,7 @@ LCFF3:  ldy #$18    ; gravity (high value -> low jump)
     rts
 
 SamusJump:
-    lda SamusJumpDsplcmnt
+    lda SamusJmpDsplcmnt
     bit ObjVertSpeed
     bpl +      ; branch if falling down
     cmp #$20
@@ -3208,22 +3209,22 @@ SamusDoor:
 *       jsr LD48C
     jsr LED65
     jsr $95AB
-    lda ItemRoomMusicStatus
+    lda ItemRmMusicSts
     beq ++
     pha
     jsr LD92C       ; start music
     pla
     bpl ++
     lda #$00
-    sta ItemRoomMusicStatus
+    sta ItemRmMusicSts
     beq ++
 *       lda #$80
-    sta ItemRoomMusicStatus
-*       lda KraidRidleyPresent
+    sta ItemRmMusicSts
+*       lda KrdRdlyPresent
     beq +
     jsr LCC07
     lda #$00
-    sta KraidRidleyPresent
+    sta KrdRdlyPresent
     beq --     ; branch always
 *       lda SamusDoorData
     and #$0F
@@ -3369,7 +3370,7 @@ LD4D5:  .word UpdateBullet ; regular beam
 
 UpdateBullet:
     lda #$01
-    sta UpdatingProjectile
+    sta UpdtngPrjctl
     jsr LD5FC
     jsr LD5DA
     jsr LD609
@@ -3390,7 +3391,7 @@ CheckBulletStat:
 DrawBullet:
     lda #$01
     jsr AnimDrawObject
-*       dec UpdatingProjectile
+*       dec UpdtngPrjctl
     rts
 
 *       inc $0500,x
@@ -3401,7 +3402,7 @@ LD522:  inc $0500,x
 
 UpdateWaveBullet:
     lda #$01
-    sta UpdatingProjectile
+    sta UpdtngPrjctl
     jsr LD5FC
     jsr LD5DA
     lda $0502,x
@@ -3518,7 +3519,7 @@ Table0D:
 
     BulletExplode:
     lda #$01
-    sta UpdatingProjectile
+    sta UpdtngPrjctl
     lda $0303,x
     sec
     sbc #$F7
@@ -3970,11 +3971,11 @@ LD92C:  lda ElevatorStatus
     lda $032F
     bmi ++
 *       lda $95CD           ;Load proper bit flag for area music.
-    ldy ItemRoomMusicStatus
+    ldy ItemRmMusicSts
     bmi ++
     beq ++
 *   lda #$81
-    sta ItemRoomMusicStatus
+    sta ItemRmMusicSts
     lda #$20            ;Set flag to play item room music.
 
 *   ora MusicInitFlag       ;
@@ -4298,7 +4299,7 @@ LDB99:  beq +               ;If so, branch.
 LDB9B:  cmp #$02            ;Is power up item the long beam?
 LDB9D:  bne ++              ;If not, branch.
 LDB9F:* tya             ;Transfer color data to A.
-LDBA0:  sta Sprite01RAM+2,x     ;Store power up color for beam weapon.
+LDBA0:  sta SpriteRAM+6,x     ;Store power up color for beam weapon.
 LDBA3:  lda #$FF            ;Indicate power up obtained is a beam weapon.
 
 LDBA5:* pha             ;Temporarily store power up type.
@@ -4333,10 +4334,10 @@ LDBE0:  sta SamusGear           ;Update Samus gear with new beam weapon.
 LDBE3:* lda #$FF            ;
 LDBE5:  sta PowerUpDelay        ;Initiate delay while power up music plays.
 LDBE8:  sta PowerUpType,x       ;Clear out item data from RAM.
-LDBEB:  ldy ItemRoomMusicStatus     ;Is Samus not in an item room?
+LDBEB:  ldy ItemRmMusicSts     ;Is Samus not in an item room?
 LDBED:  beq +               ;If not, branch.
 LDBEF:  ldy #$01            ;Restart item room music after special item music is done.
-LDBF1:* sty ItemRoomMusicStatus     ;
+LDBF1:* sty ItemRmMusicSts     ;
 LDBF3:  jmp SelectSamusPal      ;($CB73)Set Samus new palette.
 
 Exit9:
@@ -4405,14 +4406,14 @@ LDC4F:  sta $06             ;item y position before writing to unique item histo
 
 AddItemToHistory:
 LDC51:  jsr CreateItemID        ;($DC67)Create an item ID to put into unique item history.
-LDC54:  ldy NumberOfUniqueItems     ;Store number of uniqie items in Y.
+LDC54:  ldy NumUniqueItems     ;Store number of uniqie items in Y.
 LDC57:  lda $06             ;
-LDC59:  sta UniqueItemHistory,y     ;Store item ID in inuque item history.
+LDC59:  sta UnqItmHist,y     ;Store item ID in inuque item history.
 LDC5C:  lda $07             ;
-LDC5E:  sta UniqueItemHistory+1,y   ;
+LDC5E:  sta UnqItmHist+1,y   ;
 LDC61:  iny             ;Add 2 to Y. 2 bytes ber unique item.
 LDC62:  iny             ;
-LDC63:  sty NumberOfUniqueItems     ;Store new number of unique items.
+LDC63:  sty NumUniqueItems     ;Store new number of unique items.
 LDC66:  rts             ;
 
 ;------------------------------------------[ Create item ID ]-----------------------------------------
@@ -4579,17 +4580,17 @@ LDCFC:  lda InArea
     cmp #$80
     bne ++
     ldy MaxMissilePickup
-    cpy CurrentMissilePickups
+    cpy CrntMslePickups
     beq LDD5B
     lda MaxMissiles
     beq LDD5B
-    inc CurrentMissilePickups
+    inc CrntMslePickups
 *       rts
 
 *       ldy MaxEnergyPickup
-    cpy CurrentEnergyPickups
+    cpy CrntEnrgyPickups
     beq LDD5B
-    inc CurrentEnergyPickups
+    inc CrntEnrgyPickups
     cmp #$89
     bne --
     lsr $00
@@ -4603,8 +4604,8 @@ LDD5B:  ldx PageIndex
 
 *       lda RandomNumber1
     ldy #$00
-    sty CurrentEnergyPickups
-    sty CurrentMissilePickups
+    sty CrntEnrgyPickups
+    sty CrntMslePickups
     iny
     sty MaxMissilePickup
     sty MaxEnergyPickup
@@ -4613,7 +4614,7 @@ LDD5B:  ldx PageIndex
 LDD75:  jsr PowerUpMusic
     lda InArea
     and #$0F
-    sta MiniBossKillDelay
+    sta MiniBossKillDly
     lsr
     tay
     sta MaxMissiles,y
@@ -4829,23 +4830,23 @@ WriteSpriteRAM:
 LDEE6:* ldy $0F             ;Load index for placement data.
 LDEE8:  jsr YDisplacement       ;($DF6B)Get displacement for y direction.
 LDEEB:  adc $10             ;Add initial Y position.
-LDEED:  sta Sprite00RAM,x       ;Store sprite Y coord.
-LDEF0:  dec Sprite00RAM,x       ;Because PPU uses Y + 1 as real Y coord.
+LDEED:  sta SpriteRAM,x       ;Store sprite Y coord.
+LDEF0:  dec SpriteRAM,x       ;Because PPU uses Y + 1 as real Y coord.
 LDEF3:  inc $0F             ;Increment index to next byte of placement data.
 LDEF5:  ldy $11             ;Get index to frame data.
 LDEF7:  lda ($00),y         ;Tile value.
-LDEF9:  sta Sprite00RAM+1,x     ;Store tile value in sprite RAM.
+LDEF9:  sta SpriteRAM+1,x     ;Store tile value in sprite RAM.
 LDEFC:  lda ObjectCntrl         ;
 LDEFE:  asl             ;Move horizontal mirror control byte to bit 6 and
 LDEFF:  asl             ;discard all other bits.
 LDF00:  and #$40            ;
 LDF02:  eor $05             ;Use it to override sprite horz mirror bit.
-LDF04:  sta Sprite00RAM+2,x     ;Store sprite control byte in sprite RAM.
+LDF04:  sta SpriteRAM+2,x     ;Store sprite control byte in sprite RAM.
 LDF07:  inc $11             ;Increment to next byte of frame data.
 LDF09:  ldy $0F             ;Load index for placement data.
 LDF0B:  jsr XDisplacement       ;($DFA3)Get displacement for x direction.
 LDF0E:  adc $0E             ;Add initial X pos
-LDF10:  sta Sprite00RAM+3,x     ;Store sprite X coord
+LDF10:  sta SpriteRAM+3,x     ;Store sprite X coord
 LDF13:  inc $0F             ;Increment to next placement data byte.
 LDF15:  inx             ;
 LDF16:  inx             ;
@@ -5131,7 +5132,7 @@ LE0C3:  lda SpritePagePos       ;Load current sprite index.
 LE0C5:  pha             ;save sprite page pos.
 LE0C6:  tax             ;
 LE0C7:* lda DataDisplayTbl,y        ;
-LE0CA:  sta Sprite00RAM,x       ;Stor contents of DataDisplayTbl in sprite RAM.
+LE0CA:  sta SpriteRAM,x       ;Stor contents of DataDisplayTbl in sprite RAM.
 LE0CD:  inx             ;
 LE0CE:  iny             ;
 LE0CF:  cpy #$28            ;10*4. At end of DataDisplayTbl? If not, loop to
@@ -5168,10 +5169,10 @@ LE108:  bne +++             ;Branch always.
 LE10A:* lda #$FF            ;"Blank" tile.
 LE10C:  cpx #$F4            ;If at last 3 sprites, branch to skip.
 LE10E:  bcs ++              ;
-LE110:  sta Sprite03RAM+1,x     ;Erase left half of missile.
+LE110:  sta SpriteRAM+$D,x     ;Erase left half of missile.
 LE113:  cpx #$F0            ;If at last 4 sprites, branch to skip.
 LE115:  bcs ++              ;
-LE117:  sta Sprite04RAM+1,x     ;Erase right half of missile.
+LE117:  sta SpriteRAM+$11,x     ;Erase right half of missile.
 LE11A:  bne ++              ;Branch always.
 
 ;Display 3-digit end sequence timer.
@@ -5185,13 +5186,13 @@ LE12D:  lda EndTimerLo          ;
 LE130:  jsr Adiv16          ;($C2BF)Lower timer digit.
 LE133:  jsr SPRWriteDigit       ;($E173)Display digit on screen.
 LE136:  lda #$58            ;"TI" sprite(left half of "TIME").
-LE138:  sta Sprite00RAM+1,x     ;
-LE13B:  inc Sprite00RAM+2,x     ;Change color of sprite.
+LE138:  sta SpriteRAM+1,x     ;
+LE13B:  inc SpriteRAM+2,x     ;Change color of sprite.
 LE13E:  cpx #$FC            ;If at last sprite, branch to skip.
 LE140:  bcs +               ;
 LE142:  lda #$59            ;"ME" sprite(right half of "TIME").
-LE144:  sta Sprite01RAM+1,x     ;
-LE147:  inc Sprite01RAM+2,x     ;Change color of sprite.
+LE144:  sta SpriteRAM+5,x     ;
+LE147:  inc SpriteRAM+6,x     ;Change color of sprite.
 
 LE14A:* ldx SpritePagePos       ;Restore initial sprite page pos.
 LE14C:  lda TankCount           ;
@@ -5226,7 +5227,7 @@ LE172:* rts             ;
 
 SPRWriteDigit:
 LE173:  ora #$A0            ;#$A0 is index into pattern table for numbers.
-LE175:  sta Sprite00RAM+1,x     ;Store proper nametable pattern in sprite RAM.
+LE175:  sta SpriteRAM+1,x     ;Store proper nametable pattern in sprite RAM.
 LE178:  jmp Xplus4          ;Find next sprite pattern table byte.
 
 ;----------------------------------[ Add energy tank to display ]------------------------------------
@@ -5235,13 +5236,13 @@ LE178:  jmp Xplus4          ;Find next sprite pattern table byte.
 
 AddOneTank:
 LE17B:  lda #$17            ;Y coord-1.
-LE17D:  sta Sprite00RAM,x       ;
+LE17D:  sta SpriteRAM,x       ;
 LE180:  tya             ;Tile value.
-LE181:  sta Sprite00RAM+1,x     ;
+LE181:  sta SpriteRAM+1,x     ;
 LE184:  lda #$01            ;Palette #.
-LE186:  sta Sprite00RAM+2,x     ;
+LE186:  sta SpriteRAM+2,x     ;
 LE189:  lda $00             ;X coord.
-LE18B:  sta Sprite00RAM+3,x     ;
+LE18B:  sta SpriteRAM+3,x     ;
 LE18E:  sec             ;
 LE18F:  sbc #$0A            ;Find x coord of next energy tank.
 LE191:  sta $00             ;
@@ -5426,7 +5427,7 @@ LE277:  ldy #$FF            ;Assume Samus not in lava.
 LE279:  bcs ++++            ;Samus not in lava so branch.
 
 ;Samus is in lava.
-LE27B:  sty DamagePushDirection     ;Don't push Samus from lava damage.
+LE27B:  sty DmgPushDir     ;Don't push Samus from lava damage.
 LE27D:  jsr ClearHealthChange       ;($F323)Clear any pending health changes to Samus.
 LE280:  lda #$32            ;
 LE282:  sta SamusBlink          ;Make Samus blink.
@@ -5587,7 +5588,7 @@ VertAccelerate:
 LE37A:  lda SamusGravity        ;Is Samus rising or falling?
 LE37D:  bne ++              ;Branch if yes.
 LE37F:  lda #$18            ;
-LE381:  sta SamusHorzSpeedMax       ;Set Samus maximum running speed.
+LE381:  sta SamusHorzSpdMax       ;Set Samus maximum running speed.
 LE384:  lda ObjectY         ;
 LE387:  clc             ;
 LE388:  adc ObjRadY         ;Check is Samus is obstructed downwards on y room
@@ -5631,10 +5632,10 @@ LE3D0:  stx ObjVertSpeed        ;Set Samus vertical speed to max.
 
 ;This portion of the function creates an exponential increase/decrease in verticle speed. This is the
 ;part of the function that does all the work to make Samus' jump seem natural.
-LE3D3:* lda VertCntrNonLinear       ;
+LE3D3:* lda VertCntrNonLinr       ;
 LE3D6:  clc             ;This function adds itself plus the linear verticle counter
 LE3D7:  adc VertCntrLinear      ;onto itself every frame.  This causes the non-linear
-LE3DA:  sta VertCntrNonLinear       ;counter to increase exponentially.  This function will
+LE3DA:  sta VertCntrNonLinr       ;counter to increase exponentially.  This function will
 LE3DD:  lda #$00            ;cause Samus to reach maximum speed first in most
 LE3DF:  adc ObjVertSpeed        ;situations before the linear counter.
 LE3E2:  sta $00             ;$00 stores temp copy of current verticle speed.
@@ -5643,11 +5644,11 @@ LE3E4:  rts             ;
 ;----------------------------------------------------------------------------------------------------
 
 HorzAccelerate:
-LE3E5:  lda SamusHorzSpeedMax
+LE3E5:  lda SamusHorzSpdMax
     jsr Amul16       ; * 16
     sta $00
     sta $02
-    lda SamusHorzSpeedMax
+    lda SamusHorzSpdMax
     jsr Adiv16       ; / 16
     sta $01
     sta $03
@@ -5685,10 +5686,10 @@ LE3E5:  lda SamusHorzSpeedMax
     sta HorzCntrLinear
     lda $01
     sta ObjHorzSpeed
-*       lda HorzCntrNonLinear
+*       lda HorzCntrNonLinr
     clc
     adc HorzCntrLinear
-    sta HorzCntrNonLinear
+    sta HorzCntrNonLinr
     lda #$00
     adc ObjHorzSpeed
     sta $00             ;$00 stores temp copy of current horizontal speed.
@@ -5739,7 +5740,7 @@ LE462:  jsr CheckMoveUp         ;($E7A2)Check if Samus obstructed UPWARDS.
 *       lda #240
     sta ObjectY
 *   dec ObjectY
-    inc SamusJumpDsplcmnt
+    inc SamusJmpDsplcmnt
     sec
 *   rts
 
@@ -5778,7 +5779,7 @@ MoveSamusDown:
 *       lda #$FF
     sta ObjectY
 *   inc ObjectY
-    dec SamusJumpDsplcmnt
+    dec SamusJmpDsplcmnt
     sec
 *   rts
 
@@ -6172,13 +6173,13 @@ LE75D:  iny             ;
 LE75E:  cpy #$07            ;
 LE760:  bne -               ;Loop until all special room numbers are checked.
 
-LE762:  lda ItemRoomMusicStatus     ;Load item room music status.
+LE762:  lda ItemRmMusicSts     ;Load item room music status.
 LE764:  beq ++              ;Branch if not in special room.
 LE766:  lda #$80            ;Ptop playing item room music after next music start.
 LE768:  bne ++              ;Branch always.
 
 LE76A:* lda #$01            ;Start item room music on next music start.
-LE76C:* sta ItemRoomMusicStatus     ;
+LE76C:* sta ItemRmMusicSts     ;
 LE76E:  clc             ;Clear carry flag. was able to get room number.
 LE76F:* rts             ;
 
@@ -6283,7 +6284,7 @@ IsWalkableTile:
     Exit16:
     rts
 
-LE81E:  ldx UpdatingProjectile
+LE81E:  ldx UpdtngPrjctl
     beq ClcExit
     ldx #$06
 *       lda $05
@@ -6531,7 +6532,7 @@ LE9B7:  lda PPUCNT0ZP
     rts
 
 IsBlastTile:
-    ldy UpdatingProjectile
+    ldy UpdtngPrjctl
     beq Exit18
 LE9C2:  tay
     jsr $95BD
@@ -6575,9 +6576,9 @@ LEA05:  jsr GetNameTable        ;($EB85)Find name table to draw room on.
 LEA08:  asl             ;
 LEA09:  asl             ;
 LEA0A:  ora #$60            ;A=#$64 for name table 3, A=#$60 for name table 0.
-LEA0C:  sta CartRAMPtr+1        ;
+LEA0C:  sta CartRAMPtrUB        ;
 LEA0E:  lda #$00            ;
-LEA10:  sta CartRAMPtr          ;Save two byte pointer to start of proper room RAM.
+LEA10:  sta CartRAMPtrLB          ;Save two byte pointer to start of proper room RAM.
 LEA12:  rts             ;
 
 ;------------------------------------[ write attribute table data ]----------------------------------
@@ -6637,31 +6638,31 @@ LEA5D:* jmp DrawRoom            ;($EAAA)Load room contents into room RAM.
 
 DrawObject:
 LEA60:  sta $0E             ;Store object position byte(%yyyyxxxx).
-LEA62:  lda CartRAMPtr          ;
-LEA64:  sta CartRAMWorkPtr      ;Set the working pointer equal to the room pointer
-LEA66:  lda CartRAMPtr+1        ;(start at beginning of the room).
-LEA68:  sta CartRAMWorkPtr+1        ;
+LEA62:  lda CartRAMPtrLB          ;
+LEA64:  sta CartRAMWorkPtrLB      ;Set the working pointer equal to the room pointer
+LEA66:  lda CartRAMPtrUB        ;(start at beginning of the room).
+LEA68:  sta CartRAMWorkPtrUB        ;
 LEA6A:  lda $0E             ;Reload object position byte.
 LEA6C:  jsr Adiv16          ;($C2BF)/16. Lower nibble contains object y position.
 LEA6F:  tax             ;Transfer it to X, prepare for loop.
 LEA70:  beq +++             ;Skip y position calculation loop as y position=0 and
                     ;does not need to be calculated.
-LEA72:* lda CartRAMWorkPtr      ;LoW byte of pointer working in room RAM.
+LEA72:* lda CartRAMWorkPtrLB      ;LoW byte of pointer working in room RAM.
 LEA74:  clc             ;
 LEA75:  adc #$40            ;Advance two rows in room RAM(one y unit).
-LEA77:  sta CartRAMWorkPtr      ;
+LEA77:  sta CartRAMWorkPtrLB      ;
 LEA79:  bcc +               ;If carry occurred, increment high byte of pointer
-LEA7B:  inc CartRAMWorkPtr+1        ;in room RAM.
+LEA7B:  inc CartRAMWorkPtrUB        ;in room RAM.
 LEA7D:* dex             ;
 LEA7E:  bne --              ;Repeat until at desired y position(X=0).
 
 LEA80:* lda $0E             ;Reload object position byte.
 LEA82:  and #$0F            ;Remove y position upper nibble.
 LEA84:  asl             ;Each x unit is 2 tiles.
-LEA85:  adc CartRAMWorkPtr      ;
-LEA87:  sta CartRAMWorkPtr      ;Add x position to room RAM work pointer.
+LEA85:  adc CartRAMWorkPtrLB      ;
+LEA87:  sta CartRAMWorkPtrLB      ;Add x position to room RAM work pointer.
 LEA89:  bcc +               ;If carry occurred, increment high byte of room RAM work
-LEA8B:  inc CartRAMWorkPtr+1        ;pointer, else branch to draw object.
+LEA8B:  inc CartRAMWorkPtrUB        ;pointer, else branch to draw object.
 
 ;CartRAMWorkPtr now points to the object's starting location (upper left corner)
 ;on the room RAM which will eventually be loaded into a name table.
@@ -6676,10 +6677,10 @@ LEA96:  txa             ;Restore structure pointer to A.
 LEA97:  asl             ;*2. Structure pointers are two bytes in size.
 LEA98:  tay             ;
 LEA99:  lda (StructPtrTable),y      ;Low byte of 16-bit structure ptr.
-LEA9B:  sta StructPtr           ;
+LEA9B:  sta StructPtrLB           ;
 LEA9D:  iny             ;
 LEA9E:  lda (StructPtrTable),y      ;High byte of 16-bit structure ptr.
-LEAA0:  sta StructPtr+1         ;
+LEAA0:  sta StructPtrUB         ;
 LEAA2:  jsr DrawStruct          ;($EF8C)Draw one structure.
 LEAA5:  lda #$03            ;Move to next set of structure data.
 LEAA7:  jsr AddToRoomPtr        ;($EAC0)Add A to room data pointer.
@@ -6788,7 +6789,7 @@ LEB28:  pha             ;Store enemy type.
     jmp --              ;stack so next enemy/door item can be loaded.
 
 *       lda #$01            ;Samus is in Kraid or Ridley's room and the
-    sta KraidRidleyPresent      ;mini boss is alive and needs to be loaded.
+    sta KrdRdlyPresent      ;mini boss is alive and needs to be loaded.
 
 *   pla             ;Restore enemy type data.
     and #$3F            ;Keep 6 lower bits to use as index for enemy data tables.
@@ -7272,10 +7273,10 @@ LEE45:  sta $06             ;Store item Y coordinate.
 LEE47:  jmp CreateItemID        ;($DC67)Get unique item ID.
 
 CheckForItem:
-LEE4A:  ldy NumberOfUniqueItems     ;
+LEE4A:  ldy NumUniqueItems     ;
 LEE4D:  beq +++             ;Samus has no unique items. Load item and exit.
 LEE4F:* lda $07             ;
-LEE51:  cmp NumberOfUniqueItems,y   ;Look for lower byte of unique item.
+LEE51:  cmp NumUniqueItems,y   ;Look for lower byte of unique item.
 LEE54:  bne +               ;
 LEE56:  lda $06             ;Look for upper byte of unique item.
 LEE58:  cmp DataSlot,y          ;
@@ -7339,7 +7340,7 @@ LEEAE:  jsr $95B4
     jsr LEE4A
     bcc LEEC6
     lda #$08
-    sta MotherBrainStatus
+    sta MthrBrainStatus
     lda #$00
     sta MotherBrainHits
 LEEC6:  lda #$01
@@ -7405,11 +7406,11 @@ LEF19:* sta $0E             ;Store horizontal macro count.
 LEF1B:  lda (StructPtr),y       ;Get length byte again.
 LEF1D:  jsr Adiv16          ;($C2BF)/16. Upper nibble contains x coord offset(if any).
 LEF20:  asl             ;*2, because a macro is 2 tiles wide.
-LEF21:  adc CartRAMWorkPtr      ;Add x coord offset to CartRAMWorkPtr and save in $00.
+LEF21:  adc CartRAMWorkPtrLB      ;Add x coord offset to CartRAMWorkPtr and save in $00.
 LEF23:  sta $00             ;
-LEF25:  lda #$00            ;
-LEF27:  adc CartRAMWorkPtr+1        ;Save high byte of work pointer in $01.
-LEF29:  sta $01             ;$0000 = work pointer.
+LEF25:  lda #$00                ;
+LEF27:  adc CartRAMWorkPtrUB    ;Save high byte of work pointer in $01.
+LEF29:  sta $01                 ;$0000 = work pointer.
 
 DrawMacro:
 LEF2B:  lda $01             ;High byte of current location in room RAM.
@@ -7460,16 +7461,16 @@ LEF76:  lda $10             ;Load struct index.
 
 AdvanceRow:
 LEF78:  sec             ;Since carry bit is set,
-LEF79:  adc StructPtr           ;addition will be one more than expected.
-LEF7B:  sta StructPtr           ;Update the struct pointer.
+LEF79:  adc StructPtrLB           ;addition will be one more than expected.
+LEF7B:  sta StructPtrLB           ;Update the struct pointer.
 LEF7D:  bcc +               ;
-LEF7F:  inc StructPtr+1         ;Update high byte of struct pointer if carry occured.
+LEF7F:  inc StructPtrUB         ;Update high byte of struct pointer if carry occured.
 LEF81:* lda #$40            ;
 LEF83:  clc             ;
-LEF84:  adc CartRAMWorkPtr      ;Advance to next macro row in room RAM(two tile rows).
-LEF86:  sta CartRAMWorkPtr      ;
+LEF84:  adc CartRAMWorkPtrLB      ;Advance to next macro row in room RAM(two tile rows).
+LEF86:  sta CartRAMWorkPtrLB      ;
 LEF88:  bcc DrawStruct          ;Begin drawing next structure row.
-LEF8A:  inc CartRAMWorkPtr+1        ;Increment high byte of pointer if necessary.
+LEF8A:  inc CartRAMWorkPtrUB        ;Increment high byte of pointer if necessary.
 
 DrawStruct:
 LEF8C:  ldy #$00            ;Reset struct index.
@@ -7565,7 +7566,7 @@ LEFF7:  .byte %00111111         ;Lower right macro.
 ;------------------------[ Initialize room RAM and associated attribute table ]-----------------------
 
 InitTables:
-LEFF8:  lda CartRAMPtr+1        ;#$60 or #$64.
+LEFF8:  lda CartRAMPtrUB        ;#$60 or #$64.
 LEFFA:  tay             ;
 LEFFB:  tax             ;Save value to create counter later.
 LEFFC:  iny             ;
