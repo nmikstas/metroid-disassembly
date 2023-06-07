@@ -857,14 +857,14 @@
 .alias an_SamusFireRun  $22
 .alias an_SamusPntUp    $27
 .alias an_Explode       $32
-.alias an_SamusJumpPntUp    $35
+.alias an_SamusJmpPntUp $35
 .alias an_SamusRunPntUp $37
 .alias an_WaveBeam      $7D
 .alias an_BombTick      $7F
 .alias an_BombExplode   $82
 .alias an_MissileLeft   $8B
 .alias an_MissileRight  $8D
-.alias an_MissileExplode    $91
+.alias an_MissileExpld  $91
 
 ;Weapon action handlers.
 .alias wa_RegularBeam   1

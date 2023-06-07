@@ -2317,14 +2317,10 @@ L937F:  .byte $21, $4B, $09 ;PPU address and string length.
 L9382:  .byte $19, $0A, $1C, $1C, $FF, $20, $18, $1B, $0D
 
 ;Information to be stored in attribute table 0.
-L938B:  .byte $23               ;PPU address and string length.
-L938C:  .byte $D0               ;PPU memory low byte.
-L938D:  .byte $48               ;Repeat bit set, repeat entry 8 times.
+L938B:  .byte $23, $D0, $48     ;PPU address and string length.
 L938E:  .byte $00               ;Clears line below "PASS WORD".
 
-L938F:  .byte $23               ;PPU address and string length.
-L9390:  .byte $D8               ;PPU memory low byte.
-L9391:  .byte $60               ;Repeat bit set, repeat entry 32 times. 
+L938F:  .byte $23, $D8, $60     ;PPU address and string length.
 L9392:  .byte $55               ;Turn color on to display password characters.
 
 L9393:  .byte $00               ;End PPU string write.
@@ -3510,96 +3506,65 @@ L9FAE:  .byte $0F, $16, $19, $27, $0F, $36, $15, $17, $0F, $12, $21, $20, $0F, $
 L9FBE:  .byte $00               ;End EndGamePal00 data.
 
 EndGamePal01:
-L9FBF:  .byte $3F           ;PPU address and string length.
-L9FC0:  .byte $18           ;PPU address low byte.
-L9FC1:  .byte $08           ;PPU string length.
+L9FBF:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 L9FC2:  .byte $0F, $10, $20, $30, $0F, $0F, $0F, $0F
-
-L9FCA:  .byte $00           ;End EndGamePal01 data.
+L9FCA:  .byte $00               ;End EndGamePal01 data.
 
 EndGamePal02:
-L9FCB:  .byte $3F           ;PPU address and string length.
-L9FCC:  .byte $18           ;PPU address low byte.
-L9FCD:  .byte $08           ;PPU string length.
+L9FCB:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 L9FCE:  .byte $0F, $12, $22, $32, $0F, $0B, $1B, $2B
-
-L9FD6:  .byte $00           ;End EndGamePal02 data.
+L9FD6:  .byte $00               ;End EndGamePal02 data.
 
 EndGamePal03:
-L9FD7:  .byte $3F           ;PPU address and string length.
-L9FD8:  .byte $18           ;PPU address low byte.
-L9FD9:  .byte $08           ;PPU string length.
+L9FD7:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 L9FDA:  .byte $0F, $14, $24, $34, $0F, $09, $19, $29 
-
-L9FE2:  .byte $00           ;End EndGamePal03 data.
+L9FE2:  .byte $00               ;End EndGamePal03 data.
 
 EndGamePal04:
-L9FE3:  .byte $3F           ;PPU address and string length.
-L9FE4:  .byte $18           ;PPU address low byte.
-L9FE5:  .byte $08           ;PPU string length.
+L9FE3:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 L9FE6:  .byte $0F, $16, $26, $36, $0F, $07, $17, $27
-
-L9FEE:  .byte $00           ;End EndGamePal04 data.
+L9FEE:  .byte $00               ;End EndGamePal04 data.
 
 EndGamePal05:
-L9FEF:  .byte $3F           ;PPU address and string length.
-L9FF0:  .byte $18           ;PPU address low byte.
-L9FF1:  .byte $08           ;PPU string length.
+L9FEF:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 L9FF2:  .byte $0F, $18, $28, $38, $0F, $05, $15, $25 
-
-L9FFA:  .byte $00           ;End EndGamePal05 data.
+L9FFA:  .byte $00               ;End EndGamePal05 data.
 
 EndGamePal06:
-L9FFB:  .byte $3F           ;PPU address and string length.
-L9FFC:  .byte $18           ;PPU address low byte.
-L9FFD:  .byte $08           ;PPU string length.
+L9FFB:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 L9FFE:  .byte $0F, $1A, $2A, $3A, $0F, $03, $13, $13
-
-LA006:  .byte $00           ;End EndGamePal06 data.
+LA006:  .byte $00               ;End EndGamePal06 data.
 
 EndGamePal07:
-LA007:  .byte $3F           ;PPU address and string length.
-LA008:  .byte $18           ;PPU address low byte.
-LA009:  .byte $08           ;PPU string length.
+LA007:  .byte $3F, $18, $08     ;PPU address and string length.
 ;The following values are written to the sprite palette starting at $3F18:
 LA00A:  .byte $0F, $1C, $2C, $3C, $0F, $01, $11, $21 
-
-LA012:  .byte $00           ;End EndGamePal07 data.
+LA012:  .byte $00               ;End EndGamePal07 data.
 
 EndGamePal08:
-LA013:  .byte $3F           ;PPU address and string length.
-LA014:  .byte $0C           ;PPU address low byte.
-LA015:  .byte $04           ;PPU string length.
+LA013:  .byte $3F, $0C, $04     ;PPU address and string length.
 ;The following values are written to the background palette starting at $3F0C:
 LA016:  .byte $0F, $18, $08, $07
 
-LA01A:  .byte $3F           ;PPU address and string length.
-LA01B:  .byte $10           ;PPU address low byte.
-LA01C:  .byte $10           ;PPU string length.
+LA01A:  .byte $3F, $10, $10     ;PPU address and string length.
 ;The following values are written to the sprite palette:
 LA01D:  .byte $0F, $26, $05, $07, $0F, $26, $05, $07, $0F, $01, $01, $05, $0F, $13, $1C, $0C
-
-LA02D:  .byte $00           ;End EndGamePal08 data.
+LA02D:  .byte $00               ;End EndGamePal08 data.
 
 EndGamePal09:
-LA02E:  .byte $3F           ;PPU address and string length.
-LA02F:  .byte $0C           ;PPU address low byte.
-LA030:  .byte $04           ;PPU string length.
+LA02E:  .byte $3F, $0C, $04     ;PPU address and string length.
 ;The following values are written to the background palette starting at $3F0C:
 LA031:  .byte $0F, $08, $07, $0F
 
-LA035:  .byte $3F           ;PPU address and string length.
-LA036:  .byte $10           ;PPU address low byte.
-LA037:  .byte $10           ;PPU string length.
+LA035:  .byte $3F, $10, $10     ;PPU address and string length.
 ;The following values are written to the sprite palette:
 LA038:  .byte $0F, $06, $08, $0F, $0F, $06, $08, $0F, $0F, $00, $10, $0F, $0F, $01, $0C, $0F
-
 LA048:  .byte $00               ;End EndGamePal09 data.
 
 EndGamePal0A:
@@ -3608,136 +3573,101 @@ LA04C:  .byte $0F               ;Repeat bit set. Fill background palette with #$
 
 LA04D:  .byte $3F, $10, $50     ;PPU address and string length.
 LA050:  .byte $0F               ;Repeat bit set. Fill sprite palette with #$0F.
-
 LA051:  .byte $00               ;End EndGamePal0A data.
 
 ;The following data writes the end game backgroud graphics.
 
 ;Writes ground graphics on name table 0 in row $2300 (25th row from top).
-LA052:  .byte $23           ;PPU address and string length.
-LA053:  .byte $00           ;PPU address low byte.
-LA054:  .byte $20           ;PPU string length.
+LA052:  .byte $23, $00, $20     ;PPU address and string length.
 LA055:  .byte $30, $31, $30, $31, $30, $31, $30, $31, $30, $31, $30, $31, $30, $31, $30, $31
 LA065:  .byte $30, $31, $30, $31, $30, $31, $30, $31, $30, $31, $30, $31, $30, $31, $30, $31
 
 ;Writes ground graphics on name table 0 in row $2320 (26th row from top).
-LA075:  .byte $23           ;PPU address and string length.
-LA076:  .byte $20           ;PPU address low byte.
-LA077:  .byte $20           ;PPU string length.
+LA075:  .byte $23, $20, $20     ;PPU address and string length.
 LA078:  .byte $32, $33, $32, $33, $32, $33, $32, $33, $32, $33, $32, $33, $32, $33, $32, $33
 LA088:  .byte $32, $33, $32, $33, $32, $33, $32, $33, $32, $33, $32, $33, $32, $33, $32, $33
 
 ;Writes ground graphics on name table 0 in row $2340 (27th row from top).
-LA098:  .byte $23           ;PPU address and string length.
-LA099:  .byte $40           ;PPU address low byte.
-LA09A:  .byte $20           ;PPU string length.
+LA098:  .byte $23, $40, $20     ;PPU address and string length.
 LA09B:  .byte $34, $35, $34, $35, $34, $35, $34, $35, $34, $35, $34, $35, $34, $35, $34, $35
 LA0AB:  .byte $34, $35, $34, $35, $34, $35, $34, $35, $34, $35, $34, $35, $34, $35, $34, $35
 
 ;Writes ground graphics on name table 0 in row $2360 (28th row from top).
-LA0BB:  .byte $23           ;PPU address and string length.
-LA0BC:  .byte $60           ;PPU address low byte.
-LA0BD:  .byte $20           ;PPU string length.
+LA0BB:  .byte $23, $60, $20     ;PPU address and string length.
+
 LA0BE:  .byte $36, $37, $36, $37, $36, $37, $36, $37, $36, $37, $36, $37, $36, $37, $36, $37
 LA0CE:  .byte $36, $37, $36, $37, $36, $37, $36, $37, $36, $37, $36, $37, $36, $37, $36, $37
 
 ;Writes ground graphics on name table 0 in row $2380 (29th row from top).
-LA0DE:  .byte $23           ;PPU address and string length.
-LA0DF:  .byte $80           ;PPU address low byte.
-LA0E0:  .byte $20           ;PPU string length.
+LA0DE:  .byte $23, $80, $20     ;PPU address and string length.
 LA0E1:  .byte $38, $39, $38, $39, $38, $39, $38, $39, $38, $39, $38, $39, $38, $39, $38, $39
 LA0F1:  .byte $38, $39, $38, $39, $38, $39, $38, $39, $38, $39, $38, $39, $38, $39, $38, $39
 
 ;Writes ground graphics on name table 0 in row $23A0 (bottom row).
-LA101:  .byte $23           ;PPU address and string length.
-LA102:  .byte $A0           ;PPU address low byte.
-LA103:  .byte $20           ;PPU string length.
+LA101:  .byte $23, $A0, $20     ;PPU address and string length.
 LA104:  .byte $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B
 LA114:  .byte $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B, $3A, $3B
 
 ;Sets all color bits in attribute table 0 starting at $23F0.
-LA124:  .byte $23           ;PPU address and string length.
-LA125:  .byte $F0           ;PPU address low byte.
-LA126:  .byte $50           ;PPU string length.
-LA127:  .byte $FF           ;Repeat bit set. Repeats entry 16 times.
+LA124:  .byte $23, $F0, $50     ;PPU address and string length.
+LA127:  .byte $FF               ;Repeat bit set. Repeats entry 16 times.
 
 ;Writes credits on name table 2 in row $2820 (2nd row from top).
-LA128:  .byte $28           ;PPU address and string length.
-LA129:  .byte $2E           ;PPU address low byte.
-LA12A:  .byte $05           ;PPU string length.
+LA128:  .byte $28, $2E, $05     ;PPU address and string length.
 ;             'S    T    A    F    F'
 LA12B:  .byte $1C, $1D, $0A, $0F, $0F
 
 ;Writes credits on name table 2 in row $28A0 (6th row from top).
-LA130:  .byte $28           ;PPU address and string length.
-LA131:  .byte $A8           ;PPU address low byte.
-LA132:  .byte $13           ;PPU string length.
+LA130:  .byte $28, $A8, $13     ;PPU address and string length.
 ;             'S    C    E    N    A    R    I    O    _    W    R    I    T    T    E    N'
 LA133:  .byte $1C, $0C, $0E, $17, $0A, $1B, $12, $18, $FF, $20, $1B, $12, $1D, $1D, $0E, $17
 ;             '_    B    Y'
 LA143:  .byte $FF, $0B, $22
 
 ;Writes credits on name table 2 in row $28E0 (8th row from top).
-LA146:  .byte $28           ;PPU address and string length.
-LA147:  .byte $EE           ;PPU address low byte.
-LA148:  .byte $05           ;PPU string length.
+LA146:  .byte $28, $EE, $05     ;PPU address and string length.
 ;             'K    A    N    O    H'
 LA149:  .byte $14, $0A, $17, $18, $11
 
 ;Writes credits on name table 2 in row $2960 (12th row from top).
-LA14E:  .byte $29           ;PPU address and string length.
-LA14F:  .byte $66           ;PPU address low byte.
-LA150:  .byte $15           ;PPU string length.
+LA14E:  .byte $29, $66, $15     ;PPU address and string length.
 ;             'C    H    A    R    A    C    T    E    R    _    D    E    S    I    G    N'
 LA151:  .byte $0C, $11, $0A, $1B, $0A, $0C, $1D, $0E, $1B, $FF, $0D, $0E, $1C, $12, $10, $17
 ;             'E    D    _    B    Y'
 LA161:  .byte $0E, $0D, $FF, $0B, $22
 
 ;Writes credits on name table 2 in row $29A0 (14th row from top).
-LA166:  .byte $29           ;PPU address and string length.
-LA167:  .byte $AC           ;PPU address low byte.
-LA168:  .byte $08           ;PPU string length.
+LA166:  .byte $29, $AC, $08     ;PPU address and string length.
 ;             'K    I    Y    O    T    A    K    E'
 LA169:  .byte $14, $12, $22, $18, $1D, $0A, $14, $0E
 
 ;Writes credits on name table 2 in row $2A20 (18th row from top).
-LA16A:  .byte $2A           ;PPU address and string length.
-LA16B:  .byte $2B           ;PPU address low byte.
-LA173:  .byte $0C           ;PPU string length.
+LA16A:  .byte $2A, $2B, $0C     ;PPU address and string length.
 ;             'N    E    W    _    M    A    T    S    U    O    K    A'
 LA174:  .byte $17, $0E, $20, $FF, $16, $0A, $1D, $1C, $1E, $18, $14, $0A
 
 ;Writes credits on name table 2 in row $2A60 (20th row from top).
-LA180:  .byte $2A           ;PPU address and string length.
-LA181:  .byte $6C           ;PPU address low byte.
-LA182:  .byte $09           ;PPU string length.
+LA180:  .byte $2A, $6C, $09     ;PPU address and string length.
 ;             'S    H    I    K    A    M    O    T    O'
 LA183:  .byte $1C, $11, $12, $14, $0A, $16, $18, $1D, $18
 
 ;Writes credits on name table 2 in row $2AE0 (24th row from top).
-LA18C:  .byte $2A           ;PPU address and string length.
-LA18D:  .byte $EC           ;PPU address low byte.
-LA18E:  .byte $08           ;PPU string length.
+LA18C:  .byte $2A, $EC, $08     ;PPU address and string length.
 ;             'M    U    S    I    C    _    B    Y'
 LA18F:  .byte $16, $1E, $1C, $12, $0C, $FF, $0B, $22
 
 ;Writes credits on name table 2 in row $2B20 (26th row from top)
-LA197:  .byte $2B           ;PPU address and string length.
-LA198:  .byte $2B           ;PPU address low byte.
-LA199:  .byte $0A           ;PPU string length.
+LA197:  .byte $2B, $2B, $0A     ;PPU address and string length.
 ;             'H    I    P    _    T    A    N    A    K    A'
 LA19A:  .byte $11, $12, $19, $FF, $1D, $0A, $17, $0A, $14, $0A
 
 ;Writes credits on name table 2 in row $2BA0 (bottom row).
-LA1A4:  .byte $2B           ;PPU address and string length.
-LA1A5:  .byte $A7           ;PPU address low byte.
-LA1A6:  .byte $12           ;PPU string length.
+LA1A4:  .byte $2B, $A7, $12     ;PPU address and string length.
 ;             '_    M    A    I    N    _    P    R    O    G    R    A    M    M    E    R'
 LA1A7:  .byte $FF, $16, $0A, $12, $17, $FF, $19, $1B, $18, $10, $1B, $0A, $16, $16, $0E, $1B
 ;             'S    _'
 LA1B7:  .byte $1C, $FF
-
-LA1B9:  .byte $00           ;End PPU string write.
+LA1B9:  .byte $00               ;End PPU string write.
 
 ;The following pointer table is accessed by the NMIScreenWrite routine. 
 ;It is used to locate the start of the PPU strings below.
@@ -3746,78 +3676,58 @@ EndMsgStrngTbl0:
 LA1BA:  .word $A1C2, $A1EB, $A20F, $A240
 
 ;Writes end message on name table 0 in row $2060 (4th row from top).
-LA1C2:  .byte $20           ;PPU address and string length.
-LA1C3:  .byte $6D           ;PPU address low byte.
-LA1C4:  .byte $08           ;PPU string length.
+LA1C2:  .byte $20, $6D, $08     ;PPU address and string length.
 ;             'G    R    E    A    T    _    !    !'
 LA1C5:  .byte $10, $1B, $0E, $0A, $1D, $FF, $3F, $3F
 
 ;Writes end message on name table 0 in row $20C0 (7th row from top).
-LA1CD:  .byte $20           ;PPU address and string length.
-LA1CE:  .byte $C3           ;PPU address low byte.
-LA1CF:  .byte $1A           ;PPU string length.
+LA1CD:  .byte $20, $C3, $1A     ;PPU address and string length.
 ;             'Y    O    U    _    F    U    L    F    I    L    E    D    _    Y    O    U'
 LA1D0:  .byte $22, $18, $1E, $FF, $0F, $1E, $15, $0F, $12, $15, $0E, $0D, $FF, $22, $18, $1E
 ;             'R    _    M    I    S    S    I    O    N    .'
 LA1E0:  .byte $1B, $FF, $16, $12, $1C, $1C, $12, $18, $17, $07
-
-LA1EA:  .byte $00           ;End PPU string write.
+LA1EA:  .byte $00               ;End PPU string write.
 
 ;Writes end message on name table 0 in row $2100 (9th row from top).
-LA1EB:  .byte $21           ;PPU address and string length.
-LA1EC:  .byte $03           ;PPU address low byte.
-LA1ED:  .byte $17           ;PPU string length.
+LA1EB:  .byte $21, $03, $17     ;PPU address and string length.
 ;             'I    T    _    W    I    L    L    _    R    E    V    I    V    E    _    P'
 LA1EE:  .byte $12, $1D, $FF, $20, $12, $15, $15, $FF, $1B, $0E, $1F, $12, $1F, $0E, $FF, $19
 ;             'E    A    C    E    _    I    N'
 LA1FE:  .byte $0E, $0A, $0C, $0E, $FF, $12, $17
 
 ;Writes end message on name table 0 in row $2140 (11th row from top).
-LA205:  .byte $21           ;PPU address and string length.
-LA206:  .byte $42           ;PPU address low byte.
-LA207:  .byte $06           ;PPU string length.
+LA205:  .byte $21, $42, $06     ;PPU address and string length.
 ;             'S    P    A    C    E    .'
 LA208:  .byte $1C, $19, $0A, $0C, $0E, $07
-
-LA209:  .byte $00           ;End PPU string write.
+LA209:  .byte $00               ;End PPU string write.
 
 ;Writes end message on name table 0 in row $2180 (13th row from top).
-LA20F:  .byte $21           ;PPU address and string length.
-LA210:  .byte $83           ;PPU address low byte.
-LA211:  .byte $18           ;PPU string length.
+LA20F:  .byte $21, $83, $18     ;PPU address and string length.
 ;             'B    U    T    ,    I    T    _    M    A    Y    _    B    E    _    I    N'
 LA212:  .byte $0B, $1E, $1D, $00, $12, $1D, $FF, $16, $0A, $22, $FF, $0B, $0E, $FF, $12, $17
 ;             'V    A    D    E    D    _    B    Y'
 LA222:  .byte $1F, $0A, $0D, $0E, $0D, $FF, $0B, $22
 
 ;Writes end message on name table 0 in row $21C0 (15th row from top).
-LA22A:  .byte $21           ;PPU address and string length.
-LA22B:  .byte $C2           ;PPU address low byte.
-LA22C:  .byte $12           ;PPU string length.
+LA22A:  .byte $21, $C2, $12     ;PPU address and string length.
 ;             'T    H    E    _    O    T    H    E    R    _    M    E    T    R    O    I'
 LA22D:  .byte $1D, $11, $0E, $FF, $18, $1D, $11, $0E, $1B, $FF, $16, $0E, $1D, $1B, $18, $12
 ;             'D    .'
 LA23D:  .byte $0D, $07
-
-LA23F:  .byte $00           ;End PPU string write.
+LA23F:  .byte $00               ;End PPU string write.
 
 ;Writes end message on name table 0 in row $2200 (18th row from top).
-LA240:  .byte $22           ;PPU address and string length.
-LA241:  .byte $03           ;PPU address low byte.
-LA242:  .byte $18           ;PPU string length.
+LA240:  .byte $22, $03, $18     ;PPU address and string length.
 ;             'P    R    A    Y    _    F    O    R    _    A    _    T    R    U    E    _'
 LA243:  .byte $19, $1B, $0A, $22, $FF, $0F, $18, $1B, $FF, $0A, $FF, $1D, $1B, $1E, $0E, $FF
 ;             'P    E    A    C    E    _    I    N'
 LA253:  .byte $19, $0E, $0A, $0C, $0E, $FF, $12, $17
 
 ;Writes end message on name table 0 in row $2240 (19th row from top).
-LA25B:  .byte $22           ;PPU address and string length.
-LA25C:  .byte $42           ;PPU address low byte.
-LA25D:  .byte $06           ;PPU string length.
+LA25B:  .byte $22, $42, $06     ;PPU address and string length.
 ;             'S    P    A    C    E    !'
 LA25E:  .byte $1C, $19, $0A, $0C, $0E, $3F 
-
-LA25F:  .byte $00           ;End PPU string write.
+LA25F:  .byte $00               ;End PPU string write.
 
 ;The following pointer table is accessed by the NMIScreenWrite routine.
 ;It is used to locate the start of the PPU strings below.
@@ -3826,61 +3736,41 @@ EndMsgStrngTbl1:
 LA265:  .word $A26D, $A276, $A27F, $A288
 
 ;Erases end message on name table 0 in row $2060 (4th row from top).
-LA26D:  .byte $20           ;PPU address and string length.
-LA26E:  .byte $6D           ;PPU address low byte.
-LA26F:  .byte $48           ;PPU string length.
-LA270:  .byte $FF           ;Repeat bit set. Repeats entry 8 times.
+LA26D:  .byte $20, $6D, $48     ;PPU address and string length.
+LA270:  .byte $FF               ;Repeat bit set. Repeats entry 8 times.
 
 ;Erases end message on name table 0 in row $20C0 (7th row from top).
-LA271:  .byte $20           ;PPU address and string length.
-LA272:  .byte $C3           ;PPU address low byte.
-LA273:  .byte $5A           ;PPU string length.
-LA274:  .byte $FF           ;Repeat bit set. Repeats entry 26 times.
-
-LA275:  .byte $00           ;End PPU string write.
+LA271:  .byte $20, $C3, $5A      ;PPU address and string length.
+LA274:  .byte $FF               ;Repeat bit set. Repeats entry 26 times.
+LA275:  .byte $00               ;End PPU string write.
 
 ;Erases end message on name table 0 in row $2100 (9th row from top).
-LA276:  .byte $21           ;PPU address and string length.
-LA277:  .byte $03           ;PPU address low byte.
-LA278:  .byte $57           ;PPU string length.
-LA279:  .byte $FF           ;Repeat bit set. Repeats entry 23 times.
+LA276:  .byte $21, $03, $57     ;PPU address and string length.
+LA279:  .byte $FF               ;Repeat bit set. Repeats entry 23 times.
 
 ;Erases end message on name table 0 in row $2140 (11th row from top).
-LA27A:  .byte $21           ;PPU address and string length.
-LA27B:  .byte $42           ;PPU address low byte.
-LA27C:  .byte $4A           ;PPU string length.
-LA27D:  .byte $FF           ;Repeat bit set. Repeats entry 10 times.
-
-LA27E:  .byte $00           ;End PPU string write.
+LA27A:  .byte $21, $42, $4A     ;PPU address and string length.
+LA27D:  .byte $FF               ;Repeat bit set. Repeats entry 10 times.
+LA27E:  .byte $00               ;End PPU string write.
 
 ;Erases end message on name table 0 in row $2180 (13th row from top).
-LA27F:  .byte $21           ;PPU address and string length.
-LA280:  .byte $83           ;PPU address low byte.
-LA281:  .byte $58           ;PPU string length.
-LA282:  .byte $FF           ;Repeat bit set. Repeats entry 24 times.
+LA27F:  .byte $21, $83, $58     ;PPU address and string length.
+LA282:  .byte $FF               ;Repeat bit set. Repeats entry 24 times.
 
 ;Erases end message on name table 0 in row $21C0 (15th row from top).
-LA283:  .byte $21           ;PPU address and string length.
-LA284:  .byte $C2           ;PPU address low byte.
-LA285:  .byte $52           ;PPU string length.
-LA286:  .byte $FF           ;Repeat bit set. Repeats entry 12 times.
-
-LA287:  .byte $00           ;End PPU string write.
+LA283:  .byte $21, $C2, $52     ;PPU address and string length.
+LA286:  .byte $FF               ;Repeat bit set. Repeats entry 12 times.
+LA287:  .byte $00               ;End PPU string write.
 
 ;Erases end message on name table 0 in row $2200 (18th row from top).
-LA288:  .byte $22           ;PPU address and string length.
-LA289:  .byte $03           ;PPU address low byte.
-LA28A:  .byte $58           ;PPU string length.
-LA28B:  .byte $FF           ;Repeat bit set. Repeats entry 24 times.
+LA288:  .byte $22, $03, $58     ;PPU address and string length.
+LA28B:  .byte $FF               ;Repeat bit set. Repeats entry 24 times.
 
 
 ;Erases end message on name table 0 in row $2240 (19th row from top).
-LA28C:  .byte $22           ;PPU address and string length.
-LA28D:  .byte $42           ;PPU address low byte.
-LA28E:  .byte $4A           ;PPU string length.
-LA28F:  .byte $FF           ;Repeat bit set. Repeats entry 10 times.
-
-LA290:  .byte $00           ;End PPU string write
+LA28C:  .byte $22, $42, $4A     ;PPU address and string length.
+LA28F:  .byte $FF               ;Repeat bit set. Repeats entry 10 times.
+LA290:  .byte $00               ;End PPU string write
 
 ;The following table is used by the LoadCredits routine to load the end credits on the screen.
 
@@ -3891,460 +3781,311 @@ LA2C1:  .word $A4BD, $A4CD, $A4D2, $A4D7, $A4DC, $A4E1, $A4E6, $A4EB, $A4EF, $A4
 LA2D9:  .word $A51F, $A524, $A51F, $A524, $A538, $A53D, $A538, $A53D
 
 ;Writes credits on name table 0 in row $2020 (2nd row from top).
-LA2E9:  .byte $20           ;PPU address and string length.
-LA2EA:  .byte $2C           ;PPU address low byte.
-LA2EB:  .byte $0A           ;PPU string length.
+LA2E9:  .byte $20, $2C, $0A     ;PPU address and string length.
 ;             'H    A    I    _    Y    U    K    A    M    I'
 LA2EC:  .byte $11, $0A, $12, $FF, $22, $1E, $14, $0A, $16, $12
 
 ;Clears attribute table 0 starting at $23C0.
-LA2F6:  .byte $23           ;PPU address and string length.
-LA2F7:  .byte $C0           ;PPU address low byte.
-LA2F8:  .byte $60           ;PPU string length.
-LA2F9:  .byte $00           ;Repeat bit set. Repeats entry 32 times.
-
-LA2FA:  .byte $00           ;End PPU string write.
+LA2F6:  .byte $23, $C0, $60     ;PPU address and string length.
+LA2F9:  .byte $00               ;Repeat bit set. Repeats entry 32 times.
+LA2FA:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2060 (4th row from top)
-LA2FB:  .byte $20           ;PPU address and string length.
-LA2FC:  .byte $6A           ;PPU address low byte.
-LA2FD:  .byte $0D           ;PPU string length.
+LA2FB:  .byte $20, $6A, $0D     ;PPU address and string length.
 ;             'Z    A    R    U    _    S    O    B    A    J    I    M    A'
 LA2FE:  .byte $23, $0A, $1B, $1E, $FF, $1C, $18, $0B, $0A, $13, $12, $16, $0A
 
 ;Writes credits on name table 0 in row $20A0 (6th row from top).
-LA30B:  .byte $20           ;PPU address and string length.
-LA30C:  .byte $AB           ;PPU address low byte.
-LA30D:  .byte $0B           ;PPU string length.
+LA30B:  .byte $20, $AB, $0B     ;PPU address and string length.
 ;             'G    P    Z    _    S    E    N    G    O    K    U'
 LA30E:  .byte $10, $19, $23, $FF, $1C, $0E, $17, $10, $18, $14, $1E
-
-LA319:  .byte $00           ;End PPU string write.
-LA31A:  .byte $00           ;End PPU string write.
+LA319:  .byte $00               ;End PPU string write.
+LA31A:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2160 (12th row from top).
-LA31B:  .byte $21           ;PPU address and string length.
-LA31C:  .byte $6A           ;PPU address low byte.
-LA31D:  .byte $0A           ;PPU string length.
+LA31B:  .byte $21, $6A, $0A     ;PPU address and string length.
 ;             'N    .    S    H    I    O    T    A    N    I'
 LA31E:  .byte $17, $07, $1C, $11, $12, $18, $1D, $0A, $17, $12 
 
 ;Clears attribute table 0 starting at $23E0
-LA328:  .byte $23           ;PPU address and string length.
-LA329:  .byte $E0           ;PPU address low byte.
-LA32A:  .byte $60           ;PPU string length.
-LA32B:  .byte $00           ;Repeat bit set. Repeats entry 32 times.
-
-LA32C:  .byte $00           ;End PPU string write.
+LA328:  .byte $23, $E0, $60     ;PPU address and string length.
+LA32B:  .byte $00               ;Repeat bit set. Repeats entry 32 times.
+LA32C:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $21E0 (16th row from top).
-LA32D:  .byte $21           ;PPU address and string length.
-LA32E:  .byte $EB           ;PPU address low byte.
-LA32F:  .byte $08           ;PPU string length.
+LA32D:  .byte $21, $EB, $08     ;PPU address and string length.
 ;             'M    .    H    O    U    D    A    I'
 LA330:  .byte $16, $07, $11, $18, $1E, $0D, $0A, $12
-
-LA338:  .byte $00           ;End PPU string write.
+LA338:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $22A0 (22nd row from top).
-LA339:  .byte $22           ;PPU address and string length.
-LA33A:  .byte $A7           ;PPU address low byte.
-LA33B:  .byte $12           ;PPU string length.
+LA339:  .byte $22, $A7, $12     ;PPU address and string length.
 ;             'S    P    E    C    I    A    L    _    T    H    A    N    K    S    _    _ '
 LA33C:  .byte $1C, $19, $0E, $0C, $12, $0A, $15, $FF, $1D, $11, $0A, $17, $14, $1C, $FF, $FF
 ;             'T    O'
 LA34C:  .byte $1D, $18 
-
-LA34E:  .byte $00           ;End PPU string write.
+LA34E:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $22E0 (24nd row from top).
-LA34F:  .byte $22           ;PPU address and string length.
-LA350:  .byte $EC           ;PPU address low byte.
-LA351:  .byte $08           ;PPU string length.
+LA34F:  .byte $22, $EC, $08     ;PPU address and string length.
 ;             'K    E    N    _    Z    U    R    I'
 LA352:  .byte $14, $0E, $17, $FF, $23, $1E, $1B, $12
 
 ;Writes credits on name table 0 in row $2320 (26nd row from top).
-LA35A:  .byte $23           ;PPU address and string length.
-LA35B:  .byte $2E           ;PPU address low byte.
-LA35C:  .byte $04           ;PPU string length.
+LA35A:  .byte $23, $2E, $04     ;PPU address and string length.
 ;             'S    U    M    I'
 LA35D:  .byte $1C, $1E, $16, $12
-
-LA361:  .byte $00           ;End PPU string write.
+LA361:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2360 (28nd row from top).
-LA362:  .byte $23           ;PPU address and string length.
-LA363:  .byte $6C           ;PPU address low byte.
-LA364:  .byte $07           ;PPU string length.
+LA362:  .byte $23, $6C, $07     ;PPU address and string length.
 ;             'I    N    U    S    A    W    A'
 LA365:  .byte $12, $17, $1E, $1C, $0A, $20, $0A
 
 ;Writes credits on name table 0 in row $23A0 (bottom row).
-LA36C:  .byte $23           ;PPU address and string length.
-LA36D:  .byte $AD           ;PPU address low byte.
-LA36E:  .byte $05           ;PPU string length.
+LA36C:  .byte $23, $AD, $05     ;PPU address and string length.
 ;             'K    A    C    H    O'
 LA36F:  .byte $14, $0A, $0C, $11, $18
-
-LA374:  .byte $00           ;End PPU string write.
+LA374:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2820 (2nd row from top).
-LA375:  .byte $28           ;PPU address and string length.
-LA376:  .byte $28           ;PPU address low byte.
-LA377:  .byte $4E           ;PPU string length.
-LA378:  .byte $FF           ;Repeat bit set. Repeats entry 14 times.
+LA375:  .byte $28, $28, $4E     ;PPU address and string length.
+LA378:  .byte $FF               ;Repeat bit set. Repeats entry 14 times.
 
 ;Writes credits on name table 2 in row $2860 (4th row from top).
-LA379:  .byte $28           ;PPU address and string length.
-LA37A:  .byte $6C           ;PPU address low byte.
-LA37B:  .byte $07           ;PPU string length.
+LA379:  .byte $28, $6C, $07     ;PPU address and string length.
 ;             'H    Y    A    K    K    A    N'
 LA37C:  .byte $11, $22, $0A, $14, $14, $0A, $17
-
-LA383:  .byte $00           ;End PPU string write.
+LA383:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $28A0 (6th row from top).
-LA384:  .byte $28           ;PPU address and string length.
-LA385:  .byte $A8           ;PPU address low byte.
-LA386:  .byte $13           ;PPU string length.
+LA384:  .byte $28, $A8, $13     ;PPU address and string length.
 ;             '_    _    _    _    _    G    O    Y    A    K    E    _    _    _    _    _'
 LA387:  .byte $FF, $FF, $FF, $FF, $FF, $10, $18, $22, $0A, $14, $0E, $FF, $FF, $FF, $FF, $FF
 ;             '_    _    _'
 LA397:  .byte $FF, $FF, $FF
 
 ;Writes credits on name table 2 in row $28E0 (8th row from top).
-LA39A:  .byte $28           ;PPU address and string length.
-LA39B:  .byte $E8           ;PPU address low byte.
-LA39C:  .byte $4F           ;PPU string length.
-LA39D:  .byte $FF           ;Repeat bit set. Repeats entry 15 times.
-
-LA39E:  .byte $00           ;End PPU string write.
+LA39A:  .byte $28, $E8, $4F     ;PPU address and string length.
+LA39D:  .byte $FF               ;Repeat bit set. Repeats entry 15 times.
+LA39E:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2920 (10th row from top).
-LA39F:  .byte $29           ;PPU address and string length.
-LA3A0:  .byte $2C           ;PPU address low byte.
-LA3A1:  .byte $07           ;PPU string length.
+LA39F:  .byte $29, $2C, $07     ;PPU address and string length.
 ;             'H    A    R    A    D    A    _'
 LA3A2:  .byte $11, $0A, $1B, $0A, $0D, $0A, $FF
-
-LA3A9:  .byte $00           ;End PPU string write.
+LA3A9:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2960 (12th row from top).
-LA3AA:  .byte $29           ;PPU address and string length.
-LA3AB:  .byte $66           ;PPU address low byte.
-LA3AC:  .byte $16           ;PPU string length.
+LA3AA:  .byte $29, $66, $16     ;PPU address and string length.
 ;             '_    _    _    _    _    _    _    P    E    N    P    E    N    _    _    _'
 LA3AD:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $19, $0E, $17, $19, $0E, $17, $FF, $FF, $FF
 ;             '_    _    _    _    _    _'
 LA3BD:  .byte $FF, $FF, $FF, $FF, $FF, $FF
 
 ;Writes credits on name table 2 in row $29A0 (14th row from top).
-LA3C3:  .byte $29           ;PPU address and string length.
-LA3C4:  .byte $A8           ;PPU address low byte.
-LA3C5:  .byte $4F           ;PPU string length.
-LA3C6:  .byte $FF           ;Repeat bit set. Repeats entry 15 times.
-
-LA3C7:  .byte $00           ;End PPU string write.
+LA3C3:  .byte $29, $A8, $4F     ;PPU address and string length.
+LA3C6:  .byte $FF               ;Repeat bit set. Repeats entry 15 times.
+LA3C7:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $29E0 (16th row from top).
-LA3C8:  .byte $29           ;PPU address and string length.
-LA3C9:  .byte $EA           ;PPU address low byte.
-LA3CA:  .byte $0C           ;PPU string length.
+LA3C8:  .byte $29, $EA, $0C     ;PPU address and string length.
 ;             'C    O    N    V    E    R    T    E    D    _    B    Y'
 LA3CB:  .byte $0C, $18, $17, $1F, $0E, $1B, $1D, $0E, $0D, $FF, $0B, $22
-
-LA3D7:  .byte $00           ;End PPU string write.
+LA3D7:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2A20 (18th row from top).
-LA3D8:  .byte $2A           ;PPU address and string length.
-LA3D9:  .byte $26           ;PPU address low byte.
-LA3DA:  .byte $11           ;PPU string length.
+LA3D8:  .byte $2A , $26, $11    ;PPU address and string length.
 ;             '_    _    _    _    _    T    .    N    A    R    I    H    I    R    O    _'
 LA3DB:  .byte $FF, $FF, $FF, $FF, $FF, $1D, $07, $17, $0A, $1B, $12, $11, $12, $1B, $18, $FF
 ;             '_'
 LA3EB:  .byte $FF
 
 ;Writes credits on name table 2 in row $2A60 (20th row from top).
-LA3EC:  .byte $2A           ;PPU address and string length.
-LA3ED:  .byte $67           ;PPU address low byte.
-LA3EE:  .byte $51           ;PPU string length.
-LA3EF:  .byte $FF           ;Repeat bit set. Repeats entry 17 times.
-
-LA3F0:  .byte $00           ;End PPU string write.
+LA3EC:  .byte $2A, $67, $51     ;PPU address and string length.
+LA3EF:  .byte $FF               ;Repeat bit set. Repeats entry 17 times.
+LA3F0:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2AE0 (24th row from top).
-LA3F1:  .byte $2A           ;PPU address and string length.
-LA3F2:  .byte $EB           ;PPU address low byte.
-LA3F3:  .byte $0B           ;PPU string length.
+LA3F1:  .byte $2A, $EB, $0B     ;PPU address and string length.
 ;             'A    S    S    I    S    T    E    D    _    B    Y'
 LA3F4:  .byte $0A, $1C, $1C, $12, $1C, $1D, $0E, $0D, $FF, $0B, $22
 
 ;Writes credits on name table 2 in row $2B20 (26th row from top).
-LA3FF:  .byte $2B           ;PPU address and string length.
-LA400:  .byte $28           ;PPU address low byte.
-LA401:  .byte $0F           ;PPU string length.
+LA3FF:  .byte $2B, $28, $0F     ;PPU address and string length.
 ;             '_    _    _    M    A    K    O    T    O    _    K    A    N    O    H'
 LA402:  .byte $FF, $FF, $FF, $16, $0A, $14, $18, $1D, $18, $FF, $14, $0A, $17, $18, $11
-
-LA411:  .byte $00           ;End PPU string write.
+LA411:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2BA0 (bottom row).
-LA412:  .byte $2B           ;PPU address and string length.
-LA413:  .byte $A6           ;PPU address low byte.
-LA414:  .byte $53           ;PPU string length.
-LA415:  .byte $FF           ;Repeat bit set. Repeats entry 19 times.
-
-LA416:  .byte $00           ;End PPU string write.
+LA412:  .byte $2B, $A6, $53     ;PPU address and string length.
+LA415:  .byte $FF               ;Repeat bit set. Repeats entry 19 times.
+LA416:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2020 (2nd row from the top).
-LA417:  .byte $20           ;PPU address and string length.
-LA418:  .byte $2B           ;PPU address low byte.
-LA419:  .byte $0B           ;PPU string length.
+LA417:  .byte $20, $2B, $0B     ;PPU address and string length.
 ;             'D    I    R    E    C    T    E    D    _    B    Y'
 LA41A:  .byte $0D, $12, $1B, $0E, $0C, $1D, $0E, $0D, $FF, $0B, $22
-
-LA425:  .byte $00           ;End PPU string write.
+LA425:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2060 (4th row from the top).
-LA426:  .byte $20           ;PPU address and string length.
-LA427:  .byte $67           ;PPU address low byte.
-LA428:  .byte $14           ;PPU string length.
+LA426:  .byte $20, $67, $14     ;PPU address and string length.
 ;             '_    _    _    _    _    Y    A    M    A    M    O    T    O    _    _    _'
 LA429:  .byte $FF, $FF, $FF, $FF, $FF, $22, $0A, $16, $0A, $16, $18, $1D, $18, $FF, $FF, $FF
 ;             '_    _    _    _'
 LA439:  .byte $FF, $FF, $FF, $FF
 
 ;Writes credits on name table 0 in row $20A0 (6th row from the top).
-LA43D:  .byte $20           ;PPU address and string length.
-LA43E:  .byte $AA           ;PPU address low byte.
-LA43F:  .byte $4E           ;PPU string length.
-LA440:  .byte $FF           ;Repeat bit set. Repeats entry 14 times.
-
-LA441:  .byte $00           ;End PPU string write.
+LA43D:  .byte $20, $AA, $4E     ;PPU address and string length.
+LA440:  .byte $FF               ;Repeat bit set. Repeats entry 14 times.
+LA441:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2120 (10th row from the top).
-LA442:  .byte $21           ;PPU address and string length.
-LA443:  .byte $27           ;PPU address low byte.
-LA444:  .byte $11           ;PPU string length.
+LA442:  .byte $21, $27, $11     ;PPU address and string length.
 ;             '_    _    C    H    I    E    F    _    D    I    R    E    C    T    O    R'
 LA445:  .byte $FF, $FF, $0C, $11, $12, $0E, $0F, $FF, $0D, $12, $1B, $0E, $0C, $1D, $18, $1B
 ;             '_'
 LA455:  .byte $FF
 
 ;Writes credits on name table 0 in row $2160 (12th row from the top).
-LA456:  .byte $21           ;PPU address and string length.
-LA457:  .byte $68           ;PPU address low byte.
-LA458:  .byte $11           ;PPU string length.
+LA456:  .byte $21, $68, $11     ;PPU address and string length.
 ;             '_    _    S    A    T    O    R    U    _    O    K    A    D    A    _    _'
 LA459:  .byte $FF, $FF, $1C, $0A, $1D, $18, $1B, $1E, $FF, $18, $14, $0A, $0D, $0A, $FF, $FF
 ;             '_'
 LA469:  .byte $FF
-
-LA46A:  .byte $00           ;End PPU string write.
+LA46A:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $21E0 (16th row from the top).
-LA46B:  .byte $21           ;PPU address and string length.
-LA46C:  .byte $E6           ;PPU address low byte.
-LA46D:  .byte $58           ;PPU string length.
-LA46E:  .byte $FF           ;Repeat bit set. Repeats entry 24 times.
-
-LA46F:  .byte $00           ;End PPU string write.
+LA46B:  .byte $21, $E6, $58     ;PPU address and string length.
+LA46E:  .byte $FF               ;Repeat bit set. Repeats entry 24 times.
+LA46F:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2220 (18th row from the top).
-LA470:  .byte $22           ;PPU address and string length.
-LA471:  .byte $2B           ;PPU address low byte.
-LA472:  .byte $10           ;PPU string length.
+LA470:  .byte $22, $2B, $10     ;PPU address and string length.
 ;             'P    R    O    D    U    C    E    D    _    B    Y    _    _    _    _    _'
 LA473:  .byte $19, $1B, $18, $0D, $1E, $0C, $0E, $0D, $FF, $0B, $22, $FF, $FF, $FF, $FF, $FF
 
 ;Writes credits on name table 0 in row $2260 (20th row from the top).
-LA483:  .byte $22           ;PPU address and string length.
-LA484:  .byte $6A           ;PPU address low byte.
-LA485:  .byte $0C           ;PPU string length.
+LA483:  .byte $22, $6A, $0C     ;PPU address and string length.
 ;             'G    U    N    P    E    I    _    Y    O    K    O    I'
 LA486:  .byte $10, $1E, $17, $19, $0E, $12, $FF, $22, $18, $14, $18, $12
-
-LA492:  .byte $00           ;End PPU string write.
+LA492:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $22A0 (22nd row from the top).
-LA493:  .byte $22           ;PPU address and string length.
-LA494:  .byte $A6           ;PPU address low byte.
-LA495:  .byte $53           ;PPU string length.
-LA496:  .byte $FF           ;Repeat bit set. Repeats entry 19 times.
+LA493:  .byte $22, $A6, $53     ;PPU address and string length.
+LA496:  .byte $FF               ;Repeat bit set. Repeats entry 19 times.
 
 ;Writes credits on name table 0 in row $22E0 (24th row from the top).
-LA497:  .byte $22           ;PPU address and string length.
-LA498:  .byte $E8           ;PPU address low byte.
-LA499:  .byte $4F           ;PPU string length.
-LA49A:  .byte $FF           ;Repeat bit set. Repeats entry 15 times.
-
-LA49B:  .byte $00           ;End PPU string write.
+LA497:  .byte $22, $E8, $4F     ;PPU address and string length.
+LA49A:  .byte $FF               ;Repeat bit set. Repeats entry 15 times.
+LA49B:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2320 (26th row from the top).
-LA49C:  .byte $23           ;PPU address and string length.
-LA49D:  .byte $29           ;PPU address low byte.
-LA49E:  .byte $4D           ;PPU string length.
-LA49F:  .byte $FF           ;Repeat bit set. Repeats entry 13 times.
+LA49C:  .byte $23, $29, $4D     ;PPU address and string length.
+LA49F:  .byte $FF               ;Repeat bit set. Repeats entry 13 times.
 
 ;Writes credits on name table 0 in row $2340 (27th row from the top).
-LA4A0:  .byte $23           ;PPU address and string length.
-LA4A1:  .byte $4B           ;PPU address low byte.
-LA4A2:  .byte $09           ;PPU string length.
+LA4A0:  .byte $23, $4B, $09     ;PPU address and string length.
 ;             'C    O    P    Y    R    I    G    H    T'
 LA4A3:  .byte $0C, $18, $19, $22, $1B, $12, $10, $11, $1D
-
-LA4AC:  .byte $00           ;End PPU string write.
+LA4AC:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2360 (28th row from the top).
-LA4AD:  .byte $23           ;PPU address and string length.
-LA4AE:  .byte $6B           ;PPU address low byte.
-LA4AF:  .byte $4A           ;PPU string length.
-LA4B0:  .byte $FF           ;Repeat bit set. Repeats entry 10 times.
+LA4AD:  .byte $23, $6B, $4A     ;PPU address and string length.
+LA4B0:  .byte $FF               ;Repeat bit set. Repeats entry 10 times.
 
 ;Writes credits on name table 0 in row $2380 (29th row from the top).
-LA4B1:  .byte $23           ;PPU address and string length.
-LA4B2:  .byte $8E           ;PPU address low byte.
-LA4B3:  .byte $04           ;PPU string length.
+LA4B1:  .byte $23, $8E, $04     ;PPU address and string length.
 ;             '1    9    8    6'
 LA4B4:  .byte $01, $09, $08, $06 
 
 ;Writes credits on name table 0 in row $23A0 (bottom row).
-LA4B8:  .byte $23           ;PPU address and string length.
-LA4B9:  .byte $A8           ;PPU address low byte.
-LA4BA:  .byte $4F           ;PPU string length.
-LA4BB:  .byte $FF           ;Repeat bit set. Repeats entry 10 times.
-
-LA4BC:  .byte $00           ;End PPU string write.
+LA4B8:  .byte $23, $A8, $4F     ;PPU address and string length.
+LA4BB:  .byte $FF               ;Repeat bit set. Repeats entry 10 times.
+LA4BC:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2800 (top row)
-LA4BD:  .byte $28           ;PPU address and string length.
-LA4BE:  .byte $0C           ;PPU address low byte.
-LA4BF:  .byte $08           ;PPU string length.
+LA4BD:  .byte $28, $0C, $08     ;PPU address and string length.
 ;             'N    I    N    T    E    N    D    O'
 LA4C0:  .byte $17, $12, $17, $1D, $0E, $17, $0D, $18
 
 ;Writes credits on name table 2 in row $2860 (4th row from top).
-LA4C8:  .byte $28           ;PPU address and string length.
-LA4C9:  .byte $66           ;PPU address low byte.
-LA4CA:  .byte $51           ;PPU string length.
-LA4CB:  .byte $FF           ;Repeat bit set. Repeats entry 17 times.
-
-LA4CC:  .byte $00           ;End PPU string write.
+LA4C8:  .byte $28, $66, $51     ;PPU address and string length.
+LA4CB:  .byte $FF               ;Repeat bit set. Repeats entry 17 times.
+LA4CC:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $28A0 (6th row from top).
-LA4CD:  .byte $28           ;PPU address and string length.
-LA4CE:  .byte $AA           ;PPU address low byte.
-LA4CF:  .byte $4C           ;PPU string length.
-LA4D0:  .byte $FF           ;Repeat bit set. Repeats entry 12 times.
-
-LA4D1:  .byte $00           ;End PPU string write.
+LA4CD:  .byte $28, $AA, $4C     ;PPU address and string length.
+LA4D0:  .byte $FF               ;Repeat bit set. Repeats entry 12 times.
+LA4D1:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2920 (10th row from top).
-LA4D2:  .byte $29           ;PPU address and string length.
-LA4D3:  .byte $26           ;PPU address low byte.
-LA4D4:  .byte $5B           ;PPU string length.
-LA4D5:  .byte $FF           ;Repeat bit set. Repeats entry 27 times.
-
-LA4D6:  .byte $00           ;End PPU string write.
+LA4D2:  .byte $29, $26, $5B     ;PPU address and string length.
+LA4D5:  .byte $FF               ;Repeat bit set. Repeats entry 27 times.
+LA4D6:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2960 (12th row from top).
-LA4D7:  .byte $29           ;PPU address and string length.
-LA4D8:  .byte $67           ;PPU address low byte.
-LA4D9:  .byte $52           ;PPU string length.
-LA4DA:  .byte $FF           ;Repeat bit set. Repeats entry 18 times.
-
-LA4DB:  .byte $00           ;End PPU string write.
+LA4D7:  .byte $29, $67, $52     ;PPU address and string length.
+LA4DA:  .byte $FF               ;Repeat bit set. Repeats entry 18 times.
+LA4DB:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $29E0 (16th row from top).
-LA4DC:  .byte $29           ;PPU address and string length.
-LA4DD:  .byte $E6           ;PPU address low byte.
-LA4DE:  .byte $54           ;PPU string length.
-LA4DF:  .byte $FF           ;Repeat bit set. Repeats entry 20 times.
-
-LA4E0:  .byte $00           ;End PPU string write.
+LA4DC:  .byte $29, $E6, $54     ;PPU address and string length.
+LA4DF:  .byte $FF               ;Repeat bit set. Repeats entry 20 times.
+LA4E0:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2A20 (18th row from top).
-LA4E1:  .byte $2A           ;PPU address and string length.
-LA4E2:  .byte $28           ;PPU address low byte.
-LA4E3:  .byte $55           ;PPU string length.
-LA4E4:  .byte $FF           ;Repeat bit set. Repeats entry 21 times.
-
-LA4E5:  .byte $00           ;End PPU string write.
+LA4E1:  .byte $2A, $28, $55     ;PPU address and string length.
+LA4E4:  .byte $FF               ;Repeat bit set. Repeats entry 21 times.
+LA4E5:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2AE0 (24th row from top).
-LA4E6:  .byte $2A           ;PPU address and string length.
-LA4E7:  .byte $E6           ;PPU address low byte.
-LA4E8:  .byte $50           ;PPU string length.
-LA4E9:  .byte $FF           ;Repeat bit set. Repeats entry 16 times.
-
-LA4EA:  .byte $00           ;End PPU string write.
+LA4E6:  .byte $2A, $E6, $50     ;PPU address and string length.
+LA4E9:  .byte $FF               ;Repeat bit set. Repeats entry 16 times.
+LA4EA:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 2 in row $2B20 (26th row from top).
-LA4EB:  .byte $2B           ;PPU address and string length.
-LA4EC:  .byte $29           ;PPU address low byte.
-LA4ED:  .byte $4E           ;PPU string length.
-LA4EE:  .byte $FF           ;Repeat bit set. Repeats entry 14 times.
-
-LA4EF:  .byte $00           ;End PPU string write.
+LA4EB:  .byte $2B, $29, $4E     ;PPU address and string length.
+LA4EE:  .byte $FF               ;Repeat bit set. Repeats entry 14 times.
+LA4EF:  .byte $00               ;End PPU string write.
 
 ;Writes the top half of 'The End' on name table 0 in row $2020 (2nd row from top).
-LA4F0:  .byte $20           ;PPU address and string length.
-LA4F1:  .byte $26           ;PPU address low byte.
-LA4F2:  .byte $14           ;PPU string length.
+LA4F0:  .byte $20, $26, $14     ;PPU address and string length.
 LA4F3:  .byte $FF, $FF, $FF, $FF, $FF, $24, $25, $26, $27, $FF, $FF, $2C, $2D, $2E, $2F, $FF
 LA503:  .byte $FF, $FF, $FF, $FF
-
-LA507:  .byte $00           ;End PPU string write.
+LA507:  .byte $00               ;End PPU string write.
 
 ;Writes the bottom half of 'The End' on name table 0 in row $2040 (3rd row from top).
-LA508:  .byte $20           ;PPU address and string length.
-LA509:  .byte $4B           ;PPU address low byte.
-LA50A:  .byte $0A           ;PPU string length.
+LA508:  .byte $20, $4B, $0A     ;PPU address and string length.
 LA50B:  .byte $28, $29, $2A, $2B, $FF, $FF, $02, $03, $04, $05
 
 ;Writes credits on name table 0 in row $2060 (4th row from top).
-LA515:  .byte $20           ;PPU address and string length.
-LA516:  .byte $6A           ;PPU address low byte.
-LA517:  .byte $4C           ;PPU string length.
-LA518:  .byte $FF           ;Repeat bit set. Repeats entry 12 times.
-
-LA519:  .byte $00           ;End PPU string write.
+LA515:  .byte $20, $6A, $4C     ;PPU address and string length.
+LA518:  .byte $FF               ;Repeat bit set. Repeats entry 12 times.
+LA519:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2120 (10th row from top).
-LA51A:  .byte $21           ;PPU address and string length.
-LA51B:  .byte $26           ;PPU address low byte.
-LA51C:  .byte $53           ;PPU string length.
-LA51D:  .byte $FF           ;Repeat bit set. Repeats entry 19 times.
-
-LA51E:  .byte $00           ;End PPU string write.
+LA51A:  .byte $21, $26, $53     ;PPU address and string length.
+LA51D:  .byte $FF               ;Repeat bit set. Repeats entry 19 times.
+LA51E:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2160 (12th row from top).
-LA51F:  .byte $21           ;PPU address and string length.
-LA520:  .byte $6A           ;PPU address low byte.
-LA521:  .byte $4C           ;PPU string length.
-LA522:  .byte $FF           ;Repeat bit set. Repeats entry 12 times.
-
-LA523:  .byte $00           ;End PPU string write.
+LA51F:  .byte $21, $6A, $4C     ;PPU address and string length.
+LA522:  .byte $FF               ;Repeat bit set. Repeats entry 12 times.
+LA523:  .byte $00               ;End PPU string write.
 
 ;Writes credits on name table 0 in row $2180 (13th row from top).
-LA524:  .byte $21           ;PPU address and string length.
-LA525:  .byte $88           ;PPU address low byte.
-LA526:  .byte $11           ;PPU string length.
+LA524:  .byte $21, $88, $11     ;PPU address and string length.
 ;             '_    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _'
 LA527:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;             '_'
 LA537:  .byte $FF
 
 ;Writes credits on name table 0 in row $2220 (18th row from top).
-LA538:  .byte $22           ;PPU address and string length.
-LA539:  .byte $26           ;PPU address low byte.
-LA53A:  .byte $4B           ;PPU string length.
-LA53B:  .byte $FF           ;Repeat bit set. Repeats entry 11 times.
-
-LA53C:  .byte $00           ;End PPU string write.
-
-LA53D:  .byte $00           ;End PPU block write.
+LA538:  .byte $22, $26, $4B     ;PPU address and string length.
+LA53B:  .byte $FF               ;Repeat bit set. Repeats entry 11 times.
+LA53C:  .byte $00               ;End PPU string write.
+LA53D:  .byte $00               ;End PPU block write.
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -5598,7 +5339,7 @@ LB1F5:  .byte $3C, $18, $30, $E8, $E8, $C8, $90, $60, $00, $00, $00
 ;------------------------------------------[ Sound Engine ]------------------------------------------
 
 ;SFXdata. The top four entries are used by the noise music player for drum beats.
-LB200:  .byte $00           ;Base for drum beat music data.
+LB200:  .byte $00               ;Base for drum beat music data.
 
 DrumBeat00SFXData:
 LB201:  .byte $10, $01, $18     ;Noise channel music data #$01.
@@ -5712,116 +5453,116 @@ LB2BA:  .byte $00
 ;The tables below contain addresses for SFX handling routines.
 
 ;Noise Init SFX handling routine addresses:
-LB2BB:  .word $B4EE         ;No sound.
-LB2BD:  .word $B52B         ;Screw attack init SFX.
-LB2BF:  .word $B56E         ;Missile launch init SFX.
-LB2C1:  .word $B583         ;Bomb explode init SFX.
-LB2C3:  .word $B598         ;Samus walk init SFX.
-LB2C5:  .word $B50F         ;Spit flame init SFX.
-LB2C7:  .word $B4EE         ;No sound.
-LB2C9:  .word $B4EE         ;No sound.
+LB2BB:  .word $B4EE             ;No sound.
+LB2BD:  .word $B52B             ;Screw attack init SFX.
+LB2BF:  .word $B56E             ;Missile launch init SFX.
+LB2C1:  .word $B583             ;Bomb explode init SFX.
+LB2C3:  .word $B598             ;Samus walk init SFX.
+LB2C5:  .word $B50F             ;Spit flame init SFX.
+LB2C7:  .word $B4EE             ;No sound.
+LB2C9:  .word $B4EE             ;No sound.
 
 ;Noise Continue SFX handling routine addresses:
 
-LB2CB:  .word $B4EE         ;No sound.
-LB2CD:  .word $B539         ;Screw attack continue SFX.
-LB2CF:  .word $B57B         ;Missile launch continue SFX.
-LB2D1:  .word $B58A         ;Bomb explode continue SFX.
-LB2D3:  .word $B58A         ;Samus walk continue SFX.
-LB2D5:  .word $B516         ;Spit flame continue SFX.
-LB2D7:  .word $B4EE         ;No sound.
-LB2D9:  .word $B4EE         ;No sound.
+LB2CB:  .word $B4EE             ;No sound.
+LB2CD:  .word $B539             ;Screw attack continue SFX.
+LB2CF:  .word $B57B             ;Missile launch continue SFX.
+LB2D1:  .word $B58A             ;Bomb explode continue SFX.
+LB2D3:  .word $B58A             ;Samus walk continue SFX.
+LB2D5:  .word $B516             ;Spit flame continue SFX.
+LB2D7:  .word $B4EE             ;No sound.
+LB2D9:  .word $B4EE             ;No sound.
 
 ;SQ1 Init SFX handling routine addresses:
 
-LB2DB:  .word $B6CD         ;Missile pickup init SFX.
-LB2DD:  .word $B6E7         ;Energy pickup init SFX.
-LB2DF:  .word $B735         ;Metal init SFX.
-LB2E1:  .word $B716         ;Bullet fire init SFX.
-LB2E3:  .word $B73C         ;Bird out of hole init SFX.
-LB2E5:  .word $B710         ;Enemy hit init SFX.
-LB2E7:  .word $B703         ;Samus jump init SFX.
-LB2E9:  .word $B77A         ;Wave beam init SFX.
+LB2DB:  .word $B6CD             ;Missile pickup init SFX.
+LB2DD:  .word $B6E7             ;Energy pickup init SFX.
+LB2DF:  .word $B735             ;Metal init SFX.
+LB2E1:  .word $B716             ;Bullet fire init SFX.
+LB2E3:  .word $B73C             ;Bird out of hole init SFX.
+LB2E5:  .word $B710             ;Enemy hit init SFX.
+LB2E7:  .word $B703             ;Samus jump init SFX.
+LB2E9:  .word $B77A             ;Wave beam init SFX.
 
 ;SQ1 Continue SFX handling routine addresses:
 
-LB2EB:  .word $B6B0         ;Missile pickup continue SFX.
-LB2ED:  .word $B6D3         ;Energy pickup continue SFX.
-LB2EF:  .word $B6ED         ;Metal continue SFX.
-LB2F1:  .word $B74F         ;Bullet fire continue SFX.
-LB2F3:  .word $B6ED         ;Bird out of hole continue SFX.
-LB2F5:  .word $B6ED         ;Enemy hit continue SFX.
-LB2F7:  .word $B6ED         ;Samus jump continue SFX.
-LB2F9:  .word $B781         ;Wave beam continue SFX.
+LB2EB:  .word $B6B0             ;Missile pickup continue SFX.
+LB2ED:  .word $B6D3             ;Energy pickup continue SFX.
+LB2EF:  .word $B6ED             ;Metal continue SFX.
+LB2F1:  .word $B74F             ;Bullet fire continue SFX.
+LB2F3:  .word $B6ED             ;Bird out of hole continue SFX.
+LB2F5:  .word $B6ED             ;Enemy hit continue SFX.
+LB2F7:  .word $B6ED             ;Samus jump continue SFX.
+LB2F9:  .word $B781             ;Wave beam continue SFX.
 
 ;Triangle init handling routine addresses:
 
-LB2FB:  .word $B8D2         ;Samus die init SFX.
-LB2FD:  .word $B7AC         ;Door open close init SFX.
-LB2FF:  .word $B8A7         ;Metroid hit init SFX.
-LB301:  .word $B921         ;Statue raise init SFX.
-LB303:  .word $B7D9         ;Beep init SFX.
-LB305:  .word $B7EF         ;Big enemy hit init SFX.
-LB307:  .word $B834         ;Samus to ball init SFX.
-LB309:  .word $B878         ;Bomb launch init SFX.
+LB2FB:  .word $B8D2             ;Samus die init SFX.
+LB2FD:  .word $B7AC             ;Door open close init SFX.
+LB2FF:  .word $B8A7             ;Metroid hit init SFX.
+LB301:  .word $B921             ;Statue raise init SFX.
+LB303:  .word $B7D9             ;Beep init SFX.
+LB305:  .word $B7EF             ;Big enemy hit init SFX.
+LB307:  .word $B834             ;Samus to ball init SFX.
+LB309:  .word $B878             ;Bomb launch init SFX.
 
 ;Triangle continue handling routine addresses:
 
-LB30B:  .word $B8ED         ;Samus die continue SFX.
-LB30E:  .word $B7CB         ;Door open close continue SFX.
-LB30F:  .word $B8B1         ;Metroid hit continue SFX.
-LB311:  .word $B940         ;Statue raise continue SFX.
-LB313:  .word $B7E7         ;Beep continue SFX.
-LB315:  .word $B80E         ;Big enemy hit continue SFX.
-LB317:  .word $B84F         ;Samus to ball continue SFX.
-LB319:  .word $B87F         ;Bomb launch continue SFX.
+LB30B:  .word $B8ED             ;Samus die continue SFX.
+LB30E:  .word $B7CB             ;Door open close continue SFX.
+LB30F:  .word $B8B1             ;Metroid hit continue SFX.
+LB311:  .word $B940             ;Statue raise continue SFX.
+LB313:  .word $B7E7             ;Beep continue SFX.
+LB315:  .word $B80E             ;Big enemy hit continue SFX.
+LB317:  .word $B84F             ;Samus to ball continue SFX.
+LB319:  .word $B87F             ;Bomb launch continue SFX.
 
-LoadNoiseSFXInitFlags:
+LdNseSFXInitFlags:
 LB31B:  LDA NoiseSFXFlag        ;Load A with Noise init SFX flags, (1st SFX cycle).
-LB31E:  LDX #$89            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB320:  BNE GotoSFXCheckFlags       ;Branch always.
+LB31E:  LDX #$89                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB320:  BNE GotoSFXCheckFlags   ;Branch always.
 
 LoadNoiseSFXContFlags:
 LB322:  LDA NoiseContSFX        ;Load A with Noise continue flags, (2nd SFX cycle).
-LB325:  LDX #$8E            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB327:  BNE GotoSFXCheckFlags       ;Branch always.
+LB325:  LDX #$8E                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB327:  BNE GotoSFXCheckFlags   ;Branch always.
 
 LoadSQ1SFXInitFlags:
 LB329:  LDA SQ1SFXFlag          ;Load A with SQ1 init flags, (5th SFX cycle).
-LB32C:  LDX #$93            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB32E:  BNE GotoSFXCheckFlags       ;Branch always.
+LB32C:  LDX #$93                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB32E:  BNE GotoSFXCheckFlags   ;Branch always.
 
 LoadSQ1SFXContFlags:
 LB330:  LDA SQ1ContSFX          ;Load A with SQ1 continue flags, (6th SFX cycle).
-LB333:  LDX #$98            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB335:  BNE GotoSFXCheckFlags       ;Branch always.
+LB333:  LDX #$98                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB335:  BNE GotoSFXCheckFlags   ;Branch always.
 
 GotoSFXCheckFlags:
 LB337:  JSR CheckSFXFlag        ;($B4BD)Checks to see if SFX flags set.     
-LB33A:  JMP ($00E2)         ;if no flag found, Jump to next SFX cycle,
-                    ;else jump to specific SFX handling routine.
-LoadSTriangleSFXInitFlags:
+LB33A:  JMP ($00E2)             ;if no flag found, Jump to next SFX cycle,
+                                ;else jump to specific SFX handling routine.
+LdSTriSFXInitFlags:
 LB33D:  LDA TriangleSFXFlag     ;Load A with Triangle init flags, (7th SFX cycle).
-LB340:  LDX #$9D            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB342:  BNE GotoSFXCheckFlags       ;Brach always.
+LB340:  LDX #$9D                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB342:  BNE GotoSFXCheckFlags   ;Brach always.
 
 LoadTriangleSFXContFlags:
 LB344:  LDA TriangleContSFX     ;Load A with Triangle continue flags, (8th SFX cycle).
-LB347:  LDX #$A2            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB349:  BNE GotoSFXCheckFlags       ;Branch always.
+LB347:  LDX #$A2                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB349:  BNE GotoSFXCheckFlags   ;Branch always.
 
-LoadMultiSFXInitFlags:
+LdMultiSFXInitFlags:
 LB34B:  LDA MultiSFXFlag        ;Load A with Multi init flags, (3rd SFX cycle).
-LB34E:  LDX #$A7            ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB34E:  LDX #$A7                ;Lower address byte in ChooseNextSFXRoutineTbl.
 LB350:  JSR CheckSFXFlag        ;($B4BD)Checks to see if SFX or music flags set.
-LB353:  JSR FindMusicInitIndex      ;($BC53)Find bit containing music init flag.
-LB356:  JSR Add8            ;($BC64)Add 8 to MusicInitIndex.
-LB359:  JMP ($00E2)         ;If no flag found, Jump to next SFX cycle,
-                    ;else jump to specific SFX handling subroutine.
+LB353:  JSR FindMusicInitIndex  ;($BC53)Find bit containing music init flag.
+LB356:  JSR Add8                ;($BC64)Add 8 to MusicInitIndex.
+LB359:  JMP ($00E2)             ;If no flag found, Jump to next SFX cycle,
+                                ;else jump to specific SFX handling subroutine.
 LoadMultiSFXContFlags:
 LB35C:  LDA MultiContSFX        ;Load A with $68C flags (4th SFX cycle).
-LB35F:  LDX #$AC            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LB361:  JMP GotoSFXCheckFlags       ;($B337)Checks to see if SFX or music flags set.
+LB35F:  LDX #$AC                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LB361:  JMP GotoSFXCheckFlags   ;($B337)Checks to see if SFX or music flags set.
 
 LoadSQ1Flags:
 LB364:  JSR LoadSQ1SFXInitFlags ;($B329)Check for SQ1 init flags.
@@ -5831,7 +5572,7 @@ LoadSQ1ChannelSFX:              ;Used to determine which sound registers to chan
 LB368:  LDA #$00                ;($4000 - $4003) - SQ1.
 LB36A:  BEQ +                   ;Branch always.
 
-LoadTriangleChannelSFX:         ;Used to determine which sound registers to change
+LoadTriChannelSFX:              ;Used to determine which sound registers to change
 LB36C:  LDA #$08                ;($4008 - $400B) - Triangle.
 LB36E:  BNE +                   ;Branch always.
 
@@ -5903,10 +5644,10 @@ LB3C1:  CMP #$05                ;Is game paused?  If yes, branch.
 LB3C3:  BEQ ---                 ;
 LB3C5:  LDA #$00                ;Clear SFXPaused when game is running.
 LB3C7:  STA SFXPaused           ;
-LB3CA:  JSR LoadNoiseSFXInitFlags   ;($B31B)Check noise SFX flags.
-LB3CD:  JSR LoadMultiSFXInitFlags   ;($B34B)Check multichannel SFX flags.
-LB3D0:  JSR LoadSTriangleSFXInitFlags   ;($B33D)Check triangle SFX flags.
-LB3D3:  JSR LoadMusicTempFlags      ;($BC36)Check music flags.
+LB3CA:  JSR LdNseSFXInitFlags   ;($B31B)Check noise SFX flags.
+LB3CD:  JSR LdMultiSFXInitFlags ;($B34B)Check multichannel SFX flags.
+LB3D0:  JSR LdSTriSFXInitFlags  ;($B33D)Check triangle SFX flags.
+LB3D3:  JSR LoadMusicTempFlags  ;($BC36)Check music flags.
 
 ClearSFXFlags:
 LB3D6:* LDA #$00                ;
@@ -5918,7 +5659,7 @@ LB3E4:  STA MultiSFXFlag        ;
 LB3E7:  STA MusicInitFlag       ;
 LB3EA:  RTS                     ;
 
-LB3EB:* JSR InitializeSoundAddresses    ;($B404)Prepare to start playing music.     
+LB3EB:* JSR InitSoundAddresses  ;($B404)Prepare to start playing music.     
 LB3EE:  BEQ --                  ;Branch always.
 
 CheckRepeatMusic:
@@ -5933,13 +5674,13 @@ LB3FC:  LDA CurrentMusic        ;Loads A with current music flags and compares i
 LB3FF:  CMP CurrentSFXFlags     ;with current SFX flags.  If both are equal,
 LB402:  BEQ ++                  ;just clear music counters, else clear everything.
 
-InitializeSoundAddresses:       ;
-LB404:* JSR ClearMusicAndSFXAddresses   ;($B41D)Jumps to all subroutines needed to reset
+InitSoundAddresses:             ;
+LB404:* JSR ClrMusAndSFXAddrs   ;($B41D)Jumps to all subroutines needed to reset
 LB407:  JSR ClearSounds         ;($B43E)all sound addresses in order to start
-LB40A:* JSR ClearSpecialAddresses   ;($B40E)playing music.
+LB40A:* JSR ClearSpecialAddrs   ;($B40E)playing music.
 LB40D:  RTS                     ;
 
-ClearSpecialAddresses:
+ClearSpecialAddrs:
 LB40E:  LDA #$00                ;   
 LB410:  STA TriCounterCntrl     ;Clears addresses used for repeating music,
 LB413:  STA SFXPaused           ;pausing music and controlling triangle length.
@@ -5947,7 +5688,7 @@ LB416:  STA CrntMusicRepeat     ;
 LB419:  STA MusicRepeat         ;
 LB41C:  RTS                     ;
 
-ClearMusicAndSFXAddresses:      ;
+ClrMusAndSFXAddrs:              ;
 LB41D:  LDA #$00                ;
 LB41F:  STA SQ1InUse            ;
 LB422:  STA SQ2InUse            ;
@@ -5990,7 +5731,7 @@ MusicBranch00:                  ;
 LB46D:  JSR LoadSQ2ChannelSFX   ;($B374)Prepare to load SQ2 channel with data.
 LB470:  BEQ ++                  ;Branch always.
 MusicBranch01:                  ;
-LB472:  JSR LoadTriangleChannelSFX  ;($B36C)Prepare to load triangle channel with data.
+LB472:  JSR LoadTriChannelSFX   ;($B36C)Prepare to load triangle channel with data.
 LB475:  BEQ ++                  ;Branch always.
 LB477:* JSR LoadNoiseChannelSFX ;($B370)Prepare to load noise channel with data.
 LB47A:* JSR UpdateContFlags     ;($B493)Set continuation flags for this SFX.
@@ -6000,9 +5741,9 @@ LB481:  LDA #$00                ;
 LB483:  STA ThisNoiseFrame,X    ;
 LB486:  STA NoiseSFXData,X      ;Clears all the following addresses before going
 LB489:  STA MultiSFXData,X      ;to the proper SFX handling routine.
-LB48C:  STA ScrewAtkSFXData,X    ;
+LB48C:  STA ScrewAtkSFXData,X   ;
 LB48F:  STA WrtMultiChnDat      ;
-LB492:  RTS                      ;
+LB492:  RTS                     ;
 
 UpdateContFlags:
 LB493:* LDX ChannelType         ;Loads X register with sound channel just changed.
@@ -6012,7 +5753,7 @@ LB49B:  ORA CurrentSFXFlags     ;Load new continuation flags.
 LB49E:  STA NoiseContSFX,X      ;Save results.
 LB4A1:  RTS                     ;
 
-ClearCurrentSFXFlags:
+ClrCrntSFXFlags:
 LB4A2:  LDA #$00                ;Once SFX has completed, this block clears the
 LB4A4:  STA CurrentSFXFlags     ;SFX flag from the current flag register.
 LB4A7:  BEQ -                   ;
@@ -6118,7 +5859,7 @@ LB545:  INC ScrewAtkSFXData     ;Increment every fifth frame.
 LB548:  RTS                     ;
 
 LB549:* JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
-LB54C:  BNE IncrementPeriodIndex    ;Start increasing period index after first ten frames.
+LB54C:  BNE IncPeriodIndex      ;Start increasing period index after first ten frames.
 LB54E:  DEC NoiseSFXData        ;
 LB551:  DEC NoiseSFXData        ;Decrement NoiseSFXData by three every fifth frame.
 LB554:  DEC NoiseSFXData        ;
@@ -6128,7 +5869,7 @@ LB55D:  CMP #$0F                ;appear to be linked to multi SFX channels in
 LB55F:  BNE --                  ;this routine.
 LB561:  JMP EndNoiseSFX         ;($B58F)End SFX.
 
-IncrementPeriodIndex:
+IncPeriodIndex:
 LB564:  INC NoiseSFXData        ;Incrementing the period index has the effect of
 LB567:  LDA NoiseSFXData        ;lowering the frequency of the noise SFX.
 LB56A:  STA NoiseCntrl2         ;
@@ -6137,21 +5878,21 @@ LB56D:  RTS                     ;
 MissileLaunchSFXStart:
 LB56E:  LDA #$18                ;Number of frames to play sound before a change.
 LB570:  LDY #$15                ;Lower byte of sound data start address(base=$B200).
-LB572:  JSR GotoSelectSFXRoutine    ;($B587)Prepare to setup registers for SFX.
+LB572:  JSR GotoSelSFXRoutine   ;($B587)Prepare to setup registers for SFX.
 LB575:  LDA #$0A                ;
 LB577:  STA NoiseSFXData        ;Start increment index for noise channel at #$0A.
 LB57A:  RTS                     ;
 
 MissileLaunchSFXContine:
 LB57B:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
-LB57E:  BNE IncrementPeriodIndex    ;
+LB57E:  BNE IncPeriodIndex      ;
 LB580:  JMP EndNoiseSFX         ;($B58F)End SFX.
 
 BombExplodeSFXStart:
 LB583:  LDA #$30                ;Number of frames to play sound before a change.
 LB585:  LDY #$19                ;Lower byte of sound data start address(base=$B200).
 
-GotoSelectSFXRoutine:
+GotoSelSFXRoutine:
 LB587:* JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 ;The following routine is used to continue BombExplode and SamusWalk SFX.
@@ -6161,7 +5902,7 @@ LB58A:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB58D:  BNE MusicBranch02       ;If more frames to process, branch to exit. 
 
 EndNoiseSFX:
-LB58F:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
+LB58F:  JSR ClrCrntSFXFlags     ;($B4A2)Clear all SFX flags.
 LB592:  LDA #$10                ;
 LB594:  STA NoiseCntrl0         ;disable envelope generator(sound off).
 
@@ -6190,7 +5931,7 @@ LB5BD:  STA SQ1SFXData          ;
 LB5C0:  STA SQ1SQ2SFXData       ;Clear all listed memory addresses.
 LB5C3:  STA SQ1SFXPeriodLow     ;
 LB5C6:  STA ThisMultiFrame      ;
-LB5C9:  STA WrtMultiChnDat   ;
+LB5C9:  STA WrtMultiChnDat      ;
 LB5CC:  RTS                     ;
 
 EndMultiSFX:
@@ -6200,11 +5941,11 @@ LB5D2:  STA SQ2Cntrl0           ;Disable SQ2 envelope generator(sound off).
 LB5D5:  LDA #$7F                ;
 LB5D7:  STA SQ1Cntrl1           ;Disable SQ1 sweep.
 LB5DA:  STA SQ2Cntrl1           ;Disable SQ2 sweep.
-LB5DD:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
+LB5DD:  JSR ClrCrntSFXFlags     ;($B4A2)Clear all SFX flags.
 LB5E0:  LDA #$00                ;
 LB5E2:  STA SQ1InUse            ;
 LB5E5:  STA SQ2InUse            ;Allows music player to use SQ1 and SQ2 channels.
-LB5E8:  INC WrtMultiChnDat   ;
+LB5E8:  INC WrtMultiChnDat      ;
 LB5EB:  RTS                     ;
 
 BossHitSFXStart:
@@ -6230,13 +5971,13 @@ LB614:  AND #$7F                ;Randomly set bits 7, 3, 2, 1 and 0.
 LB616:  STA SQ1SFXPeriodLow     ;Store in SQ1 period low.
 LB619:  ROL                     ;
 LB61A:  STA SQ1SQ2SFXData       ;
-LB61D:  JMP WriteSQ1SQ2PeriodLow    ;($B62C)Write period low data to SQ1 and SQ2.
+LB61D:  JMP WriteSQ1SQ2PerLo    ;($B62C)Write period low data to SQ1 and SQ2.
 LB620:* INC SQ1SQ2SFXData       ;
 LB623:  INC SQ1SQ2SFXData       ;Increment SQ1 and SQ2 period low by two.
 LB626:  INC SQ1SFXPeriodLow     ;
 LB629:  INC SQ1SFXPeriodLow     ;
 
-WriteSQ1SQ2PeriodLow:
+WriteSQ1SQ2PerLo:
 LB62C:  LDA SQ1SQ2SFXData       ;
 LB62F:  STA SQ2Cntrl2           ;Write new SQ1 and SQ2 period lows to SQ1 and SQ2
 LB632:  LDA SQ1SFXPeriodLow     ;channels.
@@ -6301,14 +6042,14 @@ LB6A6:  JMP EndMultiSFX         ;($B5CD)End SFX.
 ;The following table is used by the below routine to load SQ1Cntrl2 data in the
 ;MissilePickupSFXContinue routine.
 
-MissilePickupSFXTbl:
+MslPickupSFXTbl:
 LB6A9:  .byte $BD, $8D, $7E, $5E, $46, $3E, $00 
 
 MissilePickupSFXContinue:
 LB6B0:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB6B3:  BNE MusicBranch03       ;If more frames to process, branch to exit.
 LB6B5:  LDY SQ1SFXData          ;
-LB6B8:  LDA MissilePickupSFXTbl,Y   ;Load SFX data from table above.
+LB6B8:  LDA MslPickupSFXTbl,Y   ;Load SFX data from table above.
 LB6BB:  BNE +                   ;
 LB6BD:  JMP EndSQ1SFX           ;($B6F2)SFX completed.
 LB6C0:* STA SQ1Cntrl2           ;
@@ -6351,8 +6092,8 @@ LB6F2:* LDA #$10                ;
 LB6F4:  STA SQ1Cntrl0           ;Disable envelope generator(sound off).
 LB6F7:  LDA #$00                ;
 LB6F9:  STA SQ1InUse            ;Allows music to use SQ1 channel.
-LB6FC:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
-LB6FF:  INC WrtMultiChnDat   ;Allows music routines to load SQ1 and SQ2 music.
+LB6FC:  JSR ClrCrntSFXFlags     ;($B4A2)Clear all SFX flags.
+LB6FF:  INC WrtMultiChnDat      ;Allows music routines to load SQ1 and SQ2 music.
 LB702:  RTS                     ;
 
 SamusJumpSFXStart:
@@ -6426,7 +6167,7 @@ LB76A:  JMP EndSQ1SFX           ;($B6F2)If SFX finished, jump.
 LB76D:* LDA SQ1SFXData          ;
 LB770:  AND #$01                ;Determine index for IceBeamSFXDataTbl below.
 LB772:  TAY                     ;
-LB773:  LDA IceBeamSFXDataTbl,Y     ;Loads A with value from IceBeamSFXDataTbl below.
+LB773:  LDA IceBeamSFXDataTbl,Y ;Loads A with value from IceBeamSFXDataTbl below.
 LB776:  BNE ++                  ;
 
 IceBeamSFXDataTbl:
@@ -6434,675 +6175,675 @@ LB778:  .byte $93               ;Ice beam SFX period low data.
 LB779:  .byte $81               ;
 
 WaveBeamSFXStart:
-LB77A:  LDA #$08            ;Number of frames to play sound before a change.
-LB77C:  LDY #$5D            ;Lower byte of sound data start address(base=$B200).
-LB77E:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB77A:  LDA #$08                ;Number of frames to play sound before a change.
+LB77C:  LDY #$5D                ;Lower byte of sound data start address(base=$B200).
+LB77E:  JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 WaveBeamSFXContinue:
-LB781:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB784:  BNE +               ;If more frames to process, branch.
+LB781:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB784:  BNE +                   ;If more frames to process, branch.
 LB786:  LDY SQ1SQ2SFXData       ;
 LB789:  INC SQ1SQ2SFXData       ;Load wave beam SFXDisable/enable envelope length
-LB78C:  LDA WaveBeamSFXDisLngthTbl,Y    ;data from WaveBeamSFXDisableLengthTbl.
+LB78C:  LDA WvBmSFXDisLnTbl,Y   ;data from WaveBeamSFXDisableLengthTbl.
 LB78F:  STA SQ1Cntrl0           ;
 LB792:  BNE MusicBranch10       ;If at end of WaveBeamSFXDisableLengthTbl, end SFX.
 LB794:  JMP EndSQ1SFX           ;($B6F2)If SFX finished, jump.
 LB797:* LDA SQ1SFXData
-LB79A:  AND #$01            ;
-LB79C:  TAY             ;Load wave beam SFX period low data from
-LB79D:  LDA WaveBeamSFXPeriodLowTbl,Y   ;WaveBeamSFXPeriodLowTbl.
+LB79A:  AND #$01                ;
+LB79C:  TAY                     ;Load wave beam SFX period low data from
+LB79D:  LDA WvBmSFXPerLowTbl,Y  ;WvBmSFXPerLowTbl.
 
 LoadSQ1PeriodLow:
 LB7A0:* STA SQ1Cntrl2           ;Change the period low data for SQ1 channel.
 LB7A3:  INC SQ1SFXData          ;
 
 MusicBranch10:
-LB7A6:  RTS             ;Exit for multiple routines.
+LB7A6:  RTS                     ;Exit for multiple routines.
  
-WaveBeamSFXPeriodLowTbl:
-LB7A7:  .byte $58           ;Wave beam SFX period low data.
-LB7A8:  .byte $6F           ;
+WvBmSFXPerLowTbl:
+LB7A7:  .byte $58               ;Wave beam SFX period low data.
+LB7A8:  .byte $6F               ;
 
-WaveBeamSFXDisLngthTbl:
-LB7A9:  .byte $93           ;
-LB7AA:  .byte $91           ;Wave beam SFX Disable/enable envelope length data.
-LB7AB:  .byte $00           ;
+WvBmSFXDisLnTbl:
+LB7A9:  .byte $93               ;
+LB7AA:  .byte $91               ;Wave beam SFX Disable/enable envelope length data.
+LB7AB:  .byte $00               ;
 
 DoorOpenCloseSFXStart:
-LB7AC:  LDA $B287           ;#$30.
-LB7AF:  STA TriPeriodLow       ;Set triangle period low data byte.
-LB7B2:  LDA $B288           ;#$B2.
-LB7B5:  AND #$07            ;Set triangle period high data byte.
-LB7B7:  STA TriPeriodHigh      ;#$B7.
-LB7BA:  LDA #$0F            ;
-LB7BC:  STA TriChangeLow       ;Change triangle channel period low every frame by #$0F.
-LB7BF:  LDA #$00            ;
-LB7C1:  STA TriChangeHigh      ;No change in triangle channel period high.
-LB7C4:  LDA #$1F            ;Number of frames to play sound before a change.
-LB7C6:  LDY #$85            ;Lower byte of sound data start address(base=$B200).
-LB7C8:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB7AC:  LDA $B287               ;#$30.
+LB7AF:  STA TriPeriodLow        ;Set triangle period low data byte.
+LB7B2:  LDA $B288               ;#$B2.
+LB7B5:  AND #$07                ;Set triangle period high data byte.
+LB7B7:  STA TriPeriodHigh       ;#$B7.
+LB7BA:  LDA #$0F                ;
+LB7BC:  STA TriChangeLow        ;Change triangle channel period low every frame by #$0F.
+LB7BF:  LDA #$00                ;
+LB7C1:  STA TriChangeHigh       ;No change in triangle channel period high.
+LB7C4:  LDA #$1F                ;Number of frames to play sound before a change.
+LB7C6:  LDY #$85                ;Lower byte of sound data start address(base=$B200).
+LB7C8:  JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 DoorOpenCloseSFXContinue:
-LB7CB:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB7CE:  BNE +               ;
+LB7CB:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB7CE:  BNE +                   ;
 LB7D0:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB7D3:* JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
-LB7D6:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
+LB7D3:* JSR DecreaseTriPeriods  ;($B98C)Decrease periods.
+LB7D6:  JMP WriteTriPeriods     ;($B869)Save new periods.
 
 BeepSFXStart:
 LB7D9:  LDA TriangleContSFX     ;If BombLaunchSFX is already playing, branch
-LB7DC:  AND #$80            ;without playing BeepSFX.
+LB7DC:  AND #$80                ;without playing BeepSFX.
 LB7DE:  BNE MusicBranch10       ;
-LB7E0:  LDA #$03            ;Number of frames to play sound before a change.
-LB7E2:  LDY #$79            ;Lower byte of sound data start address(base=$B200).
-LB7E4:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB7E0:  LDA #$03                ;Number of frames to play sound before a change.
+LB7E2:  LDY #$79                ;Lower byte of sound data start address(base=$B200).
+LB7E4:  JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 BeepSFXContinue:
-LB7E7:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB7E7:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB7EA:  BNE MusicBranch10       ;If more frames to process, branch to exit.
 LB7EC:  JMP EndTriangleSFX      ;($B896)End SFX.
 
 BigEnemyHitSFXStart:
-LB7EF:  LDA #$12            ;Increase triangle low period by #$12 every frame.
-LB7F1:  STA TriChangeLow       ;
-LB7F4:  LDA #$00            ;
-LB7F6:  STA TriChangeHigh      ;Does not change triangle period high.
-LB7F9:  LDA $B27F           ;#$42.
-LB7FC:  STA TriPeriodLow       ;Save new triangle period low data.
-LB7FF:  LDA $B280           ;#$18.
-LB802:  AND #$07            ;#$1F.
-LB804:  STA TriPeriodHigh      ;Save new triangle period high data.
-LB807:  LDA #$0A            ;Number of frames to play sound before a change.
-LB809:  LDY #$7D            ;Lower byte of sound data start address(base=$B200).
-LB80B:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB7EF:  LDA #$12                ;Increase triangle low period by #$12 every frame.
+LB7F1:  STA TriChangeLow        ;
+LB7F4:  LDA #$00                ;
+LB7F6:  STA TriChangeHigh       ;Does not change triangle period high.
+LB7F9:  LDA $B27F               ;#$42.
+LB7FC:  STA TriPeriodLow        ;Save new triangle period low data.
+LB7FF:  LDA $B280               ;#$18.
+LB802:  AND #$07                ;#$1F.
+LB804:  STA TriPeriodHigh       ;Save new triangle period high data.
+LB807:  LDA #$0A                ;Number of frames to play sound before a change.
+LB809:  LDY #$7D                ;Lower byte of sound data start address(base=$B200).
+LB80B:  JMP SelectSFXRoutine   ;($B452)Setup registers for SFX.
 
 BigEnemyHitSFXContinue:
-LB80E:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB811:  BNE +               ;If more frames to process, branch
+LB80E:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB811:  BNE +                   ;If more frames to process, branch
 LB813:  JMP EndTriangleSFX      ;($B896)End SFX
-LB816:* JSR IncreaseTrianglePeriods ;($B978)Increase periods.
+LB816:* JSR IncreaseTriPeriods  ;($B978)Increase periods.
 LB819:  LDA RandomNumber1       ;
-LB81B:  AND #$3C            ;
+LB81B:  AND #$3C                ;
 LB81D:  STA TriangleSFXData     ;
-LB820:  LDA TriPeriodLow       ;Randomly set or clear bits 2, 3, 4 and 5 in
-LB823:  AND #$C3            ;triangle channel period low.
+LB820:  LDA TriPeriodLow        ;Randomly set or clear bits 2, 3, 4 and 5 in
+LB823:  AND #$C3                ;triangle channel period low.
 LB825:  ORA TriangleSFXData     ;
 LB828:  STA TriangleCntrl2      ;
-LB82B:  LDA TriPeriodHigh      ;
-LB82E:  ORA #$40            ;Set 4th bit in triangle channel period high.
+LB82B:  LDA TriPeriodHigh       ;
+LB82E:  ORA #$40                ;Set 4th bit in triangle channel period high.
 LB830:  STA TriangleCntrl3      ;
-LB833:  RTS             ;
+LB833:  RTS                     ;
 
 SamusToBallSFXStart:
-LB834:  LDA #$08            ;Number of frames to play sound before a change.
-LB836:  LDY #$6D            ;Lower byte of sound data start address(base=$B200).
-LB838:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
-LB83B:  LDA #$05            ;
-LB83D:  STA PercentDiff       ;Stores percent difference. In this case 5 = 1/5 = 20%.
-LB840:  LDA $B26F           ;#$DD.
-LB843:  STA TriPeriodLow       ;Save new triangle period low data.
-LB846:  LDA $B270           ;#$3B.
-LB849:  AND #$07            ;#$02.
-LB84B:  STA TriPeriodHigh      ;Save new triangle period high data.
-LB84E:  RTS             ;
+LB834:  LDA #$08                ;Number of frames to play sound before a change.
+LB836:  LDY #$6D                ;Lower byte of sound data start address(base=$B200).
+LB838:  JSR SelectSFXRoutine    ;($B452)Setup registers for SFX.
+LB83B:  LDA #$05                ;
+LB83D:  STA PercentDiff         ;Stores percent difference. In this case 5 = 1/5 = 20%.
+LB840:  LDA $B26F               ;#$DD.
+LB843:  STA TriPeriodLow        ;Save new triangle period low data.
+LB846:  LDA $B270               ;#$3B.
+LB849:  AND #$07                ;#$02.
+LB84B:  STA TriPeriodHigh       ;Save new triangle period high data.
+LB84E:  RTS                     ;
 
 SamusToBallSFXContinue:
-LB84F:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB852:  BNE +               ;If more frames to process, branch.
+LB84F:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB852:  BNE +                   ;If more frames to process, branch.
 LB854:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB857:* JSR DivideTrianglePeriods   ;($B9A0)reduces triangle period low by 20% each frame.
-LB85A:  LDA TriLoPercentage   ;
-LB85D:  STA TriChangeLow       ;Store new values to change triangle periods.
-LB860:  LDA TriHiPercentage  ;
-LB863:  STA TriChangeHigh      ;
-LB866:  JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
+LB857:* JSR DivideTriePeriods   ;($B9A0)reduces triangle period low by 20% each frame.
+LB85A:  LDA TriLoPercentage     ;
+LB85D:  STA TriChangeLow        ;Store new values to change triangle periods.
+LB860:  LDA TriHiPercentage     ;
+LB863:  STA TriChangeHigh       ;
+LB866:  JSR DecreaseTriPeriods  ;($B98C)Decrease periods.
 
-WriteTrianglePeriods:
-LB869:  LDA TriPeriodLow       ;Write TriPeriodLow to triangle channel.
+WriteTriPeriods:
+LB869:  LDA TriPeriodLow        ;Write TriPeriodLow to triangle channel.
 LB86C:  STA TriangleCntrl2      ;
-LB86F:  LDA TriPeriodHigh      ;
-LB872:  ORA #$08            ;Write TriPeriodHigh to triangle channel.
+LB86F:  LDA TriPeriodHigh       ;
+LB872:  ORA #$08                ;Write TriPeriodHigh to triangle channel.
 LB874:  STA TriangleCntrl3      ;
-LB877:  RTS             ;
+LB877:  RTS                     ;
 
 BombLaunchSFXStart:
-LB878:  LDA #$04            ;Number of frames to play sound before a change.
-LB87A:  LDY #$65            ;Lower byte of sound data start address(base=$B200).
-LB87C:  JMP SelectSFXRoutine        ;($B452)Setup registers for SFX.
+LB878:  LDA #$04                ;Number of frames to play sound before a change.
+LB87A:  LDY #$65                ;Lower byte of sound data start address(base=$B200).
+LB87C:  JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
 BombLaunchSFXContinue:
-LB87F:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
+LB87F:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
 LB882:  BNE MusicBranch04       ;If more frames to process, branch to exit.
 LB884:  INC TriangleSFXData     ;
 LB887:  LDA TriangleSFXData     ;After four frames, load second part of SFX.
-LB88A:  CMP #$02            ;
-LB88C:  BNE +               ;
+LB88A:  CMP #$02                ;
+LB88C:  BNE +                   ;
 LB88E:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB891:* LDY #$69            ;Lower byte of sound data start address(base=$B200).
-LB893:  JMP LoadTriangleChannelSFX  ;($B36C)Prepare to load triangle channel with data.
+LB891:* LDY #$69                ;Lower byte of sound data start address(base=$B200).
+LB893:  JMP LoadTriChannelSFX   ;($B36C)Prepare to load triangle channel with data.
 
 EndTriangleSFX:
-LB896:  LDA #$00            ;
+LB896:  LDA #$00                ;
 LB898:  STA TriangleCntrl0      ;clear TriangleCntr0(sound off).
 LB89B:  STA TriangleInUse       ;Allows music to use triangle channel.
-LB89E:  LDA #$18            ;
+LB89E:  LDA #$18                ;
 LB8A0:  STA TriangleCntrl3      ;Set length index to #$03.
-LB8A3:  JSR ClearCurrentSFXFlags    ;($B4A2)Clear all SFX flags.
+LB8A3:  JSR ClrCrntSFXFlags     ;($B4A2)Clear all SFX flags.
 
 MusicBranch04:
-LB8A6:  RTS             ;Exit from for multiple routines.
+LB8A6:  RTS                     ;Exit from for multiple routines.
 
 MetroidHitSFXStart:
-LB8A7:  LDA #$03            ;Number of frames to play sound before a change.
-LB8A9:  LDY #$71            ;Lower byte of sound data start address(base=$B200).
-LB8AB:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
-LB8AE:  JMP RndTrianglePeriods      ;($B8C3)MetroidHit SFX has several different sounds.
+LB8A7:  LDA #$03                ;Number of frames to play sound before a change.
+LB8A9:  LDY #$71                ;Lower byte of sound data start address(base=$B200).
+LB8AB:  JSR SelectSFXRoutine    ;($B452)Setup registers for SFX.
+LB8AE:  JMP RndTrianglePeriods  ;($B8C3)MetroidHit SFX has several different sounds.
 
 MetroiHitSFXContinue:
-LB8B1:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB8B4:  BEQ +               ;
+LB8B1:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB8B4:  BEQ +                   ;
 LB8B6:  INC TriangleSFXData     ;
 LB8B9:  LDA TriangleSFXData     ;Randomize triangle periods nine times throughout
-LB8BC:  CMP #$09            ;the course of the SFX.
+LB8BC:  CMP #$09                ;the course of the SFX.
 LB8BE:  BNE MusicBranch04       ;If SFX not done, branch.
 LB8C0:  JMP EndTriangleSFX      ;($B896)End SFX.
 
 RndTrianglePeriods:
 LB8C3:* LDA RandomNumber1       ;Randomly set or reset bits 7, 4, 2 and 1 of
-LB8C5:  ORA #$6C            ;triangle channel period low.
+LB8C5:  ORA #$6C                ;triangle channel period low.
 LB8C7:  STA TriangleCntrl2      ;
-LB8CA:  AND #$01            ;
-LB8CC:  ORA #$F8            ;Randomly set or reset last bit of triangle
+LB8CA:  AND #$01                ;
+LB8CC:  ORA #$F8                ;Randomly set or reset last bit of triangle
 LB8CE:  STA TriangleCntrl3      ;channel period high.
-LB8D1:  RTS             ;
+LB8D1:  RTS                     ;
 
 SamusDieSFXStart:
-LB8D2:  JSR InitializeSoundAddresses    ;($B404)Clear all sound addresses.
-LB8D5:  LDA #$0E            ;Number of frames to play sound before a change.
-LB8D7:  LDY #$75            ;Lower byte of sound data start address(base=$B200).
-LB8D9:  JSR SelectSFXRoutine        ;($B452)Setup registers for SFX.
-LB8DC:  LDA #$15            ;Decrease triangle SFX periods by 4.8% every frame.
-LB8DE:  STA PercentDiff       ;
-LB8E1:  LDA $B277           ;#$40.
-LB8E4:  STA TriPeriodLow       ;
-LB8E7:  LDA #$00            ;Initial values of triangle periods.
-LB8E9:  STA TriPeriodHigh      ;
-LB8EC:* RTS             ;
+LB8D2:  JSR InitSoundAddresses  ;($B404)Clear all sound addresses.
+LB8D5:  LDA #$0E                ;Number of frames to play sound before a change.
+LB8D7:  LDY #$75                ;Lower byte of sound data start address(base=$B200).
+LB8D9:  JSR SelectSFXRoutine    ;($B452)Setup registers for SFX.
+LB8DC:  LDA #$15                ;Decrease triangle SFX periods by 4.8% every frame.
+LB8DE:  STA PercentDiff         ;
+LB8E1:  LDA $B277               ;#$40.
+LB8E4:  STA TriPeriodLow        ;
+LB8E7:  LDA #$00                ;Initial values of triangle periods.
+LB8E9:  STA TriPeriodHigh       ;
+LB8EC:* RTS                     ;
 
 SamusDieSFXContinue:
-LB8ED:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB8F0:  BNE +               ;
-LB8F2:  LDA #$20            ;Store change in triangle period low.
-LB8F4:  STA TriChangeLow       ;
-LB8F7:  LDA #$00            ;
-LB8F9:  STA TriChangeHigh      ;No change in triangle period high.
-LB8FC:  JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
+LB8ED:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB8F0:  BNE +                   ;
+LB8F2:  LDA #$20                ;Store change in triangle period low.
+LB8F4:  STA TriChangeLow        ;
+LB8F7:  LDA #$00                ;
+LB8F9:  STA TriChangeHigh       ;No change in triangle period high.
+LB8FC:  JSR DecreaseTriPeriods  ;($B98C)Decrease periods.
 LB8FF:  INC TriangleSFXData     ;
 LB902:  LDA TriangleSFXData     ;
-LB905:  CMP #$06            ;
-LB907:  BNE -               ;If more frames to process, branch to exit.
+LB905:  CMP #$06                ;
+LB907:  BNE -                   ;If more frames to process, branch to exit.
 LB909:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB90C:* JSR DivideTrianglePeriods   ;($B9A0)reduces triangle period low.
-LB90F:  LDA TriLoPercentage   ;
-LB912:  STA TriChangeLow       ;Update triangle periods.
-LB915:  LDA TriHiPercentage  ;
-LB918:  STA TriChangeHigh      ;
-LB91B:  JSR IncreaseTrianglePeriods ;($B978)Increase periods.
-LB91E:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
+LB90C:* JSR DivideTriePeriods   ;($B9A0)reduces triangle period low.
+LB90F:  LDA TriLoPercentage     ;
+LB912:  STA TriChangeLow        ;Update triangle periods.
+LB915:  LDA TriHiPercentage     ;
+LB918:  STA TriChangeHigh       ;
+LB91B:  JSR IncreaseTriPeriods  ;($B978)Increase periods.
+LB91E:  JMP WriteTriPeriods     ;($B869)Save new periods.
 
 StatueRaiseSFXStart:
-LB921:  LDA $B283           ;#$11.
-LB924:  STA TriPeriodLow       ;Save period low data.
-LB927:  LDA $B284           ;#$09.
-LB92A:  AND #$07            ;
-LB92C:  STA TriPeriodHigh      ;Store last three bits in $B284.
-LB92F:  LDA #$00            ;
-LB931:  STA TriChangeHigh      ;No change in Triangle period high.
-LB934:  LDA #$0B            ;
-LB936:  STA TriChangeLow       ;
-LB939:  LDA #$06            ;Number of frames to play sound before a change.
-LB93B:  LDY #$81            ;Lower byte of sound data start address(base=$B200).
-LB93D:  JMP SelectSFXroutine        ;($B452)Setup registers for SFX.
+LB921:  LDA $B283               ;#$11.
+LB924:  STA TriPeriodLow        ;Save period low data.
+LB927:  LDA $B284               ;#$09.
+LB92A:  AND #$07                ;
+LB92C:  STA TriPeriodHigh       ;Store last three bits in $B284.
+LB92F:  LDA #$00                ;
+LB931:  STA TriChangeHigh       ;No change in Triangle period high.
+LB934:  LDA #$0B                ;
+LB936:  STA TriChangeLow        ;
+LB939:  LDA #$06                ;Number of frames to play sound before a change.
+LB93B:  LDY #$81                ;Lower byte of sound data start address(base=$B200).
+LB93D:  JMP SelectSFXroutine    ;($B452)Setup registers for SFX.
 
 StatueRaiseSFXContinue:
-LB940:  JSR IncrementSFXFrame       ;($B4A9)Get next databyte to process in SFX.
-LB943:  BNE ++              ;
+LB940:  JSR IncrementSFXFrame   ;($B4A9)Get next databyte to process in SFX.
+LB943:  BNE ++                  ;
 LB945:  INC TriangleSFXData     ;Increment TriangleSFXData every 6 frames.
 LB948:  LDA TriangleSFXData     ;
-LB94B:  CMP #$09            ;When TriangleSFXData = #$09, end SFX.
-LB94D:  BNE +               ;
+LB94B:  CMP #$09                ;When TriangleSFXData = #$09, end SFX.
+LB94D:  BNE +                   ;
 LB94F:  JMP EndTriangleSFX      ;($B896)End SFX.
-LB952:* LDA TriChangeLow       ;
-LB955:  PHA             ;Save triangle periods.
-LB956:  LDA TriChangeHigh      ;
-LB959:  PHA             ;
-LB95A:  LDA #$25            ;
-LB95C:  STA TriChangeLow       ;
-LB95F:  LDA #$00            ;No change in triangle period high.
-LB961:  STA TriChangeHigh      ;
-LB964:  JSR IncreaseTrianglePeriods ;($B978)Increase periods.
-LB967:  PLA             ;
-LB968:  STA TriChangeHigh      ;Restore triangle periods.
-LB96B:  PLA             ;
-LB96C:  STA TriChangeLow       ;
-LB96F:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
-LB972:* JSR DecreaseTrianglePeriods ;($B98C)Decrease periods.
-LB975:  JMP WriteTrianglePeriods    ;($B869)Save new periods.
+LB952:* LDA TriChangeLow        ;
+LB955:  PHA                     ;Save triangle periods.
+LB956:  LDA TriChangeHigh       ;
+LB959:  PHA                     ;
+LB95A:  LDA #$25                ;
+LB95C:  STA TriChangeLow        ;
+LB95F:  LDA #$00                ;No change in triangle period high.
+LB961:  STA TriChangeHigh       ;
+LB964:  JSR IncreaseTriPeriods  ;($B978)Increase periods.
+LB967:  PLA                     ;
+LB968:  STA TriChangeHigh       ;Restore triangle periods.
+LB96B:  PLA                     ;
+LB96C:  STA TriChangeLow        ;
+LB96F:  JMP WriteTriPeriods     ;($B869)Save new periods.
+LB972:* JSR DecreaseTriPeriods  ;($B98C)Decrease periods.
+LB975:  JMP WriteTriPeriods     ;($B869)Save new periods.
 
-IncreaseTrianglePeriods:
+IncreaseTriPeriods:
 LB978:  CLC 
-LB979:  LDA TriPeriodLow       ;
-LB97C:  ADC TriChangeLow       ;Calculate new TriPeriodLow.
-LB97F:  STA TriPeriodLow       ;
-LB982:  LDA TriPeriodHigh      ;
-LB985:  ADC TriChangeHigh      ;Calculate new TriPeriodHigh.
-LB988:  STA TriPeriodHigh      ;
-LB98B:  RTS             ;
+LB979:  LDA TriPeriodLow        ;
+LB97C:  ADC TriChangeLow        ;Calculate new TriPeriodLow.
+LB97F:  STA TriPeriodLow        ;
+LB982:  LDA TriPeriodHigh       ;
+LB985:  ADC TriChangeHigh       ;Calculate new TriPeriodHigh.
+LB988:  STA TriPeriodHigh       ;
+LB98B:  RTS                     ;
 
-DecreaseTrianglePeriods:
+DecreaseTriPeriods:
 LB98C:  SEC 
-LB98D:  LDA TriPeriodLow       ;
-LB990:  SBC TriChangeLow       ;Calculate new TriPeriodLow.
-LB993:  STA TriPeriodLow       ;
-LB996:  LDA TriPeriodHigh      ;
-LB999:  SBC TriChangeHigh      ;Calculate new TriPeriodHigh.
-LB99C:  STA TriPeriodHigh      ;
-LB99F:  RTS             ;
+LB98D:  LDA TriPeriodLow        ;
+LB990:  SBC TriChangeLow        ;Calculate new TriPeriodLow.
+LB993:  STA TriPeriodLow        ;
+LB996:  LDA TriPeriodHigh       ;
+LB999:  SBC TriChangeHigh       ;Calculate new TriPeriodHigh.
+LB99C:  STA TriPeriodHigh       ;
+LB99F:  RTS                     ;
 
-DivideTrianglePeriods:
-LB9A0:  LDA TriPeriodLow       ;
-LB9A3:  PHA             ;Store TriPeriodLow and TriPeriodHigh.
-LB9A4:  LDA TriPeriodHigh      ;
-LB9A7:  PHA             ;
-LB9A8:  LDA #$00            ;
+DivideTriePeriods:
+LB9A0:  LDA TriPeriodLow        ;
+LB9A3:  PHA                     ;Store TriPeriodLow and TriPeriodHigh.
+LB9A4:  LDA TriPeriodHigh       ;
+LB9A7:  PHA                     ;
+LB9A8:  LDA #$00                ;
 LB9AA:  STA DivideData          ;
-LB9AD:  LDX #$10            ;
-LB9AF:  ROL TriPeriodLow       ;
-LB9B2:  ROL TriPeriodHigh      ;
+LB9AD:  LDX #$10                ;
+LB9AF:  ROL TriPeriodLow        ;
+LB9B2:  ROL TriPeriodHigh       ;
 LB9B5:* ROL DivideData          ;The following routine takes the triangle period
 LB9B8:  LDA DivideData          ;high and triangle period low values and reduces
-LB9BB:  CMP PercentDiff       ;them by a certain percent.  The percent is
-LB9BE:  BCC +               ;determined by the value stored in
-LB9C0:  SBC PercentDiff       ;PercentDiff.  If PercentDiff=#$05,
+LB9BB:  CMP PercentDiff         ;them by a certain percent.  The percent is
+LB9BE:  BCC +                   ;determined by the value stored in
+LB9C0:  SBC PercentDiff         ;PercentDiff.  If PercentDiff=#$05,
 LB9C3:  STA DivideData          ;then the values will be reduced by 20%(1/5).
-LB9C6:* ROL TriPeriodLow       ;If PercentDiff=#$0A,Then the value will
-LB9C9:  ROL TriPeriodHigh      ;be reduced by 10%(1/10), etc. This function is
-LB9CC:  DEX             ;basically a software emulation of a sweep function.
-LB9CD:  BNE --              ;
-LB9CF:  LDA TriPeriodLow       ;
-LB9D2:  STA TriLoPercentage   ;
-LB9D5:  LDA TriPeriodHigh      ;
-LB9D8:  STA TriHiPercentage  ;
-LB9DB:  PLA             ;
-LB9DC:  STA TriPeriodHigh      ;Restore TrianglePerodLow and TriPeriodHigh.
-LB9DF:  PLA             ;
-LB9E0:  STA TriPeriodLow       ;
-LB9E3:  RTS             ;
+LB9C6:* ROL TriPeriodLow        ;If PercentDiff=#$0A,Then the value will
+LB9C9:  ROL TriPeriodHigh       ;be reduced by 10%(1/10), etc. This function is
+LB9CC:  DEX                     ;basically a software emulation of a sweep function.
+LB9CD:  BNE --                  ;
+LB9CF:  LDA TriPeriodLow        ;
+LB9D2:  STA TriLoPercentage     ;
+LB9D5:  LDA TriPeriodHigh       ;
+LB9D8:  STA TriHiPercentage     ;
+LB9DB:  PLA                     ;
+LB9DC:  STA TriPeriodHigh       ;Restore TrianglePerodLow and TriPeriodHigh.
+LB9DF:  PLA                     ;
+LB9E0:  STA TriPeriodLow        ;
+LB9E3:  RTS                     ;
 
 ;--------------------------------------[ End SFX routines ]-------------------------------------
  
-SetVolumeAndDisableSweep:
-LB9E4:  LDA #$7F            ;
+SetVolAndDisblSweep:
+LB9E4:  LDA #$7F                ;
 LB9E6:  STA MusicSQ1Sweep       ;Disable sweep generator on SQ1 and SQ2.
 LB9E9:  STA MusicSQ2Sweep       ;
 LB9EC:  STX SQ1DutyEnvelope     ;Store duty cycle and volume data for SQ1 and SQ2.
 LB9EF:  STY SQ2DutyEnvelope     ;
-LB9F2:  RTS             ;
+LB9F2:  RTS                     ;
 
 ResetVolumeIndex:
-LB9F3:  LDA SQ1MusicFrameCnt      ;If at the beginning of a new SQ1 note, set
-LB9F6:  CMP #$01            ;SQ1VolumeIndex = #$01.
-LB9F8:  BNE +               ;
+LB9F3:  LDA SQ1MusicFrameCnt    ;If at the beginning of a new SQ1 note, set
+LB9F6:  CMP #$01                ;SQ1VolumeIndex = #$01.
+LB9F8:  BNE +                   ;
 LB9FA:  STA SQ1VolumeIndex      ;
-LB9FD:* LDA SQ2MusicFrameCnt      ;
-LBA00:  CMP #$01            ;If at the beginning of a new SQ2 note, set
-LBA02:  BNE +               ;SQ2VolumeIndex = #$01.
+LB9FD:* LDA SQ2MusicFrameCnt    ;
+LBA00:  CMP #$01                ;If at the beginning of a new SQ2 note, set
+LBA02:  BNE +                   ;SQ2VolumeIndex = #$01.
 LBA04:  STA SQ2VolumeIndex      ;
-LBA07:* RTS                 ;
+LBA07:* RTS                     ;
 
 LoadSQ1SQ2Periods:
-LBA08:  LDA WrtMultiChnDat   ;If a Multi channel data does not need to be
-LBA0B:  BEQ +               ;loaded, branch to exit.
-LBA0D:  LDA #$00            ;
-LBA0F:  STA WrtMultiChnDat   ;Clear multi channel data write flag.
+LBA08:  LDA WrtMultiChnDat      ;If a Multi channel data does not need to be
+LBA0B:  BEQ +                   ;loaded, branch to exit.
+LBA0D:  LDA #$00                ;
+LBA0F:  STA WrtMultiChnDat      ;Clear multi channel data write flag.
 LBA12:  LDA MusicSQ1Sweep       ;
 LBA15:  STA SQ1Cntrl1           ;
-LBA18:  LDA MusicSQ1PrdLow       ;
+LBA18:  LDA MusicSQ1PrdLow      ;
 LBA1B:  STA SQ1Cntrl2           ;Loads SQ1 channel addresses $4001, $4002, $4003.
-LBA1E:  LDA MusicSQ1PrdHi      ;
+LBA1E:  LDA MusicSQ1PrdHi       ;
 LBA21:  STA SQ1Cntrl3           ;
 LBA24:  LDA MusicSQ2Sweep       ;
 LBA27:  STA SQ2Cntrl1           ;
-LBA2A:  LDA MusicSQ2PeriodLo       ;
+LBA2A:  LDA MusicSQ2PeriodLo    ;
 LBA2D:  STA SQ2Cntrl2           ;Loads SQ2 channel addresses $4005, $4006, $4007.
-LBA30:  LDA MusicSQ2PeriodHi      ;
+LBA30:  LDA MusicSQ2PeriodHi    ;
 LBA33:  STA SQ2Cntrl3           ;
-LBA36:* RTS             ;
+LBA36:* RTS                     ;
 
 LoadSQ1SQ2Channels:
-LBA37:  LDX #$00            ;Load SQ1 channel data.
+LBA37:  LDX #$00                ;Load SQ1 channel data.
 LBA39:  JSR WriteSQCntrl0       ;($BA41)Write Cntrl0 data.
-LBA3C:  INX             ;Load SQ2 channel data.
+LBA3C:  INX                     ;Load SQ2 channel data.
 LBA3D:  JSR WriteSQCntrl0       ;($BA41)Write Cntrl0 data.
-LBA40:  RTS             ;
+LBA40:  RTS                     ;
 
 WriteSQCntrl0:
-LBA41:  LDA SQ1VolumeCntrl,X        ;Load SQ channel volume data. If zero, branch to exit.
-LBA44:  BEQ +++++           ;
-LBA46:  STA VolCntrlAddress      ;
-LBA48:  JSR LoadSQ1SQ2Periods       ;($BA08)Load SQ1 and SQ2 control information.
+LBA41:  LDA SQ1VolumeCntrl,X    ;Load SQ channel volume data. If zero, branch to exit.
+LBA44:  BEQ +++++               ;
+LBA46:  STA VolCntrlAddress     ;
+LBA48:  JSR LoadSQ1SQ2Periods   ;($BA08)Load SQ1 and SQ2 control information.
 LBA4B:  LDA SQ1VolumeData,X     ;
-LBA4E:  CMP #$10            ;If sound channel is not currently
-LBA50:  BEQ +++++++         ;playing sound, branch.
-LBA52:  LDY #$00            ;
-LBA54:* DEC VolCntrlAddress      ;Desired entry in VolumeCntrlAdressTbl.
-LBA56:  BEQ +               ;
-LBA58:  INY             ;*2(2 byte address to find voulume control data).
-LBA59:  INY             ;
-LBA5A:  BNE -               ;Keep decrementing until desired address is found.
-LBA5C:* LDA VolCntrlAddressTbl,Y ;Base is $BCB0.
-LBA5F:  STA $EC             ;Volume data address low byte.
-LBA61:  LDA VolCntrlAddressTbl+1,Y   ;Base is $BCB1.
-LBA64:  STA $ED             ;Volume data address high byte.
-LBA66:  LDY SQ1VolumeIndex,X        ;Index to desired volume data.
-LBA69:  LDA ($EC),Y         ;Load desired volume for current channel into
+LBA4E:  CMP #$10                ;If sound channel is not currently
+LBA50:  BEQ +++++++             ;playing sound, branch.
+LBA52:  LDY #$00                ;
+LBA54:* DEC VolCntrlAddress     ;Desired entry in VolumeCntrlAdressTbl.
+LBA56:  BEQ +                   ;
+LBA58:  INY                     ;*2(2 byte address to find voulume control data).
+LBA59:  INY                     ;
+LBA5A:  BNE -                   ;Keep decrementing until desired address is found.
+LBA5C:* LDA VolCntrlAddrTbl,Y   ;Base is $BCB0.
+LBA5F:  STA $EC                 ;Volume data address low byte.
+LBA61:  LDA VolCntrlAddrTbl+1,Y ;Base is $BCB1.
+LBA64:  STA $ED                 ;Volume data address high byte.
+LBA66:  LDY SQ1VolumeIndex,X    ;Index to desired volume data.
+LBA69:  LDA ($EC),Y             ;Load desired volume for current channel into
 LBA6B:  STA Cntrl0Data          ;Cntrl0Data.
-LBA6D:  CMP #$FF            ;If last entry in volume table is #$FF, restore
+LBA6D:  CMP #$FF                ;If last entry in volume table is #$FF, restore
 LBA6F:  BEQ MusicBranch05       ;volume to its original level after done reading
-LBA71:  CMP #$F0            ;Volume data.  If #$F0 is last entry, turn sound
+LBA71:  CMP #$F0                ;Volume data. If #$F0 is last entry, turn sound
 LBA73:  BEQ MusicBranch06       ;off on current channel until next note.
-LBA75:  LDA SQ1DutyEnvelope,X       ;Remove duty cycle data For current channel and
-LBA78:  AND #$F0            ;add this frame of volume data and store results 
+LBA75:  LDA SQ1DutyEnvelope,X   ;Remove duty cycle data For current channel and
+LBA78:  AND #$F0                ;add this frame of volume data and store results 
 LBA7A:  ORA Cntrl0Data          ;in Cntrl0Data.
-LBA7C:  TAY             ;
-LBA7D:* INC SQ1VolumeIndex,X        ;Increment Index to volume data.
+LBA7C:  TAY                     ;
+LBA7D:* INC SQ1VolumeIndex,X    ;Increment Index to volume data.
 LBA80:* LDA SQ1InUse,X          ;If SQ1 or SQ2(depends on loop iteration) in use,
-LBA83:  BNE +               ;branch to exit, else write SQ(1 or 2)Cntrl0.
-LBA85:  TXA             ;
-LBA86:  BEQ ++              ;If currently on SQ1, branch to write SQ1 data.
+LBA83:  BNE +                   ;branch to exit, else write SQ(1 or 2)Cntrl0.
+LBA85:  TXA                     ;
+LBA86:  BEQ ++                  ;If currently on SQ1, branch to write SQ1 data.
 
-WriteSQ2Cntrl0:             ;
+WriteSQ2Cntrl0:                 ;
 LBA88:  STY SQ2Cntrl0           ;Write SQ2Cntrl0 data.
-LBA8B:* RTS             ;
+LBA8B:* RTS                     ;
 
-WriteSQ1Cntrl0:             ;
+WriteSQ1Cntrl0:                 ;
 LBA8C:* STY SQ1Cntrl0           ;Write SQ1Cntrl0 data.
-LBA8F:  RTS             ;
+LBA8F:  RTS                     ;
 
 MusicBranch05:
-LBA90:  LDY SQ1DutyEnvelope,X       ;Restore original volume of sound channel.
-LBA93:  BNE ---             ;Branch always.
+LBA90:  LDY SQ1DutyEnvelope,X   ;Restore original volume of sound channel.
+LBA93:  BNE ---                 ;Branch always.
 
 MusicBranch06:
-LBA95:  LDY #$10            ;Disable envelope generator and set volume to 0.
-LBA97:  BNE ---             ;Branch always.
-LBA99:* LDY #$10            ;Disable envelope generator and set volume to 0.
-LBA9B:  BNE -----           ;Branch always.
+LBA95:  LDY #$10                ;Disable envelope generator and set volume to 0.
+LBA97:  BNE ---                 ;Branch always.
+LBA99:* LDY #$10                ;Disable envelope generator and set volume to 0.
+LBA9B:  BNE -----               ;Branch always.
 
 GotoCheckRepeatMusic:
-LBA9D:* JSR CheckRepeatMusic        ;($B3F0)Resets music flags if music repeats.
-LBAA0:  RTS             ;
+LBA9D:* JSR CheckRepeatMusic    ;($B3F0)Resets music flags if music repeats.
+LBAA0:  RTS                     ;
 
 GotoLoadSQ1SQ2Channels:
-LBAA1:* JSR LoadSQ1SQ2Channels      ;($BA37)Load SQ1 and SQ2 channel data.
-LBAA4:  RTS             ;
+LBAA1:* JSR LoadSQ1SQ2Channels  ;($BA37)Load SQ1 and SQ2 channel data.
+LBAA4:  RTS                     ;
 
-LoadCurrentMusicFrameData:
-LBAA5:  JSR ResetVolumeIndex        ;($B9F3)Reset index if at the beginning of a new note.
-LBAA8:  LDA #$00            ;
-LBAAA:  TAX             ;X = #$00.
-LBAAB:  STA ThisSoundChannel        ;(#$00, #$04, #$08 or #$0C).
-LBAAE:  BEQ ++              ;
-LBAB0:* TXA             ;
-LBAB1:  LSR             ;
-LBAB2:  TAX             ;Increment to next sound channel(1,2 or 3).
-                    ;
-IncrementToNextChannel:         ;
-LBAB3:  INX             ;
-LBAB4:  TXA             ;
-LBAB5:  CMP #$04            ;If done with four sound channels, branch to load
-LBAB7:  BEQ --              ;sound channel SQ1 SQ2 data.
-LBAB9:  LDA ThisSoundChannel        ;Add 4 to the least significant byte of the current
-LBABC:  CLC                 ;sound channel start address.  This moves to next
-LBABD:  ADC #$04            ;sound channel address ranges to process.
-LBABF:  STA ThisSoundChannel        ;
-LBAC2:* TXA             ;
-LBAC3:  ASL             ;*2(two bytes for sound channel info base address).
-LBAC4:  TAX             ;
-LBAC5:  LDA SQ1LowBaseByte,X        ;
-LBAC8:  STA $E6             ;Load sound channel info base address into $E6
-LBACA:  LDA SQ1HighBaseByte,X       ;and $E7. ($E6=low byte, $E7=high byte).
-LBACD:  STA $E7             ;
-LBACF:  LDA SQ1HighBaseByte,X       ;If no data for this sound channel, branch
-LBAD2:  BEQ --              ;to find data for next sound channel.
-LBAD4:  TXA             ;
-LBAD5:  LSR             ;/2. Determine current sound channel (0,1,2 or3).
-LBAD6:  TAX             ;
-LBAD7:  DEC SQ1MusicFrameCnt,X    ;Decrement the current sound channel frame count
-LBADA:  BNE IncrementToNextChannel  ;If not zero, branch to check next channel, else
-                    ;load the next set of sound channel data.
-LoadNextChannelIndexData:
+LoadCurMusFrameData:
+LBAA5:  JSR ResetVolumeIndex    ;($B9F3)Reset index if at the beginning of a new note.
+LBAA8:  LDA #$00                ;
+LBAAA:  TAX                     ;X = #$00.
+LBAAB:  STA ThisSoundChannel    ;(#$00, #$04, #$08 or #$0C).
+LBAAE:  BEQ ++                  ;
+LBAB0:* TXA                     ;
+LBAB1:  LSR                     ;
+LBAB2:  TAX                     ;Increment to next sound channel(1,2 or 3).
+                                ;
+IncToNextChannel:               ;
+LBAB3:  INX                     ;
+LBAB4:  TXA                     ;
+LBAB5:  CMP #$04                ;If done with four sound channels, branch to load
+LBAB7:  BEQ --                  ;sound channel SQ1 SQ2 data.
+LBAB9:  LDA ThisSoundChannel    ;Add 4 to the least significant byte of the current
+LBABC:  CLC                     ;sound channel start address.  This moves to next
+LBABD:  ADC #$04                ;sound channel address ranges to process.
+LBABF:  STA ThisSoundChannel    ;
+LBAC2:* TXA                     ;
+LBAC3:  ASL                     ;*2(two bytes for sound channel info base address).
+LBAC4:  TAX                     ;
+LBAC5:  LDA SQ1LowBaseByte,X    ;
+LBAC8:  STA $E6                 ;Load sound channel info base address into $E6
+LBACA:  LDA SQ1HighBaseByte,X   ;and $E7. ($E6=low byte, $E7=high byte).
+LBACD:  STA $E7                 ;
+LBACF:  LDA SQ1HighBaseByte,X   ;If no data for this sound channel, branch
+LBAD2:  BEQ --                  ;to find data for next sound channel.
+LBAD4:  TXA                     ;
+LBAD5:  LSR                     ;/2. Determine current sound channel (0,1,2 or3).
+LBAD6:  TAX                     ;
+LBAD7:  DEC SQ1MusicFrameCnt,X  ;Decrement the current sound channel frame count
+LBADA:  BNE IncToNextChannel    ;If not zero, branch to check next channel, else
+                                ;load the next set of sound channel data.
+LdNextChnlIndexDat:
 LBADC:  LDY SQ1MusicIdxIdx,X    ;Load current channel index to music data index.
 LBADF:  INC SQ1MusicIdxIdx,X    ;Increment current channel index to music data index.
-LBAE2:  LDA ($E6),Y         ;
+LBAE2:  LDA ($E6),Y             ;
 LBAE4:  BEQ ----                ;Branch if music has reached the end.
-LBAE6:  TAY             ;Transfer music data index to Y (base=$BE77) .
-LBAE7:  CMP #$FF            ;
-LBAE9:  BEQ +               ;At end of loop? If yes, branch.
-LBAEB:  AND #$C0            ;
-LBAED:  CMP #$C0            ;At beginnig of new loop? if yes, branch.
-LBAEF:  BEQ ++              ;
-LBAF1:  JMP LoadMusicChannel        ;($BB1C)Load music data into channel.
+LBAE6:  TAY                     ;Transfer music data index to Y (base=$BE77) .
+LBAE7:  CMP #$FF                ;
+LBAE9:  BEQ +                   ;At end of loop? If yes, branch.
+LBAEB:  AND #$C0                ;
+LBAED:  CMP #$C0                ;At beginnig of new loop? if yes, branch.
+LBAEF:  BEQ ++                  ;
+LBAF1:  JMP LoadMusicChannel    ;($BB1C)Load music data into channel.
 
 RepeatMusicLoop:
-LBAF4:* LDA SQ1RepeatCounter,X      ;If loop counter has reached zero, branch to exit.
-LBAF7:  BEQ ++              ;
-LBAF9:  DEC SQ1RepeatCounter,X      ;Decrement loop counter.
+LBAF4:* LDA SQ1RepeatCounter,X  ;If loop counter has reached zero, branch to exit.
+LBAF7:  BEQ ++                  ;
+LBAF9:  DEC SQ1RepeatCounter,X  ;Decrement loop counter.
 LBAFC:  LDA SQ1LoopIndex,X      ;Load loop index for proper channel and store it in
 LBAFF:  STA SQ1MusicIdxIdx,X    ;music index index address.
-LBB02:  BNE ++              ;Branch unless music has reached the end.
+LBB02:  BNE ++                  ;Branch unless music has reached the end.
 
 StartNewMusicLoop:
-LBB04:* TYA             ;
-LBB05:  AND #$3F            ;Remove last six bits of loop controller and save
-LBB07:  STA SQ1RepeatCounter,X      ;in repeat counter addresses.  # of times to loop.
-LBB0A:  DEC SQ1RepeatCounter,X      ;Decrement loop counter.
+LBB04:* TYA                     ;
+LBB05:  AND #$3F                ;Remove last six bits of loop controller and save
+LBB07:  STA SQ1RepeatCounter,X  ;in repeat counter addresses.  # of times to loop.
+LBB0A:  DEC SQ1RepeatCounter,X  ;Decrement loop counter.
 LBB0D:  LDA SQ1MusicIdxIdx,X    ;Store location of loop start in loop index address.
 LBB10:  STA SQ1LoopIndex,X      ;
-LBB13:* JMP LoadNextChannelIndexData    ;($BADC)Load next channel index data.
+LBB13:* JMP LdNextChnlIndexDat  ;($BADC)Load next channel index data.
 
-LBB16:* JMP LoadNoiseChannelMusic   ;($BBDE)Load data for noise channel music.
+LBB16:* JMP LdNseChannelMusic   ;($BBDE)Load data for noise channel music.
 
-LBB19:* JMP LoadTriangleCntrl0      ;($BBB7)Load Cntrl0 byte of triangle channel.
+LBB19:* JMP LoadTriangleCntrl0  ;($BBB7)Load Cntrl0 byte of triangle channel.
 
 LoadMusicChannel:
-LBB1C:  TYA             ;
-LBB1D:  AND #$B0            ;
-LBB1F:  CMP #$B0            ;Is data byte music note length data?  If not, branch.
-LBB21:  BNE +               ;
-LBB23:  TYA             ;
-LBB24:  AND #$0F            ;Separate note length data.
-LBB26:  CLC             ;
-LBB27:  ADC NoteLenTblOffset     ;Find proper note lengths table for current music.
-LBB2A:  TAY             ;
-LBB2B:  LDA NoteLengths0Tbl,Y       ;(Base is $BEF7)Load note length and store in 
-LBB2E:  STA SQ1FrmCountInit,X     ;frame count init address.
-LBB31:  TAY             ;Y now contains note length.
-LBB32:  TXA             ;
-LBB33:  CMP #$02            ;If loading Triangle channel data, branch.
-LBB35:  BEQ -               ;
+LBB1C:  TYA                     ;
+LBB1D:  AND #$B0                ;
+LBB1F:  CMP #$B0                ;Is data byte music note length data?  If not, branch.
+LBB21:  BNE +                   ;
+LBB23:  TYA                     ;
+LBB24:  AND #$0F                ;Separate note length data.
+LBB26:  CLC                     ;
+LBB27:  ADC NoteLenTblOffset    ;Find proper note lengths table for current music.
+LBB2A:  TAY                     ;
+LBB2B:  LDA NoteLengths0Tbl,Y   ;(Base is $BEF7)Load note length and store in 
+LBB2E:  STA SQ1FrmCountInit,X   ;frame count init address.
+LBB31:  TAY                     ;Y now contains note length.
+LBB32:  TXA                     ;
+LBB33:  CMP #$02                ;If loading Triangle channel data, branch.
+LBB35:  BEQ -                   ;
 
-LoadSoundDataIndexIndex:
+LdSndDatIndexIndex:
 LBB37:  LDY SQ1MusicIdxIdx,X    ;Load current index to sound data index.
 LBB3A:  INC SQ1MusicIdxIdx,X    ;Increment music index index address.
-LBB3D:  LDA ($E6),Y         ;Load index to sound channel music data.
-LBB3F:  TAY             ;
-LBB40:* TXA             ;
-LBB41:  CMP #$03            ;If loading Noise channel data, branch.
-LBB43:  BEQ ---             ;
-LBB45:  PHA             ;Push music channel number on stack(0, 1 or 2).
-LBB46:  LDX ThisSoundChannel        ;
-LBB49:  LDA MusicNotesTbl+1,Y       ;(Base=$BE78)Load A with music channel period low data.
-LBB4C:  BEQ +               ;If data is #$00, skip period high and low loading.
-LBB4E:  STA MusicSQ1PrdLow,X     ;Store period low data in proper period low address.
+LBB3D:  LDA ($E6),Y             ;Load index to sound channel music data.
+LBB3F:  TAY                     ;
+LBB40:* TXA                     ;
+LBB41:  CMP #$03                ;If loading Noise channel data, branch.
+LBB43:  BEQ ---                 ;
+LBB45:  PHA                     ;Push music channel number on stack(0, 1 or 2).
+LBB46:  LDX ThisSoundChannel    ;
+LBB49:  LDA MusicNotesTbl+1,Y   ;(Base=$BE78)Load A with music channel period low data.
+LBB4C:  BEQ +                   ;If data is #$00, skip period high and low loading.
+LBB4E:  STA MusicSQ1PrdLow,X    ;Store period low data in proper period low address.
 LBB51:  LDA MusicNotesTbl,Y     ;(Base=$BE77)Load A with music channel period high data.
-LBB54:  ORA #$08            ;Ensure minimum index length of 1.
-LBB56:  STA MusicSQ1PrdHi,X    ;Store period high data in proper period high address.
-LBB59:* TAY             ;
-LBB5A:  PLA             ;Pull stack and restore channel number to X.
-LBB5B:  TAX             ;
-LBB5C:  TYA             ;
-LBB5D:  BNE +               ;If period information was present, branch.
+LBB54:  ORA #$08                ;Ensure minimum index length of 1.
+LBB56:  STA MusicSQ1PrdHi,X     ;Store period high data in proper period high address.
+LBB59:* TAY                     ;
+LBB5A:  PLA                     ;Pull stack and restore channel number to X.
+LBB5B:  TAX                     ;
+LBB5C:  TYA                     ;
+LBB5D:  BNE +                   ;If period information was present, branch.
                 
 NoPeriodInformation:
-LBB5F:  LDA #$00            ;Turn off channel volume since no period data present.
+LBB5F:  LDA #$00                ;Turn off channel volume since no period data present.
 LBB61:  STA Cntrl0Data          ;
-LBB63:  TXA             ;
-LBB64:  CMP #$02            ;If loading triangle channel data, branch.
-LBB66:  BEQ ++              ;
-LBB68:  LDA #$10            ;Turn off volume and disable env. generator(SQ1,SQ2).
+LBB63:  TXA                     ;
+LBB64:  CMP #$02                ;If loading triangle channel data, branch.
+LBB66:  BEQ ++                  ;
+LBB68:  LDA #$10                ;Turn off volume and disable env. generator(SQ1,SQ2).
 LBB6A:  STA Cntrl0Data          ;
-LBB6C:  BNE ++              ;Branch always.
+LBB6C:  BNE ++                  ;Branch always.
 
 PeriodInformationFound:
-LBB6E:* LDA SQ1DutyEnvelope,X       ;Store channel duty cycle and volume info in $EA.
+LBB6E:* LDA SQ1DutyEnvelope,X   ;Store channel duty cycle and volume info in $EA.
 LBB71:  STA Cntrl0Data          ;
-LBB73:* TXA             ;
+LBB73:* TXA                     ;
 LBB74:  DEC SQ1InUse,X          ;
 LBB77:  CMP SQ1InUse,X          ;If SQ1 or SQ2 are being used by SFX routines, branch.
-LBB7A:  BEQ +++             ;
+LBB7A:  BEQ +++                 ;
 LBB7C:  INC SQ1InUse,X          ;Restore not in use status of SQ1 or SQ2.
-LBB7F:  LDY ThisSoundChannel        ;
-LBB82:  TXA             ;
-LBB83:  CMP #$02            ;If loading triangle channel data, branch.
-LBB85:  BEQ +               ;
-LBB87:  LDA SQ1VolumeCntrl,X        ;If $062E or $062F has volume data, skip writing
-LBB8A:  BNE ++              ;Cntrl0Data to SQ1 or SQ2.
+LBB7F:  LDY ThisSoundChannel    ;
+LBB82:  TXA                     ;
+LBB83:  CMP #$02                ;If loading triangle channel data, branch.
+LBB85:  BEQ +                   ;
+LBB87:  LDA SQ1VolumeCntrl,X    ;If $062E or $062F has volume data, skip writing
+LBB8A:  BNE ++                  ;Cntrl0Data to SQ1 or SQ2.
 LBB8C:* LDA Cntrl0Data          ;
 LBB8E:  STA SQ1Cntrl0,Y         ;Write Cntrl0Data.
 LBB91:* LDA Cntrl0Data          ;
 LBB93:  STA SQ1VolumeData,X     ;Store volume data index to volume data.
-LBB96:  LDA MusicSQ1PrdLow,Y     ;
+LBB96:  LDA MusicSQ1PrdLow,Y    ;
 LBB99:  STA SQ1Cntrl2,Y         ;
-LBB9C:  LDA MusicSQ1PrdHi,Y    ;Write data to three sound channel addresses.
+LBB9C:  LDA MusicSQ1PrdHi,Y     ;Write data to three sound channel addresses.
 LBB9F:  STA SQ1Cntrl3,Y         ;
 LBBA2:  LDA MusicSQ1Sweep,X     ;
 LBBA5:  STA SQ1Cntrl1,Y         ;
 
-LoadNewMusicFrameCount:
-LBBA8:  LDA SQ1FrmCountInit,X     ;Load new music frame count and store it in music
-LBBAB:  STA SQ1MusicFrameCnt,X    ;frame count address.
-LBBAE:  JMP IncrementToNextChannel  ;($BAB3)Move to next sound channel.
+LdNewMusFrameCount:
+LBBA8:  LDA SQ1FrmCountInit,X   ;Load new music frame count and store it in music
+LBBAB:  STA SQ1MusicFrameCnt,X  ;frame count address.
+LBBAE:  JMP IncToNextChannel    ;($BAB3)Move to next sound channel.
 
 SQ1SQ2InUse:
 LBBB1:* INC SQ1InUse,X          ;Restore in use status of SQ1 or SQ1.
-LBBB4:  JMP LoadNewMusicFrameCount  ;($BBA8)Load new music frame count.
+LBBB4:  JMP LdNewMusFrameCount  ;($BBA8)Load new music frame count.
 
 LoadTriangleCntrl0:
-LBBB7:  LDA TriCounterCntrl    ;
-LBBBA:  AND #$0F            ;If lower bits set, branch to play shorter note. 
-LBBBC:  BNE ++              ;
-LBBBE:  LDA TriCounterCntrl    ;
-LBBC1:  AND #$F0            ;If upper bits are set, branch to play longer note.
-LBBC3:  BNE +               ;
-LBBC5:  TYA             ;
-LBBC6:  JMP AddTriangleLength       ;($BBCD)Calculate length to play note.
-LBBC9:* LDA #$FF            ;Disable length cntr(play until triangle data changes).
-LBBCB:  BNE +               ;Branch always.
+LBBB7:  LDA TriCounterCntrl     ;
+LBBBA:  AND #$0F                ;If lower bits set, branch to play shorter note. 
+LBBBC:  BNE ++                  ;
+LBBBE:  LDA TriCounterCntrl     ;
+LBBC1:  AND #$F0                ;If upper bits are set, branch to play longer note.
+LBBC3:  BNE +                   ;
+LBBC5:  TYA                     ;
+LBBC6:  JMP AddTriangleLength   ;($BBCD)Calculate length to play note.
+LBBC9:* LDA #$FF                ;Disable length cntr(play until triangle data changes).
+LBBCB:  BNE +                   ;Branch always.
 
 AddTriangleLength:
-LBBCD:  CLC                 ;
-LBBCE:  ADC #$FF            ;Add #$FF(Effectively subtracts 1 from A).
-LBBD0:  ASL             ;*2.
-LBBD1:  ASL             ;*2.
-LBBD2:  CMP #$3C            ;
-LBBD4:  BCC +               ;If result is greater than #$3C, store #$3C(highest
-LBBD6:  LDA #$3C            ;triangle linear count allowed).
+LBBCD:  CLC                     ;
+LBBCE:  ADC #$FF                ;Add #$FF(Effectively subtracts 1 from A).
+LBBD0:  ASL                     ;*2.
+LBBD1:  ASL                     ;*2.
+LBBD2:  CMP #$3C                ;
+LBBD4:  BCC +                   ;If result is greater than #$3C, store #$3C(highest
+LBBD6:  LDA #$3C                ;triangle linear count allowed).
 LBBD8:* STA TriLinearCount      ;
-LBBDB:* JMP LoadSoundDataIndexIndex ;($BB37)Load index to sound data index.
+LBBDB:* JMP LdSndDatIndexIndex  ;($BB37)Load index to sound data index.
 
-LoadNoiseChannelMusic:
+LdNseChannelMusic:
 LBBDE:  LDA NoiseContSFX        ;
-LBBE1:  AND #$FC            ;If playing any Noise SFX, branch to exit.
-LBBE3:  BNE +               ;
-LBBE5:  LDA $B200,Y         ;
+LBBE1:  AND #$FC                ;If playing any Noise SFX, branch to exit.
+LBBE3:  BNE +                   ;
+LBBE5:  LDA $B200,Y             ;
 LBBE8:  STA NoiseCntrl0         ;Load noise channel with drum beat SFX starting
-LBBEB:  LDA $B201,Y         ;at address B201.  The possible values of Y are
+LBBEB:  LDA $B201,Y             ;at address B201.  The possible values of Y are
 LBBEE:  STA NoiseCntrl2         ;#$01, #$04, #$07 or #$0A.
-LBBF1:  LDA $B202,Y         ;
+LBBF1:  LDA $B202,Y             ;
 LBBF4:  STA NoiseCntrl3         ;
-LBBF7:* JMP LoadNewMusicFrameCount  ;($BBA8)Load new music frame count.
+LBBF7:* JMP LdNewMusFrameCount  ;($BBA8)Load new music frame count.
 
 ;The following table is used by the InitializeMusic routine to find the index for loading
 ;addresses $062B thru $0637.  Base is $BD31.
 
 InitMusicIndexTbl:
-LBBFA:  .byte $41           ;Ridley area music.
-LBBFB:  .byte $8F           ;Tourian music.
-LBBFC:  .byte $34           ;Item room music.
-LBBFD:  .byte $27           ;Kraid area music.
-LBBFE:  .byte $1A           ;Norfair music.
-LBBFF:  .byte $0D           ;Escape music.
-LBC00:  .byte $00           ;Mother brain music.
-LBC01:  .byte $82           ;Brinstar music.
-LBC02:  .byte $68           ;Fade in music.
-LBC03:  .byte $75           ;Power up music.
-LBC04:  .byte $4E           ;End music.
-LBC05:  .byte $5B           ;Intro music.
+LBBFA:  .byte $41               ;Ridley area music.
+LBBFB:  .byte $8F               ;Tourian music.
+LBBFC:  .byte $34               ;Item room music.
+LBBFD:  .byte $27               ;Kraid area music.
+LBBFE:  .byte $1A               ;Norfair music.
+LBBFF:  .byte $0D               ;Escape music.
+LBC00:  .byte $00               ;Mother brain music.
+LBC01:  .byte $82               ;Brinstar music.
+LBC02:  .byte $68               ;Fade in music.
+LBC03:  .byte $75               ;Power up music.
+LBC04:  .byte $4E               ;End music.
+LBC05:  .byte $5B               ;Intro music.
 
 ;The tables below contain addresses for SFX and music handling routines.
 ;Multi channel Init SFX and music handling routine addresses:
 
-LBC06:  .word $BC80         ;Fade in music.
-LBC08:  .word $BC7A         ;Power up music. 
-LBC0A:  .word $BC86         ;End game music.
-LBC0C:  .word $BC7A         ;Intro music.
-LBC0E:  .word $B4EE         ;No sound.
-LBC10:  .word $B673         ;Samus hit init SFX.
-LBC12:  .word $B5EC         ;Boss hit init SFX.
-LBC14:  .word $B695         ;Incorrect password init SFX.
+LBC06:  .word $BC80             ;Fade in music.
+LBC08:  .word $BC7A             ;Power up music. 
+LBC0A:  .word $BC86             ;End game music.
+LBC0C:  .word $BC7A             ;Intro music.
+LBC0E:  .word $B4EE             ;No sound.
+LBC10:  .word $B673             ;Samus hit init SFX.
+LBC12:  .word $B5EC             ;Boss hit init SFX.
+LBC14:  .word $B695             ;Incorrect password init SFX.
 
 ;Multi channel continue SFX handling routine addresses:
 
-LBC16:  .word $B4EE         ;No sound.
-LBC18:  .word $B4EE         ;No sound.
-LBC1A:  .word $B4EE         ;No sound.
-LBC1C:  .word $B4EE         ;No sound.
-LBC1E:  .word $B4EE         ;No sound.
-LBC20:  .word $B650         ;Samus hit continue SFX.
-LBC22:  .word $B5F6         ;Boss hit continue SFX.
-LBC24:  .word $B6A1         ;Incorrect password continue SFX.
+LBC16:  .word $B4EE             ;No sound.
+LBC18:  .word $B4EE             ;No sound.
+LBC1A:  .word $B4EE             ;No sound.
+LBC1C:  .word $B4EE             ;No sound.
+LBC1E:  .word $B4EE             ;No sound.
+LBC20:  .word $B650             ;Samus hit continue SFX.
+LBC22:  .word $B5F6             ;Boss hit continue SFX.
+LBC24:  .word $B6A1             ;Incorrect password continue SFX.
 
 ;Music handling routine addresses:
 
-LBC26:  .word $BC83         ;Ridley area music.
-LBC28:  .word $BC77         ;Tourian music.
-LBC2A:  .word $BC77         ;Item room music.
-LBC2C:  .word $BC77         ;Kraid area music.
-LBC2E:  .word $BC80         ;Norfair music.
-LBC30:  .word $BC7D         ;Escape music.
-LBC32:  .word $BC77         ;Mother brain music.
-LBC34:  .word $BC80         ;Brinstar music.
+LBC26:  .word $BC83             ;Ridley area music.
+LBC28:  .word $BC77             ;Tourian music.
+LBC2A:  .word $BC77             ;Item room music.
+LBC2C:  .word $BC77             ;Kraid area music.
+LBC2E:  .word $BC80             ;Norfair music.
+LBC30:  .word $BC7D             ;Escape music.
+LBC32:  .word $BC77             ;Mother brain music.
+LBC34:  .word $BC80             ;Brinstar music.
 
 ;-----------------------------------[ Entry point for music routines ]--------------------------------
 
 LoadMusicTempFlags:
-LBC36:  LDA CrntMusicRepeat      ;Load A with temp music flags, (9th SFX cycle).
-LBC39:  LDX #$B6            ;Lower address byte in ChooseNextSFXRoutineTbl.
-LBC3B:  BNE +               ;Branch always.
+LBC36:  LDA CrntMusicRepeat     ;Load A with temp music flags, (9th SFX cycle).
+LBC39:  LDX #$B6                ;Lower address byte in ChooseNextSFXRoutineTbl.
+LBC3B:  BNE +                   ;Branch always.
 
 LoadMusicInitFlags:
 LBC3D:  LDA MusicInitFlag       ;Load A with Music flags, (10th SFX cycle).
-LBC40:  LDX #$B1            ;Lower address byte in ChooseNextSFXRoutineTbl.
+LBC40:  LDX #$B1                ;Lower address byte in ChooseNextSFXRoutineTbl.
 LBC42:* JSR CheckSFXFlag        ;($B4BD)Checks to see if SFX or music flags set.
-LBC45:  JSR FindMusicInitIndex      ;($BC53)Find bit containing music init flag.
-LBC48:  JMP ($00E2)         ;If no flag found, Jump to next SFX cycle,
-                    ;else jump to specific SFX handling subroutine.
+LBC45:  JSR FindMusicInitIndex  ;($BC53)Find bit containing music init flag.
+LBC48:  JMP ($00E2)             ;If no flag found, Jump to next SFX cycle,
+                                ;else jump to specific SFX handling subroutine.
 
-ContinueMusic:              ;11th and last SFX cycle.
+ContinueMusic:                  ;11th and last SFX cycle.
 LBC4B:  LDA CurrentMusic        ;
-LBC4E:  BEQ +++             ;Branch to exit of no music playing.
-LBC50:  JMP LoadCurrentMusicFrameData   ;($BAA5)Load info for current frame of music data.
+LBC4E:  BEQ +++                 ;Branch to exit of no music playing.
+LBC50:  JMP LoadCurMusFrameData ;($BAA5)Load info for current frame of music data.
 
 ;MusicInitIndex values correspond to the following music:
 ;#$00=Ridley area music, #$01=Tourian music, #$02=Item room music, #$03=Kraid area music,
@@ -7110,28 +6851,28 @@ LBC50:  JMP LoadCurrentMusicFrameData   ;($BAA5)Load info for current frame of m
 ;#$08=Fade in music, #$09=Power up music, #$0A=End game music, #$0B=Intro music.
 
 FindMusicInitIndex:
-LBC53:  LDA #$FF            ;Load MusicInitIndex with #$FF.
+LBC53:  LDA #$FF                ;Load MusicInitIndex with #$FF.
 LBC55:  STA MusicInitIndex      ;
 LBC58:  LDA CurrentSFXFlags     ;
-LBC5B:  BEQ ++              ;Branch to exit if no SFX flags set for Multi SFX.
+LBC5B:  BEQ ++                  ;Branch to exit if no SFX flags set for Multi SFX.
 LBC5D:* INC MusicInitIndex      ;
-LBC60:  ASL             ;Shift left until bit flag is in carry bit.
-LBC61:  BCC -               ;Loop until SFX flag found.  Store bit
-LBC63:* RTS             ;number of music in MusicInitIndex.
+LBC60:  ASL                     ;Shift left until bit flag is in carry bit.
+LBC61:  BCC -                   ;Loop until SFX flag found.  Store bit
+LBC63:* RTS                     ;number of music in MusicInitIndex.
 
 ;The following routine is used to add eight to the music index when looking for music flags
 ;in the MultiSFX address.  
 Add8:
 LBC64:  LDA MusicInitIndex      ;
-LBC67:  CLC             ;
-LBC68:  ADC #$08            ;Add #$08 to MusicInitIndex.
+LBC67:  CLC                     ;
+LBC68:  ADC #$08                ;Add #$08 to MusicInitIndex.
 LBC6A:  STA MusicInitIndex      ;
-LBC6D:  RTS             ;
+LBC6D:  RTS                     ;
 
 LBC6E:  LDA CurrentMusic        ;
-LBC71:  ORA #$F0            ;This code does not appear to be used in this page.
+LBC71:  ORA #$F0                ;This code does not appear to be used in this page.
 LBC73:  STA CurrentMusic        ;
-LBC76:* RTS             ;
+LBC76:* RTS                     ;
 
 Music00Start:
 LBC77:  JMP Music00Init         ;($BCAA)Initialize music 00.
@@ -7152,41 +6893,41 @@ Music05Start:
 LBC86:  JMP Music05Init         ;($BC9E)Initialize music 05.
 
 Music04Init:
-LBC89:  LDA #$B3            ;Duty cycle and volume data for SQ1 and SQ2.
+LBC89:  LDA #$B3                ;Duty cycle and volume data for SQ1 and SQ2.
 
 XYMusicInit:
-LBC8B:* TAX             ;Duty cycle and volume data for SQ1.
-LBC8C:  TAY             ;Duty cycle and volume data for SQ2.
+LBC8B:* TAX                     ;Duty cycle and volume data for SQ1.
+LBC8C:  TAY                     ;Duty cycle and volume data for SQ2.
 
-LBC8D:* JSR SetVolumeAndDisableSweep    ;($B9E4)Set duty cycle and volume data for SQ1 and SQ2.
+LBC8D:* JSR SetVolAndDisblSweep ;($B9E4)Set duty cycle and volume data for SQ1 and SQ2.
 LBC90:  JSR InitializeMusic     ;($BF19)Setup music registers.
-LBC93:  JMP LoadCurrentMusicFrameData   ;($BAA5)Load info for current frame of music data.
+LBC93:  JMP LoadCurMusFrameData ;($BAA5)Load info for current frame of music data.
 
 Music03Init:
-LBC96:  LDA #$34            ;Duty cycle and volume data for SQ1 and SQ2.
-LBC98:  BNE --              ;Branch always
+LBC96:  LDA #$34                ;Duty cycle and volume data for SQ1 and SQ2.
+LBC98:  BNE --                  ;Branch always
 
 Music02Init:
-LBC9A:  LDA #$F4            ;Duty cycle and volume data for SQ1 and SQ2.
-LBC9C:  BNE --              ;Branch always
+LBC9A:  LDA #$F4                ;Duty cycle and volume data for SQ1 and SQ2.
+LBC9C:  BNE --                  ;Branch always
 
 Music05Init:
-LBC9E:  LDX #$F5            ;Duty cycle and volume data for SQ1.
-LBCA0:  LDY #$F6            ;Duty cycle and volume data for SQ2.
-LBCA2:  BNE -               ;Branch always
+LBC9E:  LDX #$F5                ;Duty cycle and volume data for SQ1.
+LBCA0:  LDY #$F6                ;Duty cycle and volume data for SQ2.
+LBCA2:  BNE -                   ;Branch always
 
 Music01Init:
-LBCA4:  LDX #$B6            ;Duty cycle and volume data for SQ1.
-LBCA6:  LDY #$F6            ;Duty cycle and volume data for SQ2.
-LBCA8:  BNE -               ;Branch always
+LBCA4:  LDX #$B6                ;Duty cycle and volume data for SQ1.
+LBCA6:  LDY #$F6                ;Duty cycle and volume data for SQ2.
+LBCA8:  BNE -                   ;Branch always
 
 Music00Init:
-LBCAA:  LDX #$92            ;Duty cycle and volume data for SQ1.
-LBCAC:  LDY #$96            ;Duty cycle and volume data for SQ2.
-LBCAE:  BNE -               ;Branch always
+LBCAA:  LDX #$92                ;Duty cycle and volume data for SQ1.
+LBCAC:  LDY #$96                ;Duty cycle and volume data for SQ2.
+LBCAE:  BNE -                   ;Branch always
 
 ;The following address table provides starting addresses of the volume data tables below:
-VolCntrlAddressTbl:
+VolCntrlAddrTbl:
 LBCB0:  .word $BCBA, $BCC5, $BCCF, $BCDA, $BD03
 
 VolumeDataTbl1:
@@ -7271,6 +7012,8 @@ LBDB8:  .word $0100, $0300, $0500, $0700
 ;Tourian music
 LBDC0:  .byte $0B, $FF, $03, $00, $00
 LBDC5:  .word $BE59, $BE47, $BE62, $0000
+
+;----------------------------------------------------------------------------------------------------
 
 ItemRoomTriangleIndexData:
 LBDCD:  .byte $C8               ;
@@ -7609,24 +7352,24 @@ LBF29:  TAY                     ;
 LBF2A:  LDX #$00                ;Zero out index.
 
 LBF2C:* LDA InitMusicTbl,Y      ;Base is $BD31.
-LBF2F:  STA NoteLenTblOffset,X   ;
-LBF32:  INY                 ;The following loop repeats 13 times to
-LBF33:  INX                 ;load the initial music addresses 
-LBF34:  TXA                 ;(registers $062B thru $0637).
-LBF35:  CMP #$0D            ;
-LBF37:  BNE -               ;
+LBF2F:  STA NoteLenTblOffset,X  ;
+LBF32:  INY                     ;The following loop repeats 13 times to
+LBF33:  INX                     ;load the initial music addresses 
+LBF34:  TXA                     ;(registers $062B thru $0637).
+LBF35:  CMP #$0D                ;
+LBF37:  BNE -                   ;
 
-LBF39:  LDA #$01                    ;Resets addresses $0640 thru $0643 to #$01.
-LBF3B:  STA SQ1MusicFrameCnt      ;These addresses are used for counting the
-LBF3E:  STA SQ2MusicFrameCnt      ;number of frames music channels have been playing.
-LBF41:  STA TriMusicFrameCnt ;
+LBF39:  LDA #$01                ;Resets addresses $0640 thru $0643 to #$01.
+LBF3B:  STA SQ1MusicFrameCnt    ;These addresses are used for counting the
+LBF3E:  STA SQ2MusicFrameCnt    ;number of frames music channels have been playing.
+LBF41:  STA TriMusicFrameCnt    ;
 LBF44:  STA NseMusicFrameCnt    ;
-LBF47:  LDA #$00                    ;
+LBF47:  LDA #$00                ;
 LBF49:  STA SQ1MusicIdxIdx      ;
 LBF4C:  STA SQ2MusicIdxIdx      ;Resets addresses $0638 thru $063B to #$00.
-LBF4F:  STA TriMusicIdxIdx ;These are the index to find sound channel data index.
+LBF4F:  STA TriMusicIdxIdx      ;These are the index to find sound channel data index.
 LBF52:  STA NoiseMusicIdxIdx    ;
-LBF55:  RTS                         ;
+LBF55:  RTS                     ;
 
 ;----------------------------------------------------------------------------------------------------
 

@@ -6,7 +6,7 @@
 
 ;-------------------------------------[ Forward declarations ]--------------------------------------
 
-.alias  ObjectAnimIndexTbl      $8572
+.alias  ObjectAnimIdxTbl        $8572
 .alias  FramePtrTable           $860B
 .alias  PlacePtrTable           $86DF
 .alias  StarPalSwitch           $8AC7
@@ -2272,7 +2272,7 @@ LCCC2:  ldx SamusDir
     lda Joy1Status
     and #$08
     beq +
-    lda #an_SamusJumpPntUp
+    lda #an_SamusJmpPntUp
     sta AnimResetIndex
 *       bit Joy1Status
     bmi +
@@ -2665,7 +2665,7 @@ LCFB7:  jsr ClearHorzMvmntData      ;($CF4C)Clear horizontal speed and linear co
     sty SamusHorzAccel      ;Clear horizontal acceleration data.
 *   rts             ;
 
-LCFBE:  ldy #an_SamusJumpPntUp
+LCFBE:  ldy #an_SamusJmpPntUp
     jmp +
 
 SetSamusJump:
@@ -2711,7 +2711,7 @@ SamusJump:
     lda Joy1Status
     and #$08     ; UP pressed?
     beq +      ; branch if not
-    lda #an_SamusJumpPntUp
+    lda #an_SamusJmpPntUp
     sta AnimResetIndex
     lda #sa_PntJump      ; "jumping & pointing up" handler
     sta ObjAction
@@ -2782,7 +2782,7 @@ LD09C:  lda Joy1Change
     asl
     bpl -      ; exit if FIRE not pressed
     lda AnimResetIndex
-    cmp #an_SamusJumpPntUp
+    cmp #an_SamusJmpPntUp
     bne +
     jmp LD275
 
@@ -3537,7 +3537,7 @@ LD5E4:  lda #$1D
     beq Exit5
     cpy #wa_Missile
     bne +
-    lda #an_MissileExplode
+    lda #an_MissileExpld
 *       jsr SetProjectileAnim
     lda #wa_BulletExplode
 *       sta ObjAction,x
@@ -4480,20 +4480,20 @@ LDC8E:  .byte $40           ;Flip sprite horizontally.
 
 UpdateObjAnim:
 LDC8F:  ldx PageIndex
-    ldy AnimDelay,x
-    beq +      ; is it time to advance to the next anim frame?
-    dec AnimDelay,x     ; nope
-    bne +++   ; exit if still not zero (don't update animation)
+        ldy AnimDelay,x
+        beq +                  ; is it time to advance to the next anim frame?
+        dec AnimDelay,x     ; nope
+        bne +++   ; exit if still not zero (don't update animation)
 *       sta AnimDelay,x     ; set initial anim countdown value
-    ldy AnimIndex,x
-*       lda ObjectAnimIndexTbl,y        ;($8572)Load frame number.
-    cmp #$FF    ; has end of anim been reached?
-    beq ++
-    sta AnimFrame,x     ; store frame number
-    iny      ; inc anim index
-    tya
-    sta AnimIndex,x     ; store anim index
-*   rts
+        ldy AnimIndex,x
+*       lda ObjectAnimIdxTbl,y        ;($8572)Load frame number.
+        cmp #$FF                ; has end of anim been reached?
+        beq ++
+        sta AnimFrame,x     ; store frame number
+        iny      ; inc anim index
+        tya
+         sta AnimIndex,x     ; store anim index
+*       rts
 
 *       ldy AnimResetIndex,x     ; reset anim frame index
     jmp ---    ; do first frame of animation
@@ -5346,7 +5346,7 @@ LE215:* dex             ;
 LE216:  bne Exit15          ;Check if need to scroll up to center door.
 LE218:  jsr ScrollUp            ;($E4F1)DoorStatus=4, scroll 1 pixel up.
 
-VerticalRoomCentered:
+VertRoomCentered:
 LE21B:* ldx ScrollY         ;Has room been centered on screen?
 LE21D:  bne Exit15          ;If not, branch to exit.
 LE21F:  stx DoorOnNameTable3        ;
