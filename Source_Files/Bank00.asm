@@ -46,34 +46,34 @@
 ;----------------------------------------------------------------------------------------------------
 
 MainTitleRoutine:
-L8000:  lda TitleRoutine        ;
-L8002:  cmp #$15                ;If intro routines not running, branch.
-L8004:  bcs doChooseRoutine     ;
+L8000:  LDA TitleRoutine        ;
+L8002:  CMP #$15                ;If intro routines not running, branch.
+L8004:  BCS doChooseRoutine     ;
 
-L8006:  lda Joy1Change          ;
-L8008:  and #BTN_START          ;if start has not been pressed, branch.
-L800A:  beq StartPressed        ;
+L8006:  LDA Joy1Change          ;
+L8008:  AND #BTN_START          ;if start has not been pressed, branch.
+L800A:  BEQ StartPressed        ;
 
-L800C:  ldy #$00                ;
-L800E:  sty SpareMemD1          ;
-L8010:  sty SpareMemBB          ;Unused registers.
-L8012:  sty SpareMemB7          ;
-L8014:  sty SpareMemB8          ;
+L800C:  LDY #$00                ;
+L800E:  STY SpareMemD1          ;
+L8010:  STY SpareMemBB          ;Unused registers.
+L8012:  STY SpareMemB7          ;
+L8014:  STY SpareMemB8          ;
 
-L8016:  lda PPUCNT0ZP           ;   
-L8018:  and #$FC                ;Set name table to name table 0.
-L801A:  sta PPUCNT0ZP           ;
+L8016:  LDA PPUCNT0ZP           ;   
+L8018:  AND #$FC                ;Set name table to name table 0.
+L801A:  STA PPUCNT0ZP           ;
 
-L801C:  lda #$1B                ;If start pressed, load START/CONTINUE screen.
-L801E:  sta TitleRoutine        ;
-L8020:  bne doChooseRoutine     ;Branch always.
+L801C:  LDA #$1B                ;If start pressed, load START/CONTINUE screen.
+L801E:  STA TitleRoutine        ;
+L8020:  BNE doChooseRoutine     ;Branch always.
 
 StartPressed:
-L8022:  jsr RemIntroSprts       ;($C1BC)Remove sparkle and crosshair sprites from screen.
-L8025:  lda TitleRoutine        ;
+L8022:  JSR RemIntroSprts       ;($C1BC)Remove sparkle and crosshair sprites from screen.
+L8025:  LDA TitleRoutine        ;
 
 doChooseRoutine:
-L8027:  jsr ChooseRoutine       ;($C27C)Jump to proper routine below.
+L8027:  JSR ChooseRoutine       ;($C27C)Jump to proper routine below.
 
 ;----------------------------------------------------------------------------------------------------
 
@@ -112,69 +112,71 @@ L8066:  .word SetTimer          ;($C4AA)Set delay timer.
 ;----------------------------------------------------------------------------------------------------
 
 ClearSpareMem:
-L8068:  lda #$00                ;
-L806A:  sta SpareMemCB          ;Clears two memory addresses not used by the game.
-L806C:  sta SpareMemC9          ;
+L8068:  LDA #$00                ;
+L806A:  STA SpareMemCB          ;Clears two memory addresses not used by the game.
+L806C:  STA SpareMemC9          ;
 
 IncTitleRoutine:
-L806E:  inc TitleRoutine        ;Increment to next title routine.
-L8070:  rts                     ;
+L806E:  INC TitleRoutine        ;Increment to next title routine.
+L8070:  RTS                     ;
 
 InitAfterReset:
-L8071:  ldy #$02                ;
-L8073:  sty SpareMemCF          ;
-L8075:  sty SpareMemCC          ;
-L8077:  dey                     ;
-L8078:  sty SpareMemCE          ;Not used.
-L807A:  sty SpareMemD1          ;
-L807C:  dey                     ;
-L807D:  sty SpareMemD0          ;
-L807F:  sty SpareMemCD          ;
-L8081:  sty SpareMemD3          ;
+L8071:  LDY #$02                ;
+L8073:  STY SpareMemCF          ;
+L8075:  STY SpareMemCC          ;
+L8077:  DEY                     ;
+L8078:  STY SpareMemCE          ;Not used.
+L807A:  STY SpareMemD1          ;
+L807C:  DEY                     ;
+L807D:  STY SpareMemD0          ;
+L807F:  STY SpareMemCD          ;
+L8081:  STY SpareMemD3          ;
 
-L8083:  sty NARPASSWORD         ;Set NARPASSWORD not active.
+L8083:  STY NARPASSWORD         ;Set NARPASSWORD not active.
 
-L8086:  sty SpareMemCB          ;Not used.
-L8088:  sty SpareMemC9          ;
+L8086:  STY SpareMemCB          ;Not used.
+L8088:  STY SpareMemC9          ;
 
-L808A:  lda #$02                ;
-L808C:  sta IntroMusRstrt       ;Title rountines cycle twice before restart of music.
+L808A:  LDA #$02                ;
+L808C:  STA IntroMusRstrt       ;Title rountines cycle twice before restart of music.
 
-L808E:  sty SpareMemB7          ;Not used.
-L8090:  sty SpareMemB8          ;
+L808E:  STY SpareMemB7          ;Not used.
+L8090:  STY SpareMemB8          ;
 
-L8092:  sty PalDataIndex        ;Reset index to palette data.
-L8094:  sty ScrnFlashPalInd     ;Reset index into screen flash palette data.
-L8096:  sty IntroStarOffset     ;Reset index into IntroStarPntr table.
-L8098:  sty FadeDataIndex       ;Reset index into fade out palette data.
+L8092:  STY PalDataIndex        ;Reset index to palette data.
+L8094:  STY ScrnFlashPalInd     ;Reset index into screen flash palette data.
+L8096:  STY IntroStarOffset     ;Reset index into IntroStarPntr table.
+L8098:  STY FadeDataIndex       ;Reset index into fade out palette data.
 
-L809A:  sty GenPtr00LB          ;Set $0000 to point to address $6000.
-L809C:  ldx #>RoomRAMA          ;
+L809A:  STY GenPtr00LB          ;Set $0000 to point to address $6000.
+L809C:  LDX #>RoomRAMA          ;
 
 RAM6000LoadLoop:
-L809E:  stx GenPtr00UB          ;
-L80A0:  txa                     ;
-L80A1:  and #$03                ;
-L80A3:  asl                     ;
-L80A4:  tay                     ;The following loop Loads the 
-L80A5:  sty $02                 ;RAM with the following values: 
-L80A7:  lda RamValueTbl, y      ;$6000 thru $62FF = #$00.
-L80AA:  ldy #$00                ;$6300 thru $633F = #$C0.
-L80AC:* sta ($00), y            ;$6340 thru $63FF = #$C4.
-L80AE:  iny                     ;$6400 thru $66FF = #$00.
-L80AF:  beq +                   ;$6700 thru $673F = #$C0.
-L80B1:  cpy #$40                ;$6740 thru $67FF = #$C4.
-L80B3:  bne -                   ;
-L80B5:  ldy $02                 ;
-L80B7:  lda RamValueTbl+1, y    ;
-L80BA:  ldy #$40                ;
-L80BC:  bpl -                   ;
-L80BE:* inx                     ;
-L80BF:  cpx #$68                ;
-L80C1:  bne RAM6000LoadLoop     ;
+L809E:  STX GenPtr00UB          ;
+L80A0:  TXA                     ;
+L80A1:  AND #$03                ;
+L80A3:  ASL                     ;
+L80A4:  TAY                     ;
+L80A5:  STY GenByte02           ;
+L80A7:  LDA RamValueTbl, y      ;The following loop Loads the 
+L80AA:  LDY #$00                ;RAM with the following values:
+L80AC:* STA (GenPtr00), y       ;$6000 thru $62FF = #$00.
+L80AE:  INY                     ;$6300 thru $633F = #$C0.
+L80AF:  BEQ +                   ;$6340 thru $63FF = #$C4.
+L80B1:  CPY #$40                ;$6400 thru $66FF = #$00.
+L80B3:  BNE -                   ;$6700 thru $673F = #$C0.
+L80B5:  LDY GenByte02           ;$6740 thru $67FF = #$C4. 
+L80B7:  LDA RamValueTbl+1, y    ;
+L80BA:  LDY #$40                ;
+L80BC:  BPL -                   ;
+L80BE:* INX                     ;
+L80BF:  CPX #$68                ;
+L80C1:  BNE RAM6000LoadLoop     ;
 
-L80C3:  inc TitleRoutine        ;Draw intro background next.            
-L80C5:  jmp LoadStarSprites     ;($98AE)Loads stars on intro screen.        
+L80C3:  INC TitleRoutine        ;Draw intro background next.            
+L80C5:  JMP LoadStarSprites     ;($98AE)Loads stars on intro screen.        
+
+;----------------------------------------------------------------------------------------------------
 
 ;The following table is used by the code above for writing values to RAM.
 
@@ -1949,23 +1951,23 @@ L909D:  .word $3800             ;Mother brain                                (It
 ;----------------------------------------------------------------------------------------------------
 
 ClearAll:
-L909F:  jsr ScreenOff           ;($C439)Turn screen off.
-L90A2:  jsr ClearNameTables     ;Turn off screen, clear sprites and name tables.
-L90A5:  jsr EraseAllSprites     ;
-L90A8:  lda PPUCNT0ZP           ;Set Name table address to $2000.
-L90AA:  and #$FC                ;
-L90AC:  sta PPUCNT0ZP           ;
-L90AE:  lda #$00                ;
-L90B0:  sta ScrollY             ;Reset scroll offsets.
-L90B2:  sta ScrollX             ;
-L90B4:  jsr WaitNMIPass         ;($C42C)Wait for NMI to end.
-L90B7:  jmp VBOffAndHorzWr      ;($C47D)Set PPU for horizontal write and turn off VBlank.
+L909F:  JSR ScreenOff           ;($C439)Turn screen off.
+L90A2:  JSR ClearNameTables     ;Turn off screen, clear sprites and name tables.
+L90A5:  JSR EraseAllSprites     ;
+L90A8:  LDA PPUCNT0ZP           ;Set Name table address to $2000.
+L90AA:  AND #$FC                ;
+L90AC:  STA PPUCNT0ZP           ;
+L90AE:  LDA #$00                ;
+L90B0:  STA ScrollY             ;Reset scroll offsets.
+L90B2:  STA ScrollX             ;
+L90B4:  JSR WaitNMIPass         ;($C42C)Wait for NMI to end.
+L90B7:  JMP VBOffAndHorzWr      ;($C47D)Set PPU for horizontal write and turn off VBlank.
 
 StartContScrn:
-L90BA:  jsr ClearAll            ;($909F)Turn off screen, erase sprites and nametables.
-L90BD:  ldx #$84                ;Low address for PPU write.
-L90BF:  ldy #$99                ;High address for PPU write.
-L90C1:  jsr PreparePPUProcess   ;($9449)Clears screen and writes "START CONTINUE".
+L90BA:  JSR ClearAll            ;($909F)Turn off screen, erase sprites and nametables.
+L90BD:  LDX #$84                ;Low address for PPU write.
+L90BF:  LDY #$99                ;High address for PPU write.
+L90C1:  JSR PreparePPUProcess   ;($9449)Clears screen and writes "START CONTINUE".
 L90C4:  LDY #$00                ;
 L90C6:  STY StartContinue       ;Set selection sprite at START.
 L90C9:  LDA #$0D                ;
@@ -2425,9 +2427,9 @@ L9447:  .byte $22, $E4          ;
 
 
 PreparePPUProcess:
-L9449:  stx $00                 ;Lower byte of pointer to PPU string
-L944B:  sty $01                 ;Upper byte of pointer to PPU string
-L944D:  jmp ProcessPPUStr       ;($C30C)
+L9449:  STX $00                 ;Lower byte of pointer to PPU string
+L944B:  STY $01                 ;Upper byte of pointer to PPU string
+L944D:  JMP ProcessPPUStr       ;($C30C)
 
 PrepareEraseTiles:
 L9450:  STX $00                 ;PPU low address byte

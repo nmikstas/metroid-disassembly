@@ -4,6 +4,8 @@
 .alias GenPtr00LB       $00     ;General use pointer, lower byte.
 .alias GenPtr00UB       $01     ;General use pointer, upper byte.
 
+.alias GenByte02        $02     ;General purpose byte.
+
 .alias GenByte33        $33     ;General purpose byte.  
 
 ;----------------------------------------[ Variable Defines ]----------------------------------------
