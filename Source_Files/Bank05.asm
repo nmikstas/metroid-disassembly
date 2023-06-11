@@ -3858,7 +3858,7 @@ LB2DB:  .word $B6CD             ;Missile pickup init SFX.
 LB2DD:  .word $B6E7             ;Energy pickup init SFX.
 LB2DF:  .word $B735             ;Metal init SFX.
 LB2E1:  .word $B716             ;Bullet fire init SFX.
-LB2E3:  .word $B73C             ;Bird out of hole init SFX.
+LB2E3:  .word $B73C             ;Enemy regenerate init SFX.
 LB2E5:  .word $B710             ;Enemy hit init SFX.
 LB2E7:  .word $B703             ;Samus jump init SFX.
 LB2E9:  .word $B77A             ;Wave beam init SFX.
@@ -3869,7 +3869,7 @@ LB2EB:  .word $B6B0             ;Missile pickup continue SFX.
 LB2ED:  .word $B6D3             ;Energy pickup continue SFX.
 LB2EF:  .word $B6ED             ;Metal continue SFX.
 LB2F1:  .word $B74F             ;Bullet fire continue SFX.
-LB2F3:  .word $B6ED             ;Bird out of hole continue SFX.
+LB2F3:  .word $B6ED             ;Enemy regenerate continue SFX.
 LB2F5:  .word $B6ED             ;Enemy hit continue SFX.
 LB2F7:  .word $B6ED             ;Samus jump continue SFX.
 LB2F9:  .word $B781             ;Wave beam continue SFX.
@@ -4492,7 +4492,7 @@ BulletFireSFXStart:
 LB716:  LDA HasBeamSFX          ;
 LB719:  LSR                     ;If Samus has ice beam, branch.
 LB71A:  BCS +++++               ;
-LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, BirdOutOfHole
+LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, EnemyRegen
 LB71F:  AND #$CC                ;or EnemyHit SFX already playing, branch to exit.
 LB721:  BNE MusicBranch03       ;
 LB723:  LDA HasBeamSFX          ;
@@ -4514,7 +4514,7 @@ LB737:  LDY #$45                ;Lower byte of sound data start address(base=$B2
 SelectSFX1:
 LB739:* JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
-BirdOutOfHoleSFXStart:
+EnRegenSFXStart:
 LB73C:  LDA CurrentMusic        ;If escape music is playing, use this SFX to make
 LB73F:  CMP #$04                ;the bomb ticking sound, else play regular SFX.
 LB741:  BEQ +                   ;

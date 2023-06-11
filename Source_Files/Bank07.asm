@@ -11,6 +11,7 @@
 .alias  PlacePtrTable           $86DF
 .alias  StarPalSwitch           $8AC7
 .alias  SamusEnterDoor          $8B13
+.alias  PalPntrTbl              $9560
 .alias  AreaPointers            $9598
 .alias  AreaRoutine             $95C3
 .alias  EnemyHitPointTbl        $962B
@@ -395,8 +396,8 @@ LC1FF:* DEY                     ;Palette # = PalDataPending - 1.
 LC200:  TYA                     ;
 LC201:  ASL                     ;* 2, each pal data ptr is 2 bytes (16-bit).
 LC202:  TAY                     ;
-LC203:  LDX $9560,y             ;X = low byte of PPU data pointer.
-LC206:  LDA $9561,y             ;
+LC203:  LDX PalPntrTbl,y        ;X = low byte of PPU data pointer.
+LC206:  LDA PalPntrTbl+1,y      ;
 LC209:  TAY                     ;Y = high byte of PPU data pointer.
 LC20A:  LDA #$00                ;Clear A.
 LC20C:  STA PalDataPending      ;Reset palette data pending byte.
@@ -1995,70 +1996,70 @@ LCB73:  tya                     ;
 ;Initiate sound effects.
 
 SilenceMusic:                   ;The sound flags are stored in memory
-LCB8E:  LDA #$01                ;starting at $0680. The following is a
-LCB90:  BNE SFX_SetX0           ;list of sound effects played when the
+LCB8E:  LDA #MUS_NONE           ;starting at $0680. The following is a
+LCB90:  BNE SFXSetX0            ;list of sound effects played when the
                                 ;flags are set:
 PauseMusic:                     ;
-LCB92:  LDA #$02                ;$0680: These SFX use noise channel.
-LCB94:  BNE SFX_SetX0           ;Bit 7 - No sound.
+LCB92:  LDA #MUS_PAUSE          ;$0680: These SFX use noise channel.
+LCB94:  BNE SFXSetX0            ;Bit 7 - No sound.
                                 ;Bit 6 - ScrewAttack.
-SFX_SamusWalk:                  ;Bit 5 - MissileLaunch.
+SFXSamusWalk:                   ;Bit 5 - MissileLaunch.
 LCB96:  LDA #$08                ;Bit 4 - BombExplode.
-LCB98:  BNE SFX_SetX0           ;Bit 3 - SamusWalk.
+LCB98:  BNE SFXSetX0            ;Bit 3 - SamusWalk.
                                 ;Bit 2 - SpitFlame.
-SFX_BombExplode:                ;Bit 1 - No sound.
-LCB9A:  LDA #$10                ;Bit 0 - No sound.
-LCB9C:  BNE SFX_SetX0           ;
+SFXBombExplode:                 ;Bit 1 - Pause music.
+LCB9A:  LDA #$10                ;Bit 0 - Silence music.
+LCB9C:  BNE SFXSetX0            ;
                                 ;$0681: These SFX use sq1 channel.
-SFX_MissileLaunch:              ;Bit 7 - MissilePickup.
+SFXMissileLaunch:               ;Bit 7 - MissilePickup.
 LCB9E:  LDA #$20                ;Bit 6 - EnergyPickup.
                                 ;Bit 5 - Metal.
-SFX_SetX0:                      ;Bit 4 - BulletFire.
-LCBA0:  LDX #$00                ;Bit 3 - OutOfHole.
+SFXSetX0:                       ;Bit 4 - BulletFire.
+LCBA0:  LDX #$00                ;Bit 3 - EnemyRegen.
 LCBA2:  BEQ SFX_SetSoundFlag    ;Bit 2 - EnemyHit.
                                 ;Bit 1 - SamusJump.
-SFX_OutOfHole:                  ;Bit 0 - WaveFire.
+SFXEnemyRegen:                  ;Bit 0 - WaveFire.
 LCBA4:  LDA #$08                ;
-LCBA6:  BNE SFX_SetX1           ;$0682: Not used.
+LCBA6:  BNE SFXSetX1            ;$0682: Not used.
                                 ;
-SFX_BombLaunch:                 ;$0683: These SFX use tri channel.
+SFXBombLaunch:                  ;$0683: These SFX use tri channel.
 LCBA8:  LDA #$01                ;Bit 7 - SamusDie.
 LCBAA:  BNE SFX_SetX3           ;Bit 6 - DoorOpenClose.
                                 ;Bit 5 - MetroidHit.
 SFX_SamusJump:                  ;Bit 4 - StatueRaise.
 LCBAC:  LDA #$02                ;Bit 3 - Beep.
-LCBAE:  BNE SFX_SetX1           ;Bit 2 - BigEnemyHit.
+LCBAE:  BNE SFXSetX1            ;Bit 2 - BigEnemyHit.
                                 ;Bit 1 - SamusBall.
 SFX_EnemyHit:                   ;Bit 0 - BombLaunch.
 LCBB0:  LDA #$04                ;
-LCBB2:  BNE SFX_SetX1           ;$0684: These SFX use multi channels.
+LCBB2:  BNE SFXSetX1            ;$0684: These SFX use multi channels.
                                 ;Bit 7 - FadeInMusic        (music).
 SFX_BulletFire:                 ;Bit 6 - PowerUpMusic       (music).
-LCBB4:  LDA #$10                ;Bit 5 - EndMusic           (Bank 0 only)(music).
-LCBB6:  BNE SFX_SetX1           ;Bit 4 - IntroMusic         (Bank 0 only)(music).
+LCBB4:  LDA #$10                ;Bit 5 - EndMusic           (music).
+LCBB6:  BNE SFXSetX1            ;Bit 4 - IntroMusic         (music).
                                 ;Bit 3 - not used           (SFX).
-SFX_Metal:                      ;Bit 2 - SamusHit           (SFX).
+SFXMetal:                       ;Bit 2 - SamusHit           (SFX).
 LCBB8:  LDA #$20                ;Bit 1 - BossHit            (SFX).
-LCBBA:  BNE SFX_SetX1           ;Bit 0 - IncorrectPassword  (SFX).
+LCBBA:  BNE SFXSetX1            ;Bit 0 - IncorrectPassword  (SFX).
                                 ;
 SFX_EnergyPickup:               ;$0685: Music flags. The music flags start different
 LCBBC:  LDA #$40                ;music depending on what memory bank is loaded. The
-LCBBD:  BNE SFX_SetX1           ;following lists what bits start what music for each
+LCBBD:  BNE SFXSetX1            ;following lists what bits start what music for each
                                 ;memory bank.
 SFX_MissilePickup:              ;
-LCBC0:  LDA #$80                ;Bank 0: Intro/ending.
+LCBC0:  LDA #SFX_MSL_PKUP       ;Bank 0: Intro/ending.
                                 ;Bit 7 - Not used.
-SFX_SetX1:                      ;Bit 6 - TourianMusic.
+SFXSetX1:                       ;Bit 6 - TourianMusic.
 LCBC2:  LDX #$01                ;Bit 5 - ItemRoomMusic.
 LCBC4:  BNE SFX_SetSoundFlag    ;Bit 4 - Not used.
                                 ;Bit 3 - Not used.
 SFX_WaveFire:                   ;Bit 2 - Not used.
 LCBC6:  LDA #$01                ;Bit 1 - Not used.
-LCBC8:  BNE SFX_SetX1           ;Bit 0 - Not used.
+LCBC8:  BNE SFXSetX1            ;Bit 0 - Not used.
                                 ;
 SFX_ScrewAttack:                ;Bank 1: Brinstar.
 LCBCA:  LDA #$40                ;Bit 7 - Not used.
-LCBCC:  BNE SFX_SetX0           ;Bit 6 - TourianMusic.
+LCBCC:  BNE SFXSetX0            ;Bit 6 - TourianMusic.
                                 ;Bit 5 - ItemRoomMusic.
 SFX_BigEnemyHit:                ;Bit 4 - Not used.
 LCBCE:  LDA #$04                ;Bit 3 - Not used.
@@ -2070,15 +2071,15 @@ LCBD4:  BNE SFX_SetX3           ;Bank 2: Norfair.
                                 ;Bit 7 - Not used.
 SFX_BossHit:                    ;Bit 6 - TourianMusic.
 LCBD6:  LDA #$02                ;Bit 5 - ItemRoomMusic.
-LCBD8:  BNE SFX_SetX4           ;Bit 4 - Not used.
+LCBD8:  BNE SFXSetX4            ;Bit 4 - Not used.
                                 ;Bit 3 - NorfairMusic.
-SFX_Door:                       ;Bit 2 - Not used.
+SFXDoor:                        ;Bit 2 - Not used.
 LCBDA:  LDA #$40                ;Bit 1 - Not used.
 LCBDC:  BNE SFX_SetX3           ;Bit 0 - Not used.
                                 ;
 SFX_SamusHit:                   ;Bank 3: Tourian.
 LCBDE:  LDA #$04                ;Bit 7 - Not used.
-LCBE0:  BNE SFX_SetX4           ;Bit 6 - TourianMusic
+LCBE0:  BNE SFXSetX4            ;Bit 6 - TourianMusic
                                 ;Bit 5 - ItemRoomMusic.
 SFX_SamusDie:                   ;Bit 4 - Not used.
 LCBE2:  LDA #$80                ;Bit 3 - Not used.
@@ -2096,7 +2097,7 @@ SFX_SamusBall:                  ;Bit 2 - Not used.
 LCBEF:  LDA #$02                ;Bit 1 - Not used.
 LCBF1:  BNE SFX_SetX3           ;Bit 0 - Not used.
                                 ;
-SFX_Beep:                       ;Bank 5: Ridley.
+SFXBeep:                        ;Bank 5: Ridley.
 LCBF3:  LDA #$08                ;Bit 7 - RidleyAreaMusic.
                                 ;Bit 6 - TourianMusic.
 SFX_SetX3:                      ;Bit 5 - ItemRoomMusic.
@@ -2107,23 +2108,23 @@ LCBF7:  BNE SFX_SetSoundFlag    ;Bit 3 - Not used.
                                 ;Bit 0 - Not used.
 PowerUpMusic:                   ;
 LCBF9:  LDA #$40                ;
-LCBFB:  BNE SFX_SetX4           ;
+LCBFB:  BNE SFXSetX4            ;
                                 ;
 IntroMusic:                     ;
 LCBFD:  LDA #$80                ;
                                 ;
-SFX_SetX4:                      ;
+SFXSetX4:                       ;
 LCBFF:  LDX #$04                ;
 LCC01:  BNE SFX_SetSoundFlag    ;
                                 ;
 MotherBrainMusic:               ;
 LCC03:  LDA #$02                ;
-LCC05:  BNE SFX_SetX5           ;
+LCC05:  BNE SFXSetX5            ;
                                 ;
 TourianMusic:                   ;
 LCC07:  LDA #$40                ;
                                 ;
-SFX_SetX5:                      ;
+SFXSetX5:                       ;
 LCC09:  LDX #$05                ;
 LCC0B:  BNE SFX_SetSoundFlag    ;
 
@@ -2299,7 +2300,7 @@ LCCC2:  ldx SamusDir
     bne +          ; branch if not
     lda #$09
     sta WalkSoundDelay  ; # of frames till next walk sound trigger
-    jsr SFX_SamusWalk
+    jsr SFXSamusWalk
 *   jsr LCF2E
     lda Joy1Change
     bpl +      ; branch if JUMP not pressed
@@ -2482,7 +2483,7 @@ CheckHealthBeep:
 *   lda FrameCount
     and #$0F
     bne +               ;Only beep every 16th frame.
-    jsr SFX_Beep
+    jsr SFXBeep
 *   lda #$00
     sta SamusHit
 LCE83:  rts
@@ -2608,7 +2609,7 @@ LCF4E:  STY ObjHorzSpeed        ;Set Samus Horizontal speed and horizontal
 StopHorzMovement:
 LCF55:  LDA SamusHorzAccel      ;Is Samus moving horizontally?
         BNE ClearHrztAnimData   ;If so, branch to stop movement.
-        JSR SFX_SamusWalk       ;($CB96)Play walk SFX.
+        JSR SFXSamusWalk        ;($CB96)Play walk SFX.
 
 ClearHrztAnimData:
 LCF5D:  JSR NoHorzMoveNoDelay   ;($CF81)Clear horizontal movement and animation delay data.
@@ -2910,7 +2911,7 @@ LD147:  ldy #$00
     sta ObjectY,x
     lda #wa_LayBomb
     sta ObjAction,x
-    jsr SFX_BombLaunch
+    jsr SFXBombLaunch
 *   rts
 
     SamusPntUp:
@@ -3127,7 +3128,7 @@ CheckMissileLaunch:
     ldx SamusDir
     lda MissileAnims,x
 *   jsr SetBulletAnim
-    jsr SFX_MissileLaunch
+    jsr SFXMissileLaunch
     lda #wa_Missile ; missile handler
     sta ObjAction,y
     lda #$FF
@@ -3615,7 +3616,7 @@ LD670:  lda FrameCount
     lda #an_BombExplode
 *   jsr SetProjectileAnim
     inc ObjAction,x
-    jsr SFX_BombExplode
+    jsr SFXBombExplode
 *   jmp DrawBomb
 
 LD691:  inc $030F,x
@@ -4183,36 +4184,37 @@ Table1B:
     .byte $60
     .byte $60
 
-LDADA:  lda $54
-    bmi Exit0
-    lda DoorStatus
-    bne Exit0
-    lda KraidStatueStat
-    and $687C
-    bpl Exit0
-    sta $54
-    ldx #$70
-    ldy #$08
-*   lda #$03
-    sta $0500,x
-    tya
-    asl
-    sta $0507,x
-    lda #$04
-    sta TileType,x
-    lda $036C
-    asl
-    asl
-    ora #$62
-    sta TileWRAMHi,x
-    tya
-    asl
-    adc #$08
-    sta TileWRAMLo,x
-    jsr Xminus16
-    dey
-    bne -
-Exit0:  rts
+LDADA:  LDA $54
+LDADC:  BMI Exit0
+LDADE:  LDA DoorStatus
+LDAE0:  BNE Exit0
+LDAE2:  LDA KraidStatueStat
+LDAE5:  AND $687C
+LDAE8:  BPL Exit0
+LDAEA:  STA $54
+LDAEC:  LDX #$70
+LDAEE:  LDY #$08
+LDAF0:* LDA #$03
+LDAF2:  STA $0500,x
+LDAF5:  TYA
+LDAF6:  ASL
+LDAF7:  STA $0507,x
+LDAFA:  LDA #$04
+LDAFC:  STA TileType,x
+LDAFF:  LDA $036C
+LDB02:  ASL
+LDB03:  ASL
+LDB04:  ORA #$62
+LDB06:  STA TileWRAMHi,x
+LDB09:  TYA
+LDB0A:  ASL
+LDB0B:  ADC #$08
+LDB0D:  STA TileWRAMLo,x
+LDB10:  JSR Xminus16
+LDB13:  DEY
+LDB14:  BNE -
+Exit0:
+LDB16:  RTS
 
 ; CheckMissileToggle
 ; ==================
@@ -4235,186 +4237,186 @@ CheckMissileToggle:
 ;In: Y = bit index. Out: A = bit Y set, other 7 bits zero.
 
 MakeBitMask:
-LDB2F:  sec
-LDB30:  lda #$00
-LDB32:* rol
-LDB33:  dey
-LDB34:  bpl -
-LDB36:* rts
+LDB2F:  SEC
+LDB30:  LDA #$00
+LDB32:* ROL
+LDB33:  DEY
+LDB34:  BPL -
+LDB36:* RTS
 
 ;------------------------------------------[ Update items ]-----------------------------------------
 
 UpdateItems:
-LDB37:  lda #$40            ;PowerUp RAM starts at $0340.
-LDB39:  sta PageIndex           ;
-LDB3B:  ldx #$00            ;Check first item slot.
-LDB3D:  jsr CheckOneItem        ;($DB42)Check current item slot.
-LDB40:  ldx #$08            ;Check second item slot.
+LDB37:  LDA #$40            ;PowerUp RAM starts at $0340.
+LDB39:  STA PageIndex           ;
+LDB3B:  LDX #$00            ;Check first item slot.
+LDB3D:  JSR CheckOneItem        ;($DB42)Check current item slot.
+LDB40:  LDX #$08            ;Check second item slot.
 
 CheckOneItem:
-LDB42:  stx ItemIndex           ;First or second item slot index(#$00 or #$08).
-LDB44:  ldy PowerUpType,x       ;
-LDB47:  iny             ;Is no item present in item slot(#$FF)?
-LDB48:  beq -               ;If so, branch to exit.
+LDB42:  STX ItemIndex           ;First or second item slot index(#$00 or #$08).
+LDB44:  LDY PowerUpType,x       ;
+LDB47:  INY             ;Is no item present in item slot(#$FF)?
+LDB48:  BEQ -               ;If so, branch to exit.
 
-LDB4A:  lda PowerUpYCoord,x     ;
-LDB4D:  sta PowerUpY            ;
-LDB50:  lda PowerUpXCoord,x     ;Store y, x and name table coordinates of power up item.
-LDB53:  sta PowerUpX            ;
-LDB56:  lda PowerUpNameTable,x      ;
-LDB59:  sta PowerUpHi           ;
-LDB5C:  jsr GetObjCoords        ;($D79F)Find object position in room RAM.
-LDB5F:  ldx ItemIndex           ;Index to proper power up item.
-LDB61:  ldy #$00            ;Reset index.
-LDB63:  lda ($04),y         ;Load pointer into room RAM.
-LDB65:  cmp #$A0            ;Is object being placed on top of a solid tile?
-LDB67:  bcc -               ;If so, branch to exit.
-LDB69:  lda PowerUpType,x       ;
-LDB6C:  and #$0F            ;Load power up type byte and keep only bits 0 thru 3.
-LDB6E:  ora #$50            ;Set bits 4 and 6.
-LDB70:  sta PowerUpAnimFrame        ;Save index to find object animation.
-LDB73:  lda FrameCount          ;
-LDB75:  lsr             ;Color affected every other frame.
-LDB76:  and #$03            ;the 2 LSBs of object control byte change palette of object.
-LDB78:  ora #$80            ;Indicate ObjectCntrl contains valid data by setting MSB.
-LDB7A:  sta ObjectCntrl         ;Change color of item every other frame.
-LDB7C:  lda SpritePagePos       ;Load current index into sprite RAM.
-LDB7E:  pha             ;Temp save sprite RAM position.
-LDB7F:  lda PowerUpAnimIndex,x      ;Load entry into FramePtrTable for item animation.
-LDB82:  jsr DrawFrame           ;($DE4A)Display special item.
+LDB4A:  LDA PowerUpYCoord,x     ;
+LDB4D:  STA PowerUpY            ;
+LDB50:  LDA PowerUpXCoord,x     ;Store y, x and name table coordinates of power up item.
+LDB53:  STA PowerUpX            ;
+LDB56:  LDA PowerUpNameTable,x      ;
+LDB59:  STA PowerUpHi           ;
+LDB5C:  JSR GetObjCoords        ;($D79F)Find object position in room RAM.
+LDB5F:  LDX ItemIndex           ;Index to proper power up item.
+LDB61:  LDY #$00            ;Reset index.
+LDB63:  LDA ($04),y         ;Load pointer into room RAM.
+LDB65:  CMP #$A0            ;Is object being placed on top of a solid tile?
+LDB67:  BCC -               ;If so, branch to exit.
+LDB69:  LDA PowerUpType,x       ;
+LDB6C:  AND #$0F            ;Load power up type byte and keep only bits 0 thru 3.
+LDB6E:  ORA #$50            ;Set bits 4 and 6.
+LDB70:  STA PowerUpAnimFrame        ;Save index to find object animation.
+LDB73:  LDA FrameCount          ;
+LDB75:  LSR             ;Color affected every other frame.
+LDB76:  AND #$03            ;the 2 LSBs of object control byte change palette of object.
+LDB78:  ORA #$80            ;Indicate ObjectCntrl contains valid data by setting MSB.
+LDB7A:  STA ObjectCntrl         ;Change color of item every other frame.
+LDB7C:  LDA SpritePagePos       ;Load current index into sprite RAM.
+LDB7E:  PHA             ;Temp save sprite RAM position.
+LDB7F:  LDA PowerUpAnimIndex,x      ;Load entry into FramePtrTable for item animation.
+LDB82:  JSR DrawFrame           ;($DE4A)Display special item.
 
-LDB85:  pla             ;Restore sprite page position byte.
-LDB86:  cmp SpritePagePos       ;Was power up item successfully drawn?
-LDB88:  beq Exit9           ;If not, branch to exit.
-LDB8A:  tax             ;Store sprite page position in x.
-LDB8B:  ldy ItemIndex           ;Load index to proper power up data slot.
-LDB8D:  lda PowerUpType,y       ;Reload power up type data.
-LDB90:  ldy #$01            ;Set power up color for ice beam orb.
-LDB92:  cmp #$07            ;Is power up item the ice beam?
-LDB94:  beq +               ;If so, branch.
+LDB85:  PLA             ;Restore sprite page position byte.
+LDB86:  CMP SpritePagePos       ;Was power up item successfully drawn?
+LDB88:  BEQ Exit9           ;If not, branch to exit.
+LDB8A:  TAX             ;Store sprite page position in x.
+LDB8B:  LDY ItemIndex           ;Load index to proper power up data slot.
+LDB8D:  LDA PowerUpType,y       ;Reload power up type data.
+LDB90:  LDY #$01            ;Set power up color for ice beam orb.
+LDB92:  CMP #$07            ;Is power up item the ice beam?
+LDB94:  BEQ +               ;If so, branch.
 
-LDB96:  dey             ;Set power up color for long/wave beam orb.
-LDB97:  cmp #$06            ;Is power up item the wave beam?
-LDB99:  beq +               ;If so, branch.
-LDB9B:  cmp #$02            ;Is power up item the long beam?
-LDB9D:  bne ++              ;If not, branch.
-LDB9F:* tya             ;Transfer color data to A.
-LDBA0:  sta SpriteRAM+6,x     ;Store power up color for beam weapon.
-LDBA3:  lda #$FF            ;Indicate power up obtained is a beam weapon.
+LDB96:  DEY             ;Set power up color for long/wave beam orb.
+LDB97:  CMP #$06            ;Is power up item the wave beam?
+LDB99:  BEQ +               ;If so, branch.
+LDB9B:  CMP #$02            ;Is power up item the long beam?
+LDB9D:  BNE ++              ;If not, branch.
+LDB9F:* TYA             ;Transfer color data to A.
+LDBA0:  STA SpriteRAM+6,x     ;Store power up color for beam weapon.
+LDBA3:  LDA #$FF            ;Indicate power up obtained is a beam weapon.
 
-LDBA5:* pha             ;Temporarily store power up type.
-LDBA6:  ldx #$00            ;Index to object 0(Samus).
-LDBA8:  ldy #$40            ;Index to object 1(power up).
-LDBAA:  jsr AreObjectsTouching      ;($DC7F)Determine if Samus is touching power up.
-LDBAD:  pla             ;Restore power up type byte.
-LDBAE:  bcs Exit9           ;Carry clear=Samus touching power up. Carry set=not touching.
+LDBA5:* PHA             ;Temporarily store power up type.
+LDBA6:  LDX #$00            ;Index to object 0(Samus).
+LDBA8:  LDY #$40            ;Index to object 1(power up).
+LDBAA:  JSR AreObjectsTouching      ;($DC7F)Determine if Samus is touching power up.
+LDBAD:  PLA             ;Restore power up type byte.
+LDBAE:  BCS Exit9           ;Carry clear=Samus touching power up. Carry set=not touching.
 
-LDBB0:  tay             ;Store power-up type byte in Y.
-LDBB1:  jsr PowerUpMusic        ;($CBF9)Power up obtained! Play power up music.
-LDBB4:  ldx ItemIndex           ;X=index to power up item slot.
-LDBB6:  iny             ;Is item obtained a beam weapon?
-LDBB7:  beq +               ;If so, branch.
-LDBB9:  lda PowerUpNameTable,x      ;
-LDBBC:  sta $08             ;Temp storage of nametable and power-up type in $08
-LDBBE:  lda PowerUpType,x       ;and $09 respectively.
-LDBC1:  sta $09             ;
-LDBC3:  jsr GetItemXYPos        ;($DC1C)Get proper X and Y coords of item, save in history.
-LDBC6:* lda PowerUpType,x       ;Get power-up type byte again.
-LDBC9:  tay             ;
-LDBCA:  cpy #$08            ;Is power-up item a missile or energy tank?
-LDBCC:  bcs ++++            ;If so, branch.
-LDBCE:  cpy #$06            ;Is item the wave beam or ice beam?
-LDBD0:  bcc +               ;If not, branch.
-LDBD2:  lda SamusGear           ;Clear status of wave beam and ice beam power ups.
-LDBD5:  and #$3F            ;
-LDBD7:  sta SamusGear           ;Remove beam weapon data from Samus gear byte.
-LDBDA:* jsr MakeBitMask         ;($DB2F)Create a bit mask for beam weapon just obtained.
-LDBDD:  ora SamusGear           ;
-LDBE0:  sta SamusGear           ;Update Samus gear with new beam weapon.
-LDBE3:* lda #$FF            ;
-LDBE5:  sta PowerUpDelay        ;Initiate delay while power up music plays.
-LDBE8:  sta PowerUpType,x       ;Clear out item data from RAM.
-LDBEB:  ldy ItemRmMusicSts     ;Is Samus not in an item room?
-LDBED:  beq +               ;If not, branch.
-LDBEF:  ldy #$01            ;Restart item room music after special item music is done.
-LDBF1:* sty ItemRmMusicSts     ;
-LDBF3:  jmp SelectSamusPal      ;($CB73)Set Samus new palette.
+LDBB0:  TAY             ;Store power-up type byte in Y.
+LDBB1:  JSR PowerUpMusic        ;($CBF9)Power up obtained! Play power up music.
+LDBB4:  LDX ItemIndex           ;X=index to power up item slot.
+LDBB6:  INY             ;Is item obtained a beam weapon?
+LDBB7:  BEQ +               ;If so, branch.
+LDBB9:  LDA PowerUpNameTable,x      ;
+LDBBC:  STA $08             ;Temp storage of nametable and power-up type in $08
+LDBBE:  LDA PowerUpType,x       ;and $09 respectively.
+LDBC1:  STA $09             ;
+LDBC3:  JSR GetItemXYPos        ;($DC1C)Get proper X and Y coords of item, save in history.
+LDBC6:* LDA PowerUpType,x       ;Get power-up type byte again.
+LDBC9:  TAY             ;
+LDBCA:  CPY #$08            ;Is power-up item a missile or energy tank?
+LDBCC:  BCS ++++            ;If so, branch.
+LDBCE:  CPY #$06            ;Is item the wave beam or ice beam?
+LDBD0:  BCC +               ;If not, branch.
+LDBD2:  LDA SamusGear           ;Clear status of wave beam and ice beam power ups.
+LDBD5:  AND #$3F            ;
+LDBD7:  STA SamusGear           ;Remove beam weapon data from Samus gear byte.
+LDBDA:* JSR MakeBitMask         ;($DB2F)Create a bit mask for beam weapon just obtained.
+LDBDD:  ORA SamusGear           ;
+LDBE0:  STA SamusGear           ;Update Samus gear with new beam weapon.
+LDBE3:* LDA #$FF            ;
+LDBE5:  STA PowerUpDelay        ;Initiate delay while power up music plays.
+LDBE8:  STA PowerUpType,x       ;Clear out item data from RAM.
+LDBEB:  LDY ItemRmMusicSts     ;Is Samus not in an item room?
+LDBED:  BEQ +               ;If not, branch.
+LDBEF:  LDY #$01            ;Restart item room music after special item music is done.
+LDBF1:* STY ItemRmMusicSts     ;
+LDBF3:  JMP SelectSamusPal      ;($CB73)Set Samus new palette.
 
 Exit9:
-LDBF6:  rts             ;Exit for multiple routines above.
+LDBF6:  RTS             ;Exit for multiple routines above.
 
 MissileEnergyPickup:
-LDBF7:* beq +               ;Branch if item is an energy tank.
-LDBF9:  lda #$05            ;
-LDBFB:  jsr AddToMaxMissiles        ;($DD97)Increase missile capacity by 5.
-LDBFE:  bne ---             ;Branch always.
+LDBF7:* BEQ +               ;Branch if item is an energy tank.
+LDBF9:  LDA #$05            ;
+LDBFB:  JSR AddToMaxMissiles        ;($DD97)Increase missile capacity by 5.
+LDBFE:  BNE ---             ;Branch always.
 
-LDC00:* lda TankCount           ;
-LDC03:  cmp #$06            ;Has Samus got 6 energy tanks?
-LDC05:  beq +               ;If so, she can't have any more.
-LDC07:  inc TankCount           ;Otherwise give her a new tank.
-LDC0A:* lda TankCount           ;
-LDC0D:  jsr Amul16          ;Get tank count and shift into upper nibble.
-LDC10:  ora #$09            ;
-LDC12:  sta HealthHi            ;Set new tank count. Upper health digit set to 9.
-LDC15:  lda #$99            ;Max out low health digit.
-LDC17:  sta HealthLo            ;Health is now FULL!
-LDC1A:  bne -----           ;Branch always.
+LDC00:* LDA TankCount           ;
+LDC03:  CMP #$06            ;Has Samus got 6 energy tanks?
+LDC05:  BEQ +               ;If so, she can't have any more.
+LDC07:  INC TankCount           ;Otherwise give her a new tank.
+LDC0A:* LDA TankCount           ;
+LDC0D:  JSR Amul16          ;Get tank count and shift into upper nibble.
+LDC10:  ORA #$09            ;
+LDC12:  STA HealthHi            ;Set new tank count. Upper health digit set to 9.
+LDC15:  LDA #$99            ;Max out low health digit.
+LDC17:  STA HealthLo            ;Health is now FULL!
+LDC1A:  BNE -----           ;Branch always.
 
 ;It is possible for the current nametable in the PPU to not be the actual nametable the special item
 ;is on so this function checks for the proper location of the special item so the item ID can be
 ;properly calculated.
 
 GetItemXYPos:
-LDC1C:  lda MapPosX         ;
-LDC1E:  sta $07             ;Temp storage of Samus map position x and y in $07
-LDC20:  lda MapPosY         ;and $06 respectively.
-LDC22:  sta $06             ;
-LDC24:  lda ScrollDir           ;Load scroll direction and shift LSB into carry bit.
-LDC26:  lsr             ;
-LDC27:  php             ;Temp storage of processor status.
-LDC28:  beq +               ;Branch if scrolling up/down.
-LDC2A:  bcc ++              ;Branch if scrolling right.
+LDC1C:  LDA MapPosX         ;
+LDC1E:  STA $07             ;Temp storage of Samus map position x and y in $07
+LDC20:  LDA MapPosY         ;and $06 respectively.
+LDC22:  STA $06             ;
+LDC24:  LDA ScrollDir           ;Load scroll direction and shift LSB into carry bit.
+LDC26:  LSR             ;
+LDC27:  PHP             ;Temp storage of processor status.
+LDC28:  BEQ +               ;Branch if scrolling up/down.
+LDC2A:  BCC ++              ;Branch if scrolling right.
 
 ;Scrolling left.
-LDC2C:  lda ScrollX         ;Unless the scroll x offset is 0, the actual room x pos
-LDC2E:  beq ++              ;needs to be decremented in order to be correct.
-LDC30:  dec $07             ;
-LDC32:  bcs ++              ;Branch always.
+LDC2C:  LDA ScrollX         ;Unless the scroll x offset is 0, the actual room x pos
+LDC2E:  BEQ ++              ;needs to be decremented in order to be correct.
+LDC30:  DEC $07             ;
+LDC32:  BCS ++              ;Branch always.
 
-LDC34:* bcc +               ;Branch if scrolling up.
+LDC34:* BCC +               ;Branch if scrolling up.
 
 ;Scrolling down.
-LDC36:  lda ScrollY         ;Unless the scroll y offset is 0, the actual room y pos
-LDC38:  beq +               ;needs to be decremented in order to be correct.
-LDC3A:  dec $06             ;
+LDC36:  LDA ScrollY         ;Unless the scroll y offset is 0, the actual room y pos
+LDC38:  BEQ +               ;needs to be decremented in order to be correct.
+LDC3A:  DEC $06             ;
 
-LDC3C:* lda PPUCNT0ZP           ;If item is on the same nametable as current nametable,
-LDC3E:  eor $08             ;then no further adjustment to item x and y position needed.
-LDC40:  and #$01            ;
-LDC42:  plp             ;Restore the processor status and clear the carry bit.
-LDC43:  clc             ;
-LDC44:  beq +               ;If Scrolling up/down, branch to adjust item y position.
+LDC3C:* LDA PPUCNT0ZP           ;If item is on the same nametable as current nametable,
+LDC3E:  EOR $08             ;then no further adjustment to item x and y position needed.
+LDC40:  AND #$01            ;
+LDC42:  PLP             ;Restore the processor status and clear the carry bit.
+LDC43:  CLC             ;
+LDC44:  BEQ +               ;If Scrolling up/down, branch to adjust item y position.
 
-LDC46:  adc $07             ;Scrolling left/right. Make any necessary adjustments to
-LDC48:  sta $07             ;item x position before writing to unique item history.
+LDC46:  ADC $07             ;Scrolling left/right. Make any necessary adjustments to
+LDC48:  STA $07             ;item x position before writing to unique item history.
 
-LDC4A:  jmp AddItemToHistory        ;($DC51)Add unique item to unique item history.
+LDC4A:  JMP AddItemToHistory        ;($DC51)Add unique item to unique item history.
 
-LDC4D:* adc $06             ;Scrolling up/down. Make any necessary adjustments to
-LDC4F:  sta $06             ;item y position before writing to unique item history.
+LDC4D:* ADC $06             ;Scrolling up/down. Make any necessary adjustments to
+LDC4F:  STA $06             ;item y position before writing to unique item history.
 
 AddItemToHistory:
-LDC51:  jsr CreateItemID        ;($DC67)Create an item ID to put into unique item history.
-LDC54:  ldy NumUniqueItems     ;Store number of uniqie items in Y.
-LDC57:  lda $06             ;
-LDC59:  sta UnqItmHist,y     ;Store item ID in inuque item history.
-LDC5C:  lda $07             ;
-LDC5E:  sta UnqItmHist+1,y   ;
-LDC61:  iny             ;Add 2 to Y. 2 bytes ber unique item.
-LDC62:  iny             ;
-LDC63:  sty NumUniqueItems     ;Store new number of unique items.
-LDC66:  rts             ;
+LDC51:  JSR CreateItemID        ;($DC67)Create an item ID to put into unique item history.
+LDC54:  LDY NumUniqueItems     ;Store number of uniqie items in Y.
+LDC57:  LDA $06             ;
+LDC59:  STA UnqItmHist,y     ;Store item ID in inuque item history.
+LDC5C:  LDA $07             ;
+LDC5E:  STA UnqItmHist+1,y   ;
+LDC61:  INY             ;Add 2 to Y. 2 bytes ber unique item.
+LDC62:  INY             ;
+LDC63:  STY NumUniqueItems     ;Store new number of unique items.
+LDC66:  RTS             ;
 
 ;------------------------------------------[ Create item ID ]-----------------------------------------
 
@@ -4444,27 +4446,27 @@ LDC66:  rts             ;
 ;The results are stored in $06(upper byte) and $07(lower byte).
 
 CreateItemID:
-LDC67:  lda $07             ;Load x map position of item.
-LDC69:  jsr Amul32          ;($C2C$)*32. Move lower 3 bytes to upper 3 bytes.
-LDC6C:  ora $06             ;combine Y coordinates into data byte.
-LDC6E:  sta $06             ;Lower data byte complete. Save in $06.
-LDC70:  lsr $07             ;
-LDC72:  lsr $07             ;Move upper two bits of X coordinate to LSBs.
-LDC74:  lsr $07             ;
-LDC76:  lda $09             ;Load item type bits.
-LDC78:  asl             ;Move the 6 bits of item type to upper 6 bits of byte.
-LDC79:  asl             ;
-LDC7A:  ora $07             ;Add upper two bits of X coordinate to byte.
-LDC7C:  sta $07             ;Upper data byte complete. Save in #$06.
-LDC7E:  rts             ;
+LDC67:  LDA $07             ;Load x map position of item.
+LDC69:  JSR Amul32          ;($C2C$)*32. Move lower 3 bytes to upper 3 bytes.
+LDC6C:  ORA $06             ;combine Y coordinates into data byte.
+LDC6E:  STA $06             ;Lower data byte complete. Save in $06.
+LDC70:  LSR $07             ;
+LDC72:  LSR $07             ;Move upper two bits of X coordinate to LSBs.
+LDC74:  LSR $07             ;
+LDC76:  LDA $09             ;Load item type bits.
+LDC78:  ASL             ;Move the 6 bits of item type to upper 6 bits of byte.
+LDC79:  ASL             ;
+LDC7A:  ORA $07             ;Add upper two bits of X coordinate to byte.
+LDC7C:  STA $07             ;Upper data byte complete. Save in #$06.
+LDC7E:  RTS             ;
 
 ;-----------------------------------------------------------------------------------------------------
 
 AreObjectsTouching:
-LDC7F:  jsr LF186
-LDC82:  jsr LF172
-LDC85:  jsr LF1A7
-LDC88:  jmp LF1FA
+LDC7F:  JSR LF186
+LDC82:  JSR LF172
+LDC85:  JSR LF1A7
+LDC88:  JMP LF1FA
 
 ;The following table is used to rotate the sprites of both Samus and enemies when they explode.
 
@@ -4479,33 +4481,33 @@ LDC8E:  .byte $40           ;Flip sprite horizontally.
 ; Advance to object's next frame of animation
 
 UpdateObjAnim:
-LDC8F:  ldx PageIndex
-        ldy AnimDelay,x
-        beq +                  ; is it time to advance to the next anim frame?
-        dec AnimDelay,x     ; nope
-        bne +++   ; exit if still not zero (don't update animation)
-*       sta AnimDelay,x     ; set initial anim countdown value
-        ldy AnimIndex,x
-*       lda ObjectAnimIdxTbl,y        ;($8572)Load frame number.
-        cmp #$FF                ; has end of anim been reached?
-        beq ++
-        sta AnimFrame,x     ; store frame number
-        iny      ; inc anim index
-        tya
-         sta AnimIndex,x     ; store anim index
-*       rts
+LDC8F:  LDX PageIndex
+        LDY AnimDelay,x
+        BEQ +                  ; is it time to advance to the next anim frame?
+        DEC AnimDelay,x     ; nope
+        BNE +++   ; exit if still not zero (don't update animation)
+*       STA AnimDelay,x     ; set initial anim countdown value
+        LDY AnimIndex,x
+*       LDA ObjectAnimIdxTbl,y        ;($8572)Load frame number.
+        CMP #$FF                ; has end of anim been reached?
+        BEQ ++
+        STA AnimFrame,x     ; store frame number
+        INY      ; inc anim index
+        TYA
+         STa AnimIndex,x     ; store anim index
+*       RTS
 
-*       ldy AnimResetIndex,x     ; reset anim frame index
-        jmp ---    ; do first frame of animation
+*       LDY AnimResetIndex,x     ; reset anim frame index
+        JMP ---    ; do first frame of animation
 
-LDCB7:  pha
-    lda #$00
-    sta $06
-    pla
-    bpl +
-    dec $06
-*   clc
-    rts
+LDCB7:  PHA
+        LDA #$00
+        STA $06
+        PLA
+        BPL +
+        DEC $06
+*       CLC
+        RTS
 
 ;--------------------------------[ Get sprite control byte ]-----------------------------------------
 
@@ -4515,86 +4517,86 @@ LDCB7:  pha
 ;in the PlacePtrTbl used to place the sprite on the screen.
 
 GetSpriteCntrlData:
-LDCC3:  ldy #$00            ;
-LDCC5:  sty $0F             ;Clear index into placement data.
-LDCC7:  lda ($00),y         ;Load control byte from frame pointer data.
-LDCC9:  sta $04             ;Store value in $04 for processing below.
-LDCCB:  tax             ;Keep a copy of the value in x as well.
-LDCCC:  jsr Adiv16          ;($C2BF)Move upper 4 bits to lower 4 bits.
-LDCCF:  and #$03            ;
-LDCD1:  sta $05             ;The following lines take the upper 4 bits in the
-LDCD3:  txa             ;control byte and transfer bits 4 and 5 into $05 bits 0
-LDCD4:  and #$C0            ;and 1(sprite color bits).  Bits 6 and 7 are
-LDCD6:  ora #$20            ;transferred into $05 bits 6 and 7(sprite flip bits).
-LDCD8:  ora $05             ;bit 5 is then set(sprite always drawn behind background).
-LDCDA:  sta $05             ;
-LDCDC:  lda ObjectCntrl         ;Extract bit from control byte that controls the
-LDCDE:  and #$10            ;object mirroring.
-LDCE0:  asl             ;
-LDCE1:  asl             ;
-LDCE2:  eor $04             ;Move it to the bit 6 position and use it to flip the
-LDCE4:  sta $04             ;horizontal mirroring of the sprite if set.
-LDCE6:  lda ObjectCntrl         ;
-LDCE8:  bpl +               ;If MSB is set in ObjectCntrl, use its flip bits(6 and 7).
-LDCEA:  asl ObjectCntrl         ;
-LDCEC:  jsr SpriteFlipBitsOveride   ;($E038)Use object flip bits as priority over sprite flip bits. 
-LDCEF:* txa             ;Discard upper nibble so only entry number into
-LDCF0:  and #$0F            ;PlacePtrTbl remains.
-LDCF2:  asl             ;*2. pointers in PlacePntrTbl are 2 bytes in size.
-LDCF3:  tax             ;Transfer to X to use as an index to find proper
-LDCF4:  rts             ;placement data segment.
+LDCC3:  LDY #$00            ;
+LDCC5:  STY $0F             ;Clear index into placement data.
+LDCC7:  LDA ($00),y         ;Load control byte from frame pointer data.
+LDCC9:  STA $04             ;Store value in $04 for processing below.
+LDCCB:  TAX             ;Keep a copy of the value in x as well.
+LDCCC:  JSR Adiv16          ;($C2BF)Move upper 4 bits to lower 4 bits.
+LDCCF:  AND #$03            ;
+LDCD1:  STA $05             ;The following lines take the upper 4 bits in the
+LDCD3:  TXA             ;control byte and transfer bits 4 and 5 into $05 bits 0
+LDCD4:  AND #$C0            ;and 1(sprite color bits).  Bits 6 and 7 are
+LDCD6:  ORA #$20            ;transferred into $05 bits 6 and 7(sprite flip bits).
+LDCD8:  ORA $05             ;bit 5 is then set(sprite always drawn behind background).
+LDCDA:  STA $05             ;
+LDCDC:  LDA ObjectCntrl         ;Extract bit from control byte that controls the
+LDCDE:  AND #$10            ;object mirroring.
+LDCE0:  ASL             ;
+LDCE1:  ASL             ;
+LDCE2:  EOR $04             ;Move it to the bit 6 position and use it to flip the
+LDCE4:  STA $04             ;horizontal mirroring of the sprite if set.
+LDCE6:  LDA ObjectCntrl         ;
+LDCE8:  BPL +               ;If MSB is set in ObjectCntrl, use its flip bits(6 and 7).
+LDCEA:  ASL ObjectCntrl         ;
+LDCEC:  JSR SpriteFlipBitsOveride   ;($E038)Use object flip bits as priority over sprite flip bits. 
+LDCEF:* TXA             ;Discard upper nibble so only entry number into
+LDCF0:  AND #$0F            ;PlacePtrTbl remains.
+LDCF2:  ASL             ;*2. pointers in PlacePntrTbl are 2 bytes in size.
+LDCF3:  TAX             ;Transfer to X to use as an index to find proper
+LDCF4:  RTS             ;placement data segment.
 
 ;-----------------------------------------------------------------------------------------------------
 
-LDCF5:  jsr ClearObjectCntrl        ;($DF2D)Clear object control byte.
-    pla
-    pla
-    ldx PageIndex
-LDCFC:  lda InArea
-    cmp #$13
-    bne +
-    lda EnDataIndex,x
-    cmp #$04
-    beq +++++
-    cmp #$02
-    beq +++++
-*   lda $040C,x
-    asl
-    bmi LDD75
-    jsr LF74B
-    sta $00
-    jsr $80B0
-    and #$20
-    sta EnDataIndex,x
-    lda #$05
-    sta EnStatus,x
-    lda #$60
-    sta $040D,x
-    lda RandomNumber1
-    cmp #$10
-    bcc LDD5B
-*   and #$07
-    tay
-    lda ItemDropTbl,y
-    sta EnAnimFrame,x
-    cmp #$80
-    bne ++
-    ldy MaxMissilePickup
-    cpy CrntMslePickups
-    beq LDD5B
-    lda MaxMissiles
-    beq LDD5B
-    inc CrntMslePickups
-*   rts
+LDCF5:  JSR ClearObjectCntrl        ;($DF2D)Clear object control byte.
+    PLA
+    PLA
+    LDX PageIndex
+LDCFC:  LDA InArea
+    CMP #$13
+    BNE +
+    LDA EnDataIndex,x
+    CMP #$04
+    BEQ +++++
+    CMP #$02
+    BEQ +++++
+*   LDA $040C,x
+    ASL
+    BMI LDD75
+    JSR LF74B
+    STA $00
+    JSR $80B0
+    AND #$20
+    STA EnDataIndex,x
+    LDA #$05
+    STA EnStatus,x
+    LDA #$60
+    STA $040D,x
+    LDA RandomNumber1
+    CMP #$10
+    BCC LDD5B
+*   AND #$07
+    TAY
+    LDA ItemDropTbl,y
+    STA EnAnimFrame,x
+    CMP #$80
+    BNE ++
+    LDY MaxMissilePickup
+    CPY CrntMslePickups
+    BEQ LDD5B
+    LDA MaxMissiles
+    BEQ LDD5B
+    INC CrntMslePickups
+*   RTS
 
-*   ldy MaxEnergyPickup
-    cpy CrntEnrgyPickups
-    beq LDD5B
-    inc CrntEnrgyPickups
-    cmp #$89
-    bne --
-    lsr $00
-    bcs --
+*   LDY MaxEnergyPickup
+    CPY CrntEnrgyPickups
+    BEQ LDD5B
+    INC CrntEnrgyPickups
+    CMP #$89
+    BNE --
+    LSR $00
+    BCS --
 
 LDD5B:  ldx PageIndex
     lda InArea
@@ -4634,86 +4636,86 @@ LDD8B:  ldx PageIndex
 ; (255 if it overflows)
 
 AddToMaxMissiles:
-    pha             ;Temp storage of # of missiles to add.
-    clc
-    adc MissileCount
-    bcc +
-    lda #$FF
-*   sta MissileCount
-    pla
-    clc
-    adc MaxMissiles
-    bcc +
-    lda #$FF
-*   sta MaxMissiles
-    rts
+    PHA             ;Temp storage of # of missiles to add.
+    CLC
+    ADC MissileCount
+    BCC +
+    LDA #$FF
+*   STA MissileCount
+    PLA
+    CLC
+    ADC MaxMissiles
+    BCC +
+    LDA #$FF
+*   STA MaxMissiles
+    RTS
 
-*   lda EnYRoomPos,x
-    sta $0A  ; Y coord
-    lda EnXRoomPos,x
-    sta $0B  ; X coord
-    lda EnNameTable,x
-    sta $06  ; hi coord
-    lda EnAnimFrame,x
-    asl
-    tay
-    lda ($41),y
-    bcc +
-    lda ($43),y
-*   sta $00
-    iny
-    lda ($41),y
-    bcc +
-    lda ($43),y
-*   sta $01
-    jsr GetSpriteCntrlData      ;($DCC3)Get place pointer index and sprite control data.
-    tay
-    lda ($45),y
-    sta $02
-    iny
-    lda ($45),y
-    sta $03
-    ldy #$00
-    cpx #$02
-    bne +
-    ldx PageIndex
-    inc EnCounter,x
-    lda EnCounter,x
-    pha
-    and #$03
-    tax
-    lda $05
-    and #$3F
-    ora ExplodeRotationTbl,x
-    sta $05
-    pla
-    cmp #$19
-    bne +
-    jmp LDCF5
+*   LDA EnYRoomPos,x
+    STA $0A  ; Y coord
+    LDA EnXRoomPos,x
+    STA $0B  ; X coord
+    LDA EnNameTable,x
+    STA $06  ; hi coord
+    LDA EnAnimFrame,x
+    ASL
+    TAY
+    LDA ($41),y
+    BCC +
+    LDA ($43),y
+*   STA $00
+    INY
+    LDA ($41),y
+    BCC +
+    LDA ($43),y
+*   STA $01
+    JSR GetSpriteCntrlData      ;($DCC3)Get place pointer index and sprite control data.
+    TAY
+    LDA ($45),y
+    STA $02
+    INY
+    LDA ($45),y
+    STA $03
+    LDY #$00
+    CPX #$02
+    BNE +
+    LDX PageIndex
+    INC EnCounter,x
+    LDA EnCounter,x
+    PHA
+    AND #$03
+    TAX
+    LDA $05
+    AND #$3F
+    ORA ExplodeRotationTbl,x
+    STA $05
+    PLA
+    CMP #$19
+    BNE +
+    JMP LDCF5
 
-*   ldx PageIndex
-    iny
-    lda ($00),y
-    sta EnRadY,x
-    jsr ReduceYRadius       ;($DE3D)Reduce temp y radius by #$10.
-    iny
-    lda ($00),y
-    sta EnRadX,x
-    sta $09
-    iny
-    sty $11
-    jsr IsObjectVisible     ;($DFDF)Determine if object is within screen boundaries.
-    txa
-    asl
-    sta $08
-    ldx PageIndex
-    lda $0405,x
-    and #$FD
-    ora $08
-    sta $0405,x
-    lda $08
-    beq ++
-    jmp LDEDE
+*   LDX PageIndex
+    INY
+    LDA ($00),y
+    STA EnRadY,x
+    JSR ReduceYRadius       ;($DE3D)Reduce temp y radius by #$10.
+    INY
+    LDA ($00),y
+    STA EnRadX,x
+    STA $09
+    INY
+    STY $11
+    JSR IsObjectVisible     ;($DFDF)Determine if object is within screen boundaries.
+    TXA
+    ASL
+    STA $08
+    LDX PageIndex
+    LDA $0405,x
+    AND #$FD
+    ORA $08
+    STA $0405,x
+    LDA $08
+    BEQ ++
+    JMP LDEDE
 
 ;----------------------------------------[ Item drop table ]-----------------------------------------
 
@@ -5507,7 +5509,7 @@ LE305:  sta ObjVertSpeed        ;vertical direction of travel(bounce up).
 LE308:  jmp SamusMoveHorizontally   ;($E31A)Attempt to move Samus left/right.
 
 ;Samus has hit the ground after moving downwards. 
-LE30B:* jsr SFX_SamusWalk       ;($CB96)Play walk SFX.
+LE30B:* jsr SFXSamusWalk       ;($CB96)Play walk SFX.
 LE30E:* jsr StopVertMovement        ;($D147)Clear vertical movement data.
 LE311:  sty SamusGravity        ;Clear Samus gravity value.
 LE314:  beq SamusMoveHorizontally   ;($E31A)Attempt to move Samus left/right.
@@ -6334,7 +6336,7 @@ ClcExit:
     rts
 
 PlaySnd4:
-    jmp SFX_Metal
+    jmp SFXMetal
 
 CheckMoveLeft:
     ldx PageIndex
@@ -8306,7 +8308,7 @@ LF536:  lda EnSpecialAttribs,x
 *   jsr $80B0
     and #$20
     bne ---
-    jsr SFX_Metal
+    jsr SFXMetal
     jmp LF42D
 
 *   lda EnHitPoints,x
@@ -8598,7 +8600,7 @@ LF7BA:  dec EnDelay,x
 *   lda EnDataIndex,x
     cmp #$07
     bne +
-    jsr SFX_OutOfHole
+    jsr SFXEnemyRegen
     ldx PageIndex
 *   inc EnStatus,x
     jsr LF699
@@ -8824,69 +8826,69 @@ LF987:  inc $0408,x
     sta EnDelay,x
     beq +
 LF991:  jsr LFA5B
-    lda $040A,x
-    and #$FE
-    tay
-    lda $97A7,y
-    sta $0A
-    lda $97A8,y
-    sta $0B
-*   ldy $0408,x
-    lda ($0A),y
-    cmp #$FF
-    bne +
-    sta $0408,x
-    jmp LF987
+    LDA $040A,x
+    AND #$FE
+    TAY
+    LDA $97A7,y
+    STA $0A
+    LDA $97A8,y
+    STA $0B
+*   LDY $0408,x
+    LDA ($0A),y
+    CMP #$FF
+    BNE +
+    STA $0408,x
+    JMP LF987
 
-*   cmp EnDelay,x
-    beq ---
-    inc EnDelay,x
-    iny
-    lda ($0A),y
-    jsr $8296
-    ldx PageIndex
-    sta $0402,x
-    lda ($0A),y
-    jsr $832F
-    ldx PageIndex
-    sta $0403,x
-    tay
-    lda $040A,x
-    lsr
-    php
-    bcc +
-    tya
-    jsr TwosCompliment      ;($C3D4)
-    sta $0403,x
-*   plp
-    bne +
-    lda $0402,x
-    beq +
-    bmi +
-    ldy $040A,x
-    lda $95E0,y
-    sta EnResetAnimIndex,x
-*   jsr LFA1E
-    ldx PageIndex
-    bcs ++
-    lda EnStatus,x
-    beq Exit20
-    ldy #$00
-    lda $040A,x
-    lsr
-    beq +
-    iny
-*   lda $95E2,y
-    jsr LF68D
-    jsr LF518
-    lda #$0A
-    sta EnDelay,x
-*   jmp LF97C
+*   CMP EnDelay,x
+    BEQ ---
+    INC EnDelay,x
+    INY
+    LDA ($0A),y
+    JSR $8296
+    LDX PageIndex
+    STA $0402,x
+    LDA ($0A),y
+    JSR $832F
+    LDX PageIndex
+    STA $0403,x
+    TAY
+    LDA $040A,x
+    LSR
+    PHP
+    BCC +
+    TYA
+    JSR TwosCompliment      ;($C3D4)
+    STA $0403,x
+*   PLP
+    BNE +
+    LDA $0402,x
+    BEQ +
+    BMI +
+    LDY $040A,x
+    LDA $95E0,y
+    STA EnResetAnimIndex,x
+*   JSR LFA1E
+    LDX PageIndex
+    BCS ++
+    LDA EnStatus,x
+    BEQ Exit20
+    LDY #$00
+    LDA $040A,x
+    LSR
+    BEQ +
+    INY
+*   LDA $95E2,y
+    JSR LF68D
+    JSR LF518
+    LDA #$0A
+    STA EnDelay,x
+*   JMP LF97C
 
 KillObject:
-LFA18:  lda #$00            ;
-LFA1A:  sta EnStatus,x          ;Store #$00 as enemy status(enemy slot is open).
-LFA1D:  rts             ;
+LFA18:  LDA #$00            ;
+LFA1A:  STA EnStatus,x          ;Store #$00 as enemy status(enemy slot is open).
+LFA1D:  RTS             ;
 
 ; enemy<background crash detection
 

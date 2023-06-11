@@ -1786,35 +1786,19 @@ L9550:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $
 
 ;----------------------------------------------------------------------------------------------------
 
+;The following table points to the palette data used in this bank.
+
+
 PalPntrTbl:
-L9560:  .word Palette00         ;($A271)
-L9562:  .word Palette01         ;($A295)
-L9564:  .word Palette02         ;($A2A1)
-L9566:  .word Palette03         ;($A29B)
-L9568:  .word Palette04         ;($A2A7)
-L956A:  .word Palette05         ;($A2AD)
-L956C:  .word Palette06         ;($A2D0)
-L956E:  .word Palette06         ;($A2D0)
-L9570:  .word Palette06         ;($A2D0)
-L9572:  .word Palette06         ;($A2D0)
-L9574:  .word Palette06         ;($A2D0)
-L9576:  .word Palette06         ;($A2D0)
-L9578:  .word Palette06         ;($A2D0)
-L957A:  .word Palette06         ;($A2D0)
-L957C:  .word Palette06         ;($A2D0)
-L957E:  .word Palette06         ;($A2D0)
-L9580:  .word Palette06         ;($A2D0)
-L9582:  .word Palette06         ;($A2D0)
-L9584:  .word Palette06         ;($A2D0)
-L9586:  .word Palette06         ;($A2D0)
-L9588:  .word Palette07         ;($A2D7)
-L958A:  .word Palette08         ;($A2DE)
-L958C:  .word Palette09         ;($A2E5)
-L958E:  .word Palette0A         ;($A2EC)
-L9590:  .word Palette0B         ;($A2F4)
-L9592:  .word Palette0C         ;($A2FC)
-L9594:  .word Palette0D         ;($A304)
-L9596:  .word Palette0E         ;($A30C)
+L9560:  .word Palette00, Palette01, Palette02, Palette03
+L9568:  .word Palette04, Palette05, Palette06, Palette06
+L9570:  .word Palette06, Palette06, Palette06, Palette06
+L9578:  .word Palette06, Palette06, Palette06, Palette06
+L9580:  .word Palette06, Palette06, Palette06, Palette06
+L9588:  .word Palette07, Palette08, Palette09, Palette0A
+L9590:  .word Palette0B, Palette0C, Palette0D, Palette0E
+
+;----------------------------------------------------------------------------------------------------
 
 AreaPointers:
 L9598:  .word SpecItmsTbl       ;($A3D6)Beginning of special items table.
@@ -4136,7 +4120,7 @@ LB2DB:  .word $B6CD             ;Missile pickup init SFX.
 LB2DD:  .word $B6E7             ;Energy pickup init SFX.
 LB2DF:  .word $B735             ;Metal init SFX.
 LB2E1:  .word $B716             ;Bullet fire init SFX.
-LB2E3:  .word $B73C             ;Bird out of hole init SFX.
+LB2E3:  .word $B73C             ;Enemy regenerate init SFX.
 LB2E5:  .word $B710             ;Enemy hit init SFX.
 LB2E7:  .word $B703             ;Samus jump init SFX.
 LB2E9:  .word $B77A             ;Wave beam init SFX.
@@ -4147,7 +4131,7 @@ LB2EB:  .word $B6B0             ;Missile pickup continue SFX.
 LB2ED:  .word $B6D3             ;Energy pickup continue SFX.
 LB2EF:  .word $B6ED             ;Metal continue SFX.
 LB2F1:  .word $B74F             ;Bullet fire continue SFX.
-LB2F3:  .word $B6ED             ;Bird out of hole continue SFX.
+LB2F3:  .word $B6ED             ;Enemy regenerate continue SFX.
 LB2F5:  .word $B6ED             ;Enemy hit continue SFX.
 LB2F7:  .word $B6ED             ;Samus jump continue SFX.
 LB2F9:  .word $B781             ;Wave beam continue SFX.
@@ -4770,7 +4754,7 @@ BulletFireSFXStart:
 LB716:  LDA HasBeamSFX          ;
 LB719:  LSR                     ;If Samus has ice beam, branch.
 LB71A:  BCS +++++               ;
-LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, BirdOutOfHole
+LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, EnemyRegen
 LB71F:  AND #$CC                ;or EnemyHit SFX already playing, branch to exit.
 LB721:  BNE MusicBranch03       ;
 LB723:  LDA HasBeamSFX          ;
@@ -4792,7 +4776,7 @@ LB737:  LDY #$45                ;Lower byte of sound data start address(base=$B2
 SelectSFX1:
 LB739:* JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
-BirdOutOfHoleSFXStart:
+EnRegenSFXStart:
 LB73C:  LDA CurrentMusic        ;If escape music is playing, use this SFX to make
 LB73F:  CMP #$04                ;the bomb ticking sound, else play regular SFX.
 LB741:  BEQ +                   ;

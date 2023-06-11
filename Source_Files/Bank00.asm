@@ -186,7 +186,7 @@ L80C8:  .byte $00, $00, $00, $00, $00, $00, $C0, $C4
 ;----------------------------------------------------------------------------------------------------
 
 DrawIntroBkg:
-L80D0:  LDA #$10                ;Intro music flag.
+L80D0:  LDA #MUS_INTRO          ;Intro music flag.
 L80D2:  STA ABStatus            ;Never accessed by game.
 L80D4:  STA MultiSFXFlag        ;Initiates intro music.
 
@@ -218,8 +218,10 @@ FadeInDelay:
 L80F9:  LDA PPUCNT0ZP           ;
 L80FB:  AND #$FE                ;Switch to name table 0 or 2.
 L80FD:  STA PPUCNT0ZP           ;
+
 L80FF:  LDA #$08                ;Loads Timer3 with #$08. Delays Fade in routine.
 L8101:  STA Timer3              ;Delays fade in by 80 frames (1.3 seconds).
+
 L8103:  LSR                     ;
 L8104:  STA PalDataIndex        ;Loads PalDataIndex with #$04
 L8106:  INC TitleRoutine        ;Increment to next routine.
@@ -229,113 +231,165 @@ FlashEffect:
 L8109:  LDA FrameCount          ;Every third frame, run change palette
 L810B:  AND #$03                ;Creates METROID flash effect.
 L810D:  BNE +                   ;
+
 L810F:  LDA PalDataIndex        ;Uses only the first three palette
 L8111:  AND #$03                ;data sets in the flash routine.
 L8113:  STA PalDataIndex        ;
-L8115:  JSR LoadPalData         ;
+L8115:  JSR LoadPalData         ;($8A8C)Load data into Palettes.
+
 L8118:  LDA Timer3              ;If Timer 3 has not expired, branch
 L811A:  BNE +                   ;so routine will keep running.
+
 L811C:  LDA PalDataIndex        ;
 L811E:  CMP #$04                ;Ensures the palette index is back at 0.
 L8120:  BNE +                   ;
+
 L8122:  INC TitleRoutine        ;Increment to next routine.
 L8124:  JSR LoadSparkleData     ;($87AB) Loads data for next routine.
+
 L8127:  LDA #$18                ;Sets Timer 3 for a delay of 240 frames
 L8129:  STA Timer3              ;(4 seconds).
 L812B:* RTS                     ;
 
+;----------------------------------------------------------------------------------------------------
+
+
 METROIDFadeIn:
-L812C:  LDA Timer3              ;
-L812E:  BNE +                   ;
+L812C:  LDA Timer3              ;Has timer reached 0?
+L812E:  BNE +                   ;If not, branch to wait longer.
+
 L8130:  LDA FrameCount          ;Every 16th FrameCount, Change palette.
 L8132:  AND #$0F                ;Causes the fade in effect.
 L8134:  BNE +                   ;
+
 L8136:  JSR LoadPalData         ;($8A8C)Load data into Palettes.
 L8139:  BNE +                   ;
+
 L813B:  LDA #$20                ;Set timer delay for METROID flash effect.
 L813D:  STA Timer3              ;Delays flash by 320 frames (5.3 seconds).
 L813F:  INC TitleRoutine        ;
 L8141:* RTS                     ;
 
+;----------------------------------------------------------------------------------------------------
+
 LoadFlashTimer:
-L8142:  LDA Timer3              ;If 320 frames have not passed, exit
-L8144:  BNE -                   ;
+L8142:  LDA Timer3              ;Has 320 frames passed?
+L8144:  BNE -                   ;If not, exit.
+
 L8146:  LDA #$08                ;
 L8148:  STA Timer3              ;Stores a value of 80 frames in Timer3
 L814A:  INC TitleRoutine        ;(1.3 seconds).
 L814C:  RTS                     ;
 
+;----------------------------------------------------------------------------------------------------
+
 METROIDSparkle:
 L814D:  LDA Timer3              ;Wait until 3 seconds have passed since
-L814F:  BNE ++                  ;last routine before continuing.
+L814F:  BNE EndSparkle          ;last routine before continuing.
+
 L8151:  LDA IntroSpr0Comp       ;Check if sparkle sprites are done moving.
 L8154:  AND IntroSpr1Comp       ;
-L8157:  CMP #$01                ;Is sparkle routine finished? If so,
-L8159:  BNE +                   ;go to next title routine, else continue
-L815B:  INC TitleRoutine        ;with sparkle routine.
-L815D:  BNE ++                  ;
+L8157:  CMP #$01                ;Is sparkle routine finished? 
+L8159:  BNE +                   ;If nit, branch to continue routine.
+
+L815B:  INC TitleRoutine        ;Move to next intro routine.
+L815D:  BNE EndSparkle          ;
+
 L815F:* JSR UpdtSparkleSprts    ;($87CF)Update sparkle sprites on the screen.
-L8162:* RTS                     ;
+
+EndSparkle:
+L8162:  RTS                     ;End METROID sparkle routine.
+
+;----------------------------------------------------------------------------------------------------
 
 METROIDFadeOut:
 L8163:  LDA FrameCount          ;Wait until the frame count is a multiple
 L8165:  AND #$07                ;of eight before proceeding.  
-L8167:  BNE ++                  ;
+L8167:  BNE EndMETFadeOut       ;
+
 L8169:  LDA FadeDataIndex       ;If FadeDataIndex is less than #$04, keep
 L816B:  CMP #$04                ;doing the palette changing routine.
 L816D:  BNE +                   ;
+
 L816F:  JSR LoadInitSprtDat     ;($8897)Load initial sprite values for crosshair routine.
 L8172:  LDA #$08                ;
 L8174:  STA Timer3              ;Load Timer3 with a delay of 80 frames(1.3 seconds).
 L8176:  STA First4SlowCntr      ;Set counter for slow sprite movement for 8 frames,
-L8178:  LDA #$00                ;
-L817A:  STA ScndCrshrSprts      ;Set ScndCrshrSprts=#$00
+
+L8178:  LDA #$00                ;Set ScndCrshrSprts=#$00
+L817A:  STA ScndCrshrSprts      ;
+
 L817C:  INC TitleRoutine        ;Move to next routine
 L817E:* JSR DoFadeOut           ;($8B5F)Fades METROID off the screen.
-L8181:* RTS                     ;
+
+EndMETFadeOut:
+L8181:  RTS                     ;End METROID fade out routine.
+
+;----------------------------------------------------------------------------------------------------
 
 Crosshairs:
 L8182:  LDA FlashScreen         ;Is it time to flash the screen white?
 L8184:  BEQ +                   ;If not, branch.
+
 L8186:  JSR FlashIntroScreen    ;($8AA7)Flash screen white.
+
 L8189:* LDA Timer3              ;Wait 80 frames from last routine
-L818B:  BNE ++++                ;before running this one.
+L818B:  BNE EndCrosshairs       ;before running this one.
+
 L818D:  LDA IntroSpr0Comp       ;
 L8190:  AND IntroSpr1Comp       ;Check if first 4 sprites have completed
 L8193:  AND IntroSpr2Comp       ;their movements.  If not, branch.
 L8196:  AND IntroSpr3Comp       ;
-L8199:  BEQ ++                  ;
+L8199:  BEQ DrawCrosshairs      ;
+
 L819B:  LDA #$01                ;Prepare to flash screen and draw cross.
 L819D:  CMP ScndCrshrSprts      ;Branch if second crosshair sprites are already 
 L819F:  BEQ +                   ;active.
+
 L81A1:  INC ScndCrshrSprts      ;Indicates second crosshair sprites are active.
 L81A3:  STA DrawCross           ;Draw cross animation on screen.
 L81A5:  STA FlashScreen         ;Flash screen white.
-L81A7:  LDA #$00                ;
-L81A9:  STA CrossDataIndex      ;Reset index to cross sprite data.
+
+L81A7:  LDA #$00                ;Reset index to cross sprite data.
+L81A9:  STA CrossDataIndex      ;
+
 L81AB:* AND IntroSpr4Comp       ;
 L81AE:  AND IntroSpr5Comp       ;Check if second 4 sprites have completed 
 L81AF:  AND IntroSpr6Comp       ;their movements.  If not, branch.
 L81B4:  AND IntroSpr7Comp       ;
-L81B7:  BEQ +                   ;
+L81B7:  BEQ DrawCrosshairs      ;
+
 L81B9:  LDA #$01                ;Prepare to flash screen and draw cross.
 L81BB:  STA DrawCross           ;Draw cross animation on screen.
 L81BD:  STA FlashScreen         ;Flash screen white.
+
 L81BF:  JSR LoadStarSprites     ;($98AE)Loads stars on intro screen.
-L81C2:  LDA #$00                ;
-L81C4:  STA CrossDataIndex      ;Reset index to cross sprite data.
+
+L81C2:  LDA #$00                ;Reset index to cross sprite data.
+L81C4:  STA CrossDataIndex      ;
 L81C6:  INC TitleRoutine        ;Do MoreCrosshairs next frame.
-L81C8:  BNE ++                  ;Branch always.
-L81CA:* JSR DrwCrshrsSprts      ;($88FE)Draw sprites that converge in center of screen.
+L81C8:  BNE DrawCrossSpr        ;Branch always.
+
+DrawCrosshairs:
+L81CA:  JSR DrwCrshrsSprts      ;($88FE)Draw sprites that converge in center of screen.
+
+DrawCrossSpr:
 L81CD:* JSR DrawCrossSprites    ;($8976)Draw cross sprites in middle of the screen.
-L81D0:* RTS                     ;
+
+EndCrosshairs:
+L81D0:  RTS                     ;End the crosshairs routine.
+
+;----------------------------------------------------------------------------------------------------
 
 MoreCrosshairs:
 L81D1:  LDA FlashScreen         ;Is it time to flash the screen white?
 L81D3:  BEQ +                   ;If not, branch.
+
 L81D5:  JSR DrawCrossSprites    ;($8976)Draw cross sprites in middle of the screen.
 L81D8:  JMP FlashIntroScreen    ;($8AA7)Flash screen white.
+
 L81DB:* INC TitleRoutine        ;ChangeIntroNT is next routine to run.
+
 L81DD:  LDA #$60                ;
 L81DF:  STA ObjectY             ;
 L81E2:  LDA #$7C                ;These values are written into memory, but they are
@@ -359,50 +413,76 @@ ChangeIntroNT:
 L822E:  LDA PPUCNT0ZP           ;
 L8230:  ORA #$01                ;Change to name table 1.
 L8232:  STA PPUCNT0ZP           ;
+
 L8234:  INC TitleRoutine        ;Next routine to run is MessageFadeIn.
-L8236:  LDA #$08                ;
-L8238:  STA Timer3              ;Set Timer3 for 80 frames(1.33 seconds).
+
+L8236:  LDA #$08                ;Set Timer3 for 80 frames(1.33 seconds).
+L8238:  STA Timer3              ;
+
 L823A:  LDA #$06                ;Index to FadeInPalData.
 L823C:  STA FadeDataIndex       ;
+
 L823E:  LDA #$00                ;
 L8240:  STA SpareMemC9          ;Not accessed by game.
 L8242:  RTS                     ;
 
+;----------------------------------------------------------------------------------------------------
+
 MessageFadeIn:
 L8243:  LDA Timer3              ;Check if delay timer has expired.  If not, branch
-L8245:  BNE ++                  ;to exit, else run this rouine.
+L8245:  BNE EndMsgFadeIn        ;to exit, else run this rouine.
+
 L8247:  LDA FrameCount          ;
 L8249:  AND #$07                ;Perform next step of fade every 8th frame.
-L824B:  BNE ++                  ;
-L824D:  LDA FadeDataIndex       ;
-L824F:  CMP #$0B                ;Has end of fade in palette data been reached?
+L824B:  BNE EndMsgFadeIn        ;
+
+L824D:  LDA FadeDataIndex       ;Has end of fade in palette data been reached?
+L824F:  CMP #$0B                ;
 L8251:  BNE +                   ;If not, branch.
-L8253:  LDA #$00                ;
-L8255:  STA FadeDataIndex       ;Clear FadeDataIndex.
-L8257:  LDA #$30                ;
-L8259:  STA Timer3              ;Set Timer3 to 480 frames(8 seconds).
+
+L8253:  LDA #$00                ;Clear FadeDataIndex.
+L8255:  STA FadeDataIndex       ;
+
+L8257:  LDA #$30                ;Set Timer3 to 480 frames(8 seconds).
+L8259:  STA Timer3              ;
+
 L825B:  INC TitleRoutine        ;Next routine is MessageFadeOut.
-L825D:  BNE ++                  ;Branch always.
+L825D:  BNE EndMsgFadeIn        ;Branch always.
+
 L825F:* JSR DoFadeOut           ;($8B5F)Fade message onto screen.
-L8262:* RTS                     ;
+
+EndMsgFadeIn:
+L8262:  RTS                     ;End message fade in routine.
+
+;----------------------------------------------------------------------------------------------------
 
 MessageFadeOut:
 L8263:  LDA Timer3              ;Check if delay timer has expired.  If not, branch
-L8265:  BNE ++                  ;to exit, else run this rouine.
+L8265:  BNE EndMsgFadeOut       ;to exit, else run this rouine.
+
 L8267:  LDA FrameCount          ;
 L8269:  AND #$07                ;Perform next step of fade every 8th frame.
-L826B:  BNE ++                  ;
-L826D:  LDA FadeDataIndex       ;
-L826F:  CMP #$05                ;Has end of fade out palette data been reached?
+L826B:  BNE EndMsgFadeOut       ;
+
+L826D:  LDA FadeDataIndex       ;Has end of fade out palette data been reached?
+L826F:  CMP #$05                ;
 L8271:  BNE +                   ;If not, branch.
+
 L8273:  LDA #$06                ;
 L8275:  STA FadeDataIndex       ;Set index to start of fade in data.
-L8277:  LDA #$00                ;
-L8279:  STA SpareMemCB          ;Not accessed by game.
+
+L8277:  LDA #$00                ;Not accessed by game.
+L8279:  STA SpareMemCB          ;
+
 L827B:  INC TitleRoutine        ;Next routine is DelayIntroReplay.
-L827D:  BNE ++                  ;Branch always.
+L827D:  BNE EndMsgFadeOut       ;Branch always.
+
 L827F:* JSR DoFadeOut           ;($8B5F)Fade message off of screen.
-L8282:* RTS                     ;
+
+EndMsgFadeOut:
+L8282:  RTS                     ;End message fade out routine.
+
+;----------------------------------------------------------------------------------------------------
 
 DelayIntroReplay:
 L8283:  INC TitleRoutine        ;Increment to next routine.
@@ -421,17 +501,21 @@ L829A:  .byte $85, $D2, $A9, $10, $85, $2C, $E6, $1F, $60
 
 PrepIntroRestart:
 L82A3:  LDA Timer3              ;Check if delay timer has expired.  If not, branch
-L82A5:  BNE ++                  ;to exit, else run this rouine.
+L82A5:  BNE ExitPrepRestart     ;to exit, else run this rouine.
+
 L82A7:  STA SpareMemD2          ;Not accessed by game.
 L82A9:  STA SpareMemBB          ;Not accessed by game.
 L82AB:  STA IsSamus             ;Clear IsSamus memory address.
+
 L82AD:  LDY #$1F                ;
 L82AF:* STA ObjAction,Y         ;
 L82B2:  DEY                     ;Clear RAM $0300 thru $031F.
 L82B3:  BPL -                   ;
+
 L82B5:  LDA PPUCNT0ZP           ;Change to name table 0.
 L82B7:  AND #$FC                ;
 L82B9:  STA PPUCNT0ZP           ;
+
 L82BB:  INY                     ;Y=0.
 L82BC:  STY SpareMemB7          ;Accessed by unused routine.
 L82BE:  STY SpareMemB8          ;Accessed by unused routine.
@@ -449,22 +533,33 @@ L82D3:  STY SpareMemCE          ;Not accessed by game.
 L82D5:  INY                     ;Y=2.
 L82D6:  STY SpareMemCC          ;Not accessed by game.
 L82D8:  STY SpareMemCF          ;Not accessed by game.
+
 L82DA:  STY TitleRoutine        ;Next routine sets up METROID fade in delay.
+
 L82DC:  LDA IntroMusRstrt       ;Check to see if intro music needs to be restarted.
-L82DE:  BNE ++                  ;Branch if not.
-L82E0:  LDA #$10                ;
-L82E2:  STA MultiSFXFlag        ;Restart intro music.
+L82DE:  BNE DecIntroCounter     ;Branch if not.
+
+L82E0:  LDA #MUS_INTRO          ;Restart intro music.
+L82E2:  STA MultiSFXFlag        ;
+
 L82E5:  LDA #$02                ;Set restart of intro music after another two cycles
 L82E7:  STA IntroMusRstrt       ;of the title routines.
-L82E9:* RTS                     ;
- 
-L82EA:* DEC IntroMusRstrt       ;One title routine cycle complete. Decrement intro
+
+ExitPrepRestart:
+L82E9:  RTS                     ;Exit the restart intro routine.
+
+DecIntroCounter:
+L82EA:  DEC IntroMusRstrt       ;One title routine cycle complete. Decrement intro
 L82EC:  RTS                     ;music restart counter.
+
+;----------------------------------------------------------------------------------------------------
 
 TitleScreenOff:
 L82ED:  JSR ScreenOff           ;($C439)Turn screen off.
 L82F0:  INC TitleRoutine        ;Next routine is TitleRoutineRtn.
 L82F2:  RTS                     ;This routine should not be reached.
+
+;----------------------------------------------------------------------------------------------------
 
 TitleRoutineRtn:
 L82F3:  RTS                     ;Last title routine function. Should not be reached.
@@ -474,89 +569,107 @@ L82F3:  RTS                     ;Last title routine function. Should not be reac
 ;The following data fills name table 0 with the intro screen background graphics.
 
 ;Information to be stored in attribute table 0.
+IntroAttrib0_0:
 L82F4:  .byte $23, $C0, $20     ;PPU address and string length.
 L82F7:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
 L8307:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
+IntroAttrib0_1:
 L8317:  .byte $23, $E0, $20 ;PPU address and string length.
 L831A:  .byte $FF, $FF, $BF, $AF, $FF, $FF, $FF, $FF, $00, $00, $00, $00, $00, $00, $00, $00
 L832A:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 ;Writes row $22E0 (24th row from top).
+IntroRow0_24:
 L833A:  .byte $22, $E0, $20     ;PPU address and string length.
 L833D:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 L834D:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 
 ;Writes row $2300 (25th row from top).
+IntroRow0_25:
 L835D:  .byte $23, $00, $20     ;PPU address and string length.
 L8360:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 L8370:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 
 ;Writes row $2320 (26th row from top).
+IntroRow0_26:
 L8380:  .byte $23, $20, $20     ;PPU address and string length.
 L8383:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 L8393:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 
 ;Writes row $2340 (27th row from top).
+IntroRow0_27:
 L83A3:  .byte $23, $40, $20     ;PPU address and string length.
 L83A6:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 L83B6:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 
 ;Writes row $2360 (28th row from top).
+IntroRow0_28:
 L83C6:  .byte $23, $60, $20     ;PPU address and string length.
 L83C9:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 L83D9:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 
 ;Writes row $2380 (29th row from top).
+IntroRow0_29:
 L83E9:  .byte $23, $80, $20     ;PPU address and string length.
 L83EC:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 L83FC:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 
 ;Writes row $23A0 (Bottom row).
+IntroRow0_30:
 L840C:  .byte $23, $A0, $20     ;PPU address and string length.
 L840F:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 L841F:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 
 ;Writes some blank spaces in row $20A0 (6th row from top).
+IntroRow0_6:
 L842F:  .byte $20, $A8, $4F     ;PPU address and string length.
 L8432:  .byte $FF               ;Repeat bit set. Repeat 16 blank tiles.
 
 ;Writes METROID graphics in row $2100 (9th row from top).
+IntroRow0_9:
 L8433:  .byte $21, $03, $1C     ;PPU address and string length.
 L8436:  .byte $40, $5D, $56, $5D, $43, $40, $5D, $43, $40, $5D, $5D, $43, $40, $5D, $5D, $63
 L8446:  .byte $62, $5D, $5D, $63, $40, $43, $40, $5D, $5D, $63, $1D, $16
 
 ;Writes METROID graphics in row $2120 (10th row from top).
+IntroRow0_10:
 L8452:  .byte $21, $23, $1A     ;PPU address and string length.
 L8455:  .byte $44, $50, $50, $50, $47, $44, $57, $58, $74, $75, $76, $77, $44, $57, $69, $47
 L8465:  .byte $44, $57, $69, $47, $44, $47, $44, $68, $69, $47
 
 ;Writes METROID graphics in row $2140 (11th row from top).
+IntroRow0_11:
 L846F:  .byte $21, $43, $1A     ;PPU address and string length.
 L8472:  .byte $44, $41, $7E, $49, $47, $44, $59, $5A, $78, $79, $7A, $7B, $44, $59, $6D, $70
 L8482:  .byte $44, $73, $72, $47, $44, $47, $44, $73, $72, $47
 
 ;Writes METROID graphics in row $2160 (12th row from top).
+IntroRow0_12:
 L848C:  .byte $21, $63, $1A     ;PPU address and string length.
 L848F:  .byte $44, $42, $7F, $4A, $47, $44, $5B, $5C, $FF, $44, $47, $FF, $44, $5B, $6F, $71
 L849F:  .byte $44, $45, $46, $47, $44, $47, $44, $45, $46, $47
 
 ;Writes METROID graphics in row $2180 (13th row from top).
+IntroRow0_13:
 L84A9:  .byte $21, $83, $1A     ;PPU address and string length.
 L84AC:  .byte $44, $47, $FF, $44, $47, $44, $5F, $60, $FF, $44, $47, $FF, $44, $7D, $7C, $47
 L84BC:  .byte $44, $6A, $6B, $47, $44, $47, $44, $6A, $6B, $47
 
 ;Writes METROID graphics in row $21A0 (14th row from top).
+IntroRow0_14:
 L84C6:  .byte $21, $A3, $1A     ;PPU address and string length.
 L84C9:  .byte $4C, $4F, $FF, $4C, $4F, $4C, $5E, $4F, $FF, $4C, $4F, $FF, $4C, $4D, $4E, $4F
 L84D9:  .byte $66, $5E, $5E, $64, $4C, $4F, $4C, $5E, $5E, $64
 
 ;Writes METROID graphics in row $21C0 (15th row from top).
+IntroRow0_15:
 L84E3:  .byte $21, $C3, $1A     ;PPU address and string length.
 L84E6:  .byte $51, $52, $FF, $51, $52, $51, $61, $52, $FF, $51, $52, $FF, $51, $53, $54, $52
 L84F6:  .byte $67, $61, $61, $65, $51, $52, $51, $61, $61, $65
 
 ;Writes PUSH START BUTTON in row $2220 (18th row from top).
+IntroRow0_18:
 L8500:  .byte $22, $27, $15 ;PPU address and string length.
 ;              _    P    U    S    H    _    S    T    A    R    T    _    B    U    T    T
 L8503:  .byte $FF, $19, $1E, $1C, $11, $FF, $1C, $1D, $0A, $1B, $1D, $FF, $0B, $1E, $1D, $1D
@@ -564,6 +677,7 @@ L8503:  .byte $FF, $19, $1E, $1C, $11, $FF, $1C, $1D, $0A, $1B, $1D, $FF, $0B, $
 L8513:  .byte $18, $17, $FF, $FF, $FF
 
 ;Writes C 1986 NINTENDO in row $2260 (20th row from top).
+IntroRow0_20:
 L8518:  .byte $22, $69, $12     ;PPU address and string length.
 ;              C    _    1    9    8    6    _    N    I    N    T    E    N    D    O    _
 L851B:  .byte $8F, $FF, $01, $09, $08, $06, $FF, $17, $12, $17, $1D, $0E, $17, $0D, $18, $FF
@@ -573,56 +687,67 @@ L852B:  .byte $FF, $FF
 ;The following data fills name table 1 with the intro screen background graphics.
 
 ;Information to be stored in attribute table 1.
+IntroAttrib1_0:
 L852D:  .byte $27, $C0, $20     ;PPU address and string length.
 L8530:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 L8540:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 ;Writes row $27E0 (24th row from top).
+IntroAttrib1_1:
 L8550:  .byte $27, $E0, $20     ;PPU address and string length.
 L8553:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $00, $00, $00, $00, $00, $00, $00, $00
 L8563:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 ;Writes row $26E0 (24th row from top).
+IntroRow1_24:
 L8573:  .byte $26, $E0, $20     ;PPU address and string length.
 L8576:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 L8586:  .byte $FF, $FF, $FF, $FF, $FF, $8C, $FF, $FF, $FF, $FF, $FF, $8D, $FF, $FF, $8E, $FF
 
 ;Writes row $2700 (25th row from top).
+IntroRow1_25:
 L8595:  .byte $27, $00, $20     ;PPU address and string length.
 L8599:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 L85A9:  .byte $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81, $80, $81
 
 ;Writes row $2720 (26th row from top).
+IntroRow1_26:
 L85B9:  .byte $27, $20, $20     ;PPU address and string length.
 L85BC:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 L85CC:  .byte $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83, $82, $83
 
 ;Writes row $2740 (27th row from top).
+IntroRow1_27:
 L85DC:  .byte $27, $40, $20     ;PPU address and string length.
 L85DF:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 L85EF:  .byte $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85, $84, $85
 
 ;Writes row $2760 (28th row from top).
+IntroRow1_28:
 L85FF:  .byte $27, $60, $20     ;PPU address and string length.
 L8602:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 L8612:  .byte $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87, $86, $87
 
 ;Writes row $2780 (29th row from top).
+IntroRow1_29:
 L8622:  .byte $27, $80, $20     ;PPU address and string length.
 L8625:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 L8635:  .byte $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89, $88, $89
 
 ;Writes row $27A0 (bottom row).
+IntroRow1_30:
 L8645:  .byte $27, $A0, $20     ;PPU address and string length.
 L8648:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 L8658:  .byte $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B, $8A, $8B
 
 ;Writes row $2480 (5th row from top).
+IntroRow1_5:
 L8668:  .byte $24, $88, $0F     ;PPU address and string length.
 ;              E    M    E    R    G    E    N    C    Y    _    O    R    D    E    R
 L866B:  .byte $0E, $16, $0E, $1B, $10, $0E, $17, $0C, $22, $FF, $18, $1B, $0D, $0E, $1B
 
 ;Writes row $2500 (9th row from top).
+IntroRow1_9:
 L867A:  .byte $25, $04, $1C     ;PPU address and string length.
 ;              D    E    F    E    A    T    _    T    H    E    _    M    E    T    R    0
 L867D:  .byte $0D, $0E, $0F, $0E, $0A, $1D, $FF, $1D, $11, $0E, $FF, $16, $0E, $1D, $1B, $18
@@ -630,6 +755,7 @@ L867D:  .byte $0D, $0E, $0F, $0E, $0A, $1D, $FF, $1D, $11, $0E, $FF, $16, $0E, $
 L868D:  .byte $12, $0D, $FF, $18, $0F, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 ;Writes row $2540 (11th row from top).
+IntroRow1_11:
 L8699:  .byte $25, $44, $1A     ;PPU address and string length.
 ;              T    H    E    _    P    L    A    N    E    T    _    Z    E    B    E    T
 L869C:  .byte $1D, $11, $0E, $FF, $19, $15, $0A, $17, $0E, $1D, $FF, $23, $0E, $0B, $0E, $1D
@@ -637,6 +763,7 @@ L869C:  .byte $1D, $11, $0E, $FF, $19, $15, $0A, $17, $0E, $1D, $FF, $23, $0E, $
 L86AC:  .byte $11, $FF, $0A, $17, $0D, $FF, $FF, $FF, $FF, $FF
 
 ;Writes row $2580 (13th row from top).
+IntroRow1_13:
 L86B6:  .byte $25, $84, $1A     ;PPU address and string length.
 ;              D    E    S    T    R    O    Y    _    T    H    E    _    M    O    T    H
 L86B9:  .byte $0D, $0E, $1C, $1D, $1B, $18, $22, $FF, $1D, $11, $0E, $FF, $16, $18, $1D, $11
@@ -644,6 +771,7 @@ L86B9:  .byte $0D, $0E, $1C, $1D, $1B, $18, $22, $FF, $1D, $11, $0E, $FF, $16, $
 L86C9:  .byte $0E, $1B, $FF, $0B, $1B, $0A, $12, $17, $FF, $FF
 
 ;Writes row $25C0 (15th row from top).
+IntroRow1_15:
 L86D3:  .byte $25, $C4, $1A     ;PPU address and string length.
 ;              T    H    E    _    M    E    C    H    A    N    I    C    A    L    _    L
 L86D6:  .byte $1D, $11, $0E, $FF, $16, $0E, $0C, $11, $0A, $17, $12, $0C, $0A, $15, $FF, $15
@@ -651,6 +779,7 @@ L86D6:  .byte $1D, $11, $0E, $FF, $16, $0E, $0C, $11, $0A, $17, $12, $0C, $0A, $
 L86E9:  .byte $12, $0F, $0E, $FF, $1F, $0E, $12, $17, $FF, $FF
 
 ;Writes row $2620 (18th row from top).
+IntroRow1_18:
 L86F0:  .byte $26, $27, $15     ;PPU address and string length.
 ;              G    A    L    A    X    Y    _    F    E    D    E    R    A    L    _    P
 L86F3:  .byte $10, $0A, $15, $0A, $21, $22, $FF, $0F, $0E, $0D, $0E, $1B, $0A, $15, $FF, $19
@@ -658,6 +787,7 @@ L86F3:  .byte $10, $0A, $15, $0A, $21, $22, $FF, $0F, $0E, $0D, $0E, $1B, $0A, $
 L8703:  .byte $18, $15, $12, $0C, $0E
 
 ;Writes row $2660 (20th row from top).
+IntroRow1_20:
 L8708:  .byte $26, $69, $12     ;PPU address and string length.
 ;              _    _    _    _    _    _    _    _    _    _    _    _    _    _    M    5
 L870B:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $16, $05
@@ -727,10 +857,13 @@ L87D6:  JSR SparkleUpdate       ;($87D9)Update sparkle sprite data.
 SparkleUpdate:
 L87D9:  LDA IntroSpr0NxtCntr,X  ;If $6EA5 has not reached #$00, skip next routine.
 L87DC:  BNE +                   ;
+
 L87DE:  JSR DoSprkleprteCoord   ;($881A)Update sparkle sprite screen position.
-L87E1:* LDA IntroSpr0Comp,X     ;
-L87E4:  BNE ++                  ;If sprite is already done, skip routine.
-L87E6:  DEC IntroSpr0NxtCntr,X  ;
+
+L87E1:* LDA IntroSpr0Comp,X     ;If sprite is already done, skip routine.
+L87E4:  BNE EndSprklUpdate      ;
+
+L87E6:  DEC IntroSpr0NxtCntr,X  ;Decrement counter.
 
 L87E9:  LDA SprklSpr0YChange,X  ;
 L87EC:  CLC                     ;
@@ -743,17 +876,25 @@ L87F7:  ADC IntroSpr0XCoord,X   ;Updates sparkle sprite X coord.
 L87FA:  STA IntroSpr0XCoord,X   ;
 
 L87FD:  DEC IntroSpr0ChngCnt,X  ;Decrement IntroSpr0ChngCnt. If 0, time to change
-L8800:  BNE +                   ;sprite graphic.
+L8800:  BNE UpdateSprklSprite   ;sprite graphic.
+
 L8802:  LDA IntroSpr0PattTbl,X  ;
 L8805:  EOR #$03                ;If IntroSpr0ChngCnt=$00, the sparkle sprite graphic is
 L8807:  STA IntroSpr0PattTbl,X  ;changed back and forth between pattern table
 L880A:  LDA #$20                ;graphic $C6 and $C7.  IntroSpr0ChngCnt is reset to #$20.
 L880C:  STA IntroSpr0ChngCnt,X  ;
-L880F:  ASL                     ;
-L8810:  EOR IntroSpr0Cntrl,X    ;Flips pattern at $C5 in pattern table 
-L8813:  STA IntroSpr0Cntrl,X    ;horizontally when displayed.
-L8816:* JMP WriteIntroSprite    ;($887B)Transfer sprite info into sprite RAM.
-L8819:* RTS                     ;
+
+L880F:  ASL                     ;Flips pattern at $C5 in pattern table 
+L8810:  EOR IntroSpr0Cntrl,X    ;horizontally when displayed.
+L8813:  STA IntroSpr0Cntrl,X    ;
+
+UpdateSprklSprite:
+L8816:  JMP WriteIntroSprite    ;($887B)Transfer sprite info into sprite RAM.
+
+EndSprklUpdate:
+L8819:  RTS                     ;Exit sparkle update routine.
+
+;----------------------------------------------------------------------------------------------------
 
 DoSprkleprteCoord:
 L881A:  TXA                     ;
@@ -807,6 +948,7 @@ WriteIntroSprite:
 L887B:  LDA IntroSpr0YCoord,X   ;
 L887E:  SEC                     ;Subtract #$01 from first byte to get proper y coordinate.
 L887F:  SBC #$01                ;
+
 L8881:  STA SpriteRAM+$10,X     ;
 L8884:  LDA IntroSpr0PattTbl,X  ;
 L8887:  STA SpriteRAM+$11,X     ;Load the four bytes for the
@@ -1163,6 +1305,7 @@ L8A8C:  lDY PalDataIndex        ;
 L8A8E:  LDA PalSelectTbl,Y      ;Chooses which set of palette data
 L8A91:  CMP #$FF                ;to load from the table below.
 L8A93:  BEQ +                   ;
+
 L8A95:  STA PalDataPending      ;Prepare to write palette data.
 L8A97:  INC PalDataIndex        ;
 L8A99:* RTS                     ;
@@ -1232,20 +1375,35 @@ L8AFC:  JMP PrepPPUPalStr       ;($C37E)Prepare and write new palette data.
 ;is changed every 16 frames by the above routine.
 
 IntroStarPntr:
-L8AFF:  .word $8B0F, $8B19, $8B23, $8B2D, $8B37, $8B41, $8B4B, $8B55
+L8AFF:  .word IntroStarPal0, IntroStarPal1, IntroStarPal2, IntroStarPal3
+L8B07:  .word IntroStarPal4, IntroStarPal5, IntroStarPal6, IntroStarPal7
 
 ;The following table contains the platette data that is changed in the intro
 ;scene to give the stars a twinkling effect. All entries in the table are
 ;non-repeating. 
 
-IntroStarPal:
+IntroStarPal0:
 L8B0F:  .byte $03, $0F, $02, $13, $00, $03, $00, $34, $0F, $00
-L8B10:  .byte $03, $06, $01, $23, $00, $03, $0F, $34, $09, $00
+
+IntroStarPal1:
+L8B19:  .byte $03, $06, $01, $23, $00, $03, $0F, $34, $09, $00
+
+IntroStarPal2:
 L8B23:  .byte $03, $16, $0F, $23, $00, $03, $0F, $24, $1A, $00
+
+IntroStarPal3:
 L8B2D:  .byte $03, $17, $0F, $13, $00, $03, $00, $04, $28, $00
+
+IntroStarPal4:
 L8B37:  .byte $03, $17, $01, $14, $00, $03, $10, $0F, $28, $00
+
+IntroStarPal5:
 L8B41:  .byte $03, $16, $02, $0F, $00, $03, $30, $0F, $1A, $00
+
+IntroStarPal6:
 L8B4B:  .byte $03, $06, $12, $0F, $00, $03, $30, $04, $09, $00
+
+IntroStarPal7:
 L8B55:  .byte $03, $0F, $12, $14, $00, $03, $10, $24, $0F, $00
 
 ;----------------------------------------------------------------------------------------------------
@@ -1255,15 +1413,18 @@ L8B5F:  LDY FadeDataIndex       ;Load palette data from table below.
 L8B61:  LDA FadeOutPalData,Y    ;
 L8B64:  CMP #$FF                ;If palette data = #$FF, exit.
 L8B66:  BEQ +                   ;
+
 L8B68:  STA PalDataPending      ;Store new palette data.
 L8B6A:  INC FadeDataIndex       ;
 L8B6C:* RTS                     ;
+
+;The following tables contain indexes into PalPntrTbl used for fade in/out on the intro screen.
 
 FadeOutPalData:
 L8B6D:  .byte $0D, $0E, $0F, $10, $01, $FF
 
 FadeInPalData:
-L8B73:  .Byte $01, $10, $0F, $0E, $0D, $FF
+L8B73:  .byte $01, $10, $0F, $0E, $0D, $FF
 
 ;----------------------------------------[ Password routines ]---------------------------------------
 
@@ -2465,17 +2626,18 @@ L953C:  .byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $00, $
 L954C:  .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 L955C:  .byte $00, $00, $00, $00
 
-;--------------------------------------[ Palette data ]---------------------------------------------
+;----------------------------------------------------------------------------------------------------
 
-;The following table points to the palette data
-;used in the intro and ending portions of the game.
+;The following table points to the palette data used in this bank.
 
-PaletteColorsPointerTable:
+PalPntrTbl:
 L9560:  .word Palette00, Palette01, Palette02, Palette03
 L9558:  .word Palette04, Palette05, Palette06, Palette07
 L9570:  .word Palette08, Palette09, Palette0A, Palette0B
 L9578:  .word Palette0C, Palette0D, Palette0E, Palette0F
 L9580:  .word Palette10, Palette11, Palette12
+
+;----------------------------------------------------------------------------------------------------
 
 Palette00:
 L9586:  .byte $3F, $00, $20     ;PPU palette adress and data length.
@@ -2634,6 +2796,8 @@ EndGamePal0C:
 L9819:  .byte $3F, $10, $50     ;PPU palette adress and data length.
 L981C:  .byte $0F               ;Repeat bit set. Fill sprite palette with #$0F.
 L981D:  .byte $00               ;End EndGamePal0C data.
+
+;----------------------------------------------------------------------------------------------------
 
 UpdateSpriteCoords:
 L981E:  LDA IntroSpr0XRun,X     ;Load sprite run(sprite x component).
@@ -4126,10 +4290,11 @@ LA8FE:  .byte ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, $0B, _
 LA91E:  .byte ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___, ___
  
 CopyMap:
-LA93E:  LDA #$3E                ;
+LA93E:  LDA #<WorldMap          ;
 LA940:  STA $00                 ;
-LA942:  LDA #$A5                ;
+LA942:  LDA #>WorldMap          ;
 LA944:  STA $01                 ;
+
 LA946:  LDA #$00                ;
 LA948:  STA $02                 ;
 LA94A:  LDA #$70                ;Loads contents of world map into 
@@ -5481,7 +5646,7 @@ LB2DB:  .word $B6CD             ;Missile pickup init SFX.
 LB2DD:  .word $B6E7             ;Energy pickup init SFX.
 LB2DF:  .word $B735             ;Metal init SFX.
 LB2E1:  .word $B716             ;Bullet fire init SFX.
-LB2E3:  .word $B73C             ;Bird out of hole init SFX.
+LB2E3:  .word $B73C             ;Enemy regenerate init SFX.
 LB2E5:  .word $B710             ;Enemy hit init SFX.
 LB2E7:  .word $B703             ;Samus jump init SFX.
 LB2E9:  .word $B77A             ;Wave beam init SFX.
@@ -5492,7 +5657,7 @@ LB2EB:  .word $B6B0             ;Missile pickup continue SFX.
 LB2ED:  .word $B6D3             ;Energy pickup continue SFX.
 LB2EF:  .word $B6ED             ;Metal continue SFX.
 LB2F1:  .word $B74F             ;Bullet fire continue SFX.
-LB2F3:  .word $B6ED             ;Bird out of hole continue SFX.
+LB2F3:  .word $B6ED             ;Enemy regenerate continue SFX.
 LB2F5:  .word $B6ED             ;Enemy hit continue SFX.
 LB2F7:  .word $B6ED             ;Samus jump continue SFX.
 LB2F9:  .word $B781             ;Wave beam continue SFX.
@@ -6115,7 +6280,7 @@ BulletFireSFXStart:
 LB716:  LDA HasBeamSFX          ;
 LB719:  LSR                     ;If Samus has ice beam, branch.
 LB71A:  BCS +++++               ;
-LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, BirdOutOfHole
+LB71C:  LDA SQ1ContSFX          ;If MissilePickup, EnergyPickup, EnemyRegen
 LB71F:  AND #$CC                ;or EnemyHit SFX already playing, branch to exit.
 LB721:  BNE MusicBranch03       ;
 LB723:  LDA HasBeamSFX          ;
@@ -6137,7 +6302,7 @@ LB737:  LDY #$45                ;Lower byte of sound data start address(base=$B2
 SelectSFX1:
 LB739:* JMP SelectSFXRoutine    ;($B452)Setup registers for SFX.
 
-BirdOutOfHoleSFXStart:
+EnRegenSFXStart:
 LB73C:  LDA CurrentMusic        ;If escape music is playing, use this SFX to make
 LB73F:  CMP #$04                ;the bomb ticking sound, else play regular SFX.
 LB741:  BEQ +                   ;

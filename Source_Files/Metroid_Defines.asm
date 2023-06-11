@@ -819,14 +819,14 @@
 ;-------------------------------------------[ Constants ]--------------------------------------------
 
 ;Bitmask defs used for SamusGear.
-.alias gr_BOMBS         %00000001
-.alias gr_HIGHJUMP      %00000010
-.alias gr_LONGBEAM      %00000100
-.alias gr_SCREWATTACK   %00001000
-.alias gr_MARUMARI      %00010000
-.alias gr_VARIA         %00100000
-.alias gr_WAVEBEAM      %01000000
-.alias gr_ICEBEAM       %10000000
+.alias gr_BOMBS         $01
+.alias gr_HIGHJUMP      $02
+.alias gr_LONGBEAM      $04
+.alias gr_SCREWATTACK   $08
+.alias gr_MARUMARI      $10
+.alias gr_VARIA         $20
+.alias gr_WAVEBEAM      $40
+.alias gr_ICEBEAM       $80
 
 ;Samus action handlers.
 .alias sa_Stand         0
@@ -878,9 +878,65 @@
 .alias wa_BombExplode   10
 .alias wa_Missile       11
 
+;Hardware registers.
+.alias PPU_PT0_UB       $00     ;Base address of pattern table 0, upper byte.
+.alias PPU_PT0_LB       $00     ;Base address of pattern table 0, lower byte.
+.alias PPU_PT1_UB       $10     ;Base address of pattern table 1, upper byte.
+.alias PPU_PT1_LB       $00     ;Base address of pattern table 1, lower byte.
+.alias PPU_NT0_UB       $20     ;Base address of name table 0, upper byte.
+.alias PPU_NT0_LB       $00     ;Base address of name table 0, lower byte.
+.alias PPU_AT0_UB       $23     ;Base address of attribute table 0, upper byte.
+.alias PPU_AT0_LB       $C0     ;Base address of attribute table 0, lower byte.
+.alias PPU_NT1_UB       $24     ;Base address of name table 1, upper byte.
+.alias PPU_NT1_LB       $00     ;Base address of name table 1, lower byte.
+.alias PPU_PAL_UB       $3F     ;Base address of palettes, upper byte.
+.alias PPU_PAL_LB       $00     ;Base address of palettes, lower byte.
+
 .alias SUIT_ON          $00     ;Samus suit on.
 .alias SUIT_OFF         $01     ;Samus suit off.
 
+;Music and SFX flags.
+.alias SFX_SMS_DIE      $80     ;Samus die SFX.
+.alias SFX_MSL_PKUP     $80     ;Missile pickup SFX.
+.alias SFX_SCRW_ATK     $40     ;Screw attack SFX.
+.alias SFX_ENGY_PKUP    $40     ;Energy pickup SFX.
+.alias SFX_DOOR         $40     ;Door open/close SFX.
+.alias SFX_MSL_LNCH     $20     ;Missile launch SFX.
+.alias SFX_METAL        $20     ;Invincible enemy hit SFX.
+.alias SFX_MTRD_HIT     $20     ;Metroid hit SFX.
+.alias MUS_END          $20     ;End game music.
+.alias SFX_BMB_XPLD     $10     ;Bomb explode SFX.
+.alias SFX_BLT_FIRE     $10     ;Bullet fire SFX.
+.alias SFX_ST_RAISE     $10     ;Statue raise SFX.
+.alias SFX_SMS_WLK      $08     ;Samus walk SFX.
+.alias SFX_EN_REGEN     $08     ;Enemy regenerate SFX.
+.alias SFX_BEEP         $08     ;Low health beep SFX.
+.alias SFX_SPT_FLM      $04     ;Spit flame SFX.
+.alias SFX_EN_HIT       $04     ;Enemy hit SFX.
+.alias SFX_BIG_EN_HIT   $04     ;Big enemy hit SFX.
+.alias SFX_SMS_HIT      $04     ;Samus hit SFX.
+.alias SFX_SMS_JMP      $02     ;Samus jump SFX.
+.alias SFX_SMS_BALL     $02     ;Samus morph into ball SFX.
+.alias SFX_BOSS_HIT     $02     ;Boss hit SFX.
+.alias SFX_WV_FIRE      $01     ;Wave beam SFX.
+.alias SFX_BMB_SET      $01     ;Bomb launced SFX.
+.alias SFX_BAD_PSWD     $01     ;Incorrect password SFX.
+
+.alias MUS_FADE_IN      $80     ;Fade in music.
+.alias MUS_RIDLEY       $80     ;Ridley hideout music.
+.alias MUS_PWR_UP       $40     ;Power up music.
+.alias MUS_TOURIAN      $40     ;Tourian area music
+.alias MUS_ITM_ROOM     $20     ;Item room music.
+.alias MUS_INTRO        $10     ;Intro music.
+.alias MUS_KRAID        $10     ;Kraid hideout music.
+.alias MUS_NORFAIR      $08     ;Norfair area music.
+.alias MUS_ESCAPE       $04     ;End escape music.
+.alias MUS_BOSS         $02     ;Boss room music.
+.alias MUS_PAUSE        $02     ;Pause music.
+.alias MUS_BRINSTAR     $01     ;Brinstar area music.
+.alias MUS_NONE         $01     ;Silence music.
+
+;Controller inputs.
 .alias D_PAD            $0F     ;All bits for D-pad input.
 .alias BTN_RIGHT        $01     ;Controller D-pad right.
 .alias BTN_LEFT         $02     ;Controller D-pad left.
