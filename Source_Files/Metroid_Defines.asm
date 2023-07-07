@@ -1,14 +1,32 @@
 ;-----------------------------------[ General Purpose Variables ]------------------------------------
 
+.alias GenByte00        $00     ;General purpose byte.
+.alias GenWord00        $00     ;General use word.
+.alias GenWord00LB      $00     ;General use word, lower byte.
+.alias GenWord00UB      $01     ;General use word, upper byte.
 .alias GenPtr00         $00     ;General use pointer.
 .alias GenPtr00LB       $00     ;General use pointer, lower byte.
 .alias GenPtr00UB       $01     ;General use pointer, upper byte.
 
 .alias GenByte02        $02     ;General purpose byte.
+.alias GenPtr02         $02     ;General use pointer.
+.alias GenPtr02LB       $02     ;General use pointer, lower byte.
+.alias GenPtr02UB       $03     ;General use pointer, upper byte.
 
-.alias GenByte33        $33     ;General purpose byte.  
+.alias GenByte03        $03     ;General purpose byte.
+.alias GenByte04        $04     ;General purpose byte.
+
+.alias GenByte33        $33     ;General purpose byte.
 
 ;----------------------------------------[ Variable Defines ]----------------------------------------
+
+;PPU palette write.
+.alias PPUDestPtr       $00     ;PPU write destination pointer.
+.alias PPUDestPtrLB     $00     ;PPU write destination pointer, lower byte.
+.alias PPUDestPtrUB     $01     ;PPU write destination pointer, upper byte.
+.alias PPUSrcPtr        $02     ;PPU write source pointer.
+.alias PPUSrcPtrLB      $02     ;PPU write source pointer, lower byte.
+.alias PPUSrcPtrUB      $03     ;PPU write source pointer, upper byte.
 
 .alias CodePtr          $0C     ;Pointer to an indirect function call.
 .alias CodePtrUB        $0C     ;Pointer to an indirect function call, lower byte.
@@ -225,6 +243,18 @@
 .alias SpareMemD3       $D3     ;Written to in title routine, but never accessed.
 .alias SpareMemD7       $D7     ;Written to in title routine, but never accessed.
 .alias IntroMusRstrt    $D8     ;After all title routines run twice, restarts intro music.
+
+.alias SFXPtrE0         $E0     ;Pointer used by SFX routines.
+.alias SFXPtrE0LB       $E0     ;Pointer used by SFX routines, lower byte.
+.alias SFXPtrE0UB       $E1     ;Pointer used by SFX routines, upper byte.
+.alias SFXPtrE2_        $00E2   ;Pointer used by SFX routines.
+.alias SFXPtrE2         $E2     ;Pointer used by SFX routines.
+.alias SFXPtrE2LB       $E2     ;Pointer used by SFX routines, lower byte.
+.alias SFXPtrE2UB       $E3     ;Pointer used by SFX routines, upper byte.
+.alias SFXPtrE4         $E4     ;Pointer used by SFX routines.
+.alias SFXPtrE4LB       $E4     ;Pointer used by SFX routines, lower byte.
+.alias SFXPtrE4UB       $E5     ;Pointer used by SFX routines, upper byte.
+
 .alias ABStatus         $F0     ;Stores A and B button status in AreaInit. Never used.
 ;                       $F7
 
@@ -507,6 +537,8 @@
 .alias PPUScroll        $2005   ;
 .alias PPUAddress       $2006   ;
 .alias PPUIOReg         $2007   ;
+
+.alias APUCntrl         $4000   ;Base address of APU control registers.
 
 .alias SQ1Cntrl0        $4000   ;
 .alias SQ1Cntrl1        $4001   ;SQ1 hardware control registers.
@@ -935,6 +967,29 @@
 .alias MUS_PAUSE        $02     ;Pause music.
 .alias MUS_BRINSTAR     $01     ;Brinstar area music.
 .alias MUS_NONE         $01     ;Silence music.
+
+;Music control.
+.alias MUS_REPEAT       $FF     ;Repeat music.
+.alias MUS_NO_REPEAT    $00     ;Do not repeat music.
+.alias MUS_NLT_0        $00     ;Note length table 0.
+.alias MUS_NLT_1        $0B     ;Note length table 1.
+.alias MUS_NLT_2        $17     ;Note length table 2.
+.alias VOL_TBL_NONE     $00     ;Channel does not use volume data table.
+.alias VOL_TBL1         $01     ;Channel uses volume data table 1.
+.alias VOL_TBL2         $02     ;Channel uses volume data table 2.
+.alias VOL_TBL3         $03     ;Channel uses volume data table 5.
+.alias VOL_TBL4         $04     ;Channel uses volume data table 4.
+.alias VOL_TBL5         $05     ;Channel uses volume data table 5.
+.alias NSE_NONE         $0000   ;No noise channel music data.
+.alias SQ1_NONE         $0100   ;No SQ1 channel music data.
+.alias SQ2_NONE         $0300   ;No SQ2 channel music data.
+.alias TRI_NONE         $0500   ;No triangle channel music data.
+.alias NSE_NONE1        $0700   ;No noise channel music data.
+
+.alias CHN_NOISE        $00     ;Noise channel indicator.
+.alias CHN_SQ1          $01     ;SQ1 channel indicator.
+.alias CHN_TRI          $03     ;Triangle channel indicator.
+.alias CHN_MULTI        $04     ;Multiple channels indicator.
 
 ;Controller inputs.
 .alias D_PAD            $0F     ;All bits for D-pad input.
