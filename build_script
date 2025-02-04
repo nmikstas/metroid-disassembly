@@ -123,7 +123,7 @@ fi
 #	Output_Files/Bank02.bin \
 #	Output_Files/Bank03.bin \
 #   Output_Files/Bank04.bin \
-#    Output_Files/Bank05.bin \
-#    Output_Files/Bank06.bin \
-#    Output_Files/Bank07.bin \
-#	> assembled_metroid.nes
+#   Output_Files/Bank05.bin \
+#   Output_Files/Bank06.bin \
+#   Output_Files/Bank07.bin \
+#   > assembled_metroid.nes
